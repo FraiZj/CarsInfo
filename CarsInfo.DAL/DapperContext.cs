@@ -30,23 +30,23 @@ namespace CarsInfo.DAL
             await connection.ExecuteAsync(sql, new { id });
         }
 
-        public Task<IEnumerable<T>> GetAllAsync<T>(IEnumerable<Type> includes) where T : BaseEntity
+        public Task<IEnumerable<T>> GetAllAsync<T>() where T : BaseEntity
         {
             var tableName = GetTableName(typeof(T));
             using var connection = new SqlConnection(_connectionString);
             var sql = new StringBuilder($"SELECT * FROM {tableName}");
 
-            foreach (var include in includes)
-            {
-                var includeTableName = GetTableName(include);
-                var inludeSql = $" INNER JOIN {includeTableName} ON {tableName}.Id = {includeTableName}.Id";
-                sql.Append(inludeSql);
-            }
+            //foreach (var include in includes)
+            //{
+            //    var includeTableName = GetTableName(include);
+            //    var inludeSql = $" INNER JOIN {includeTableName} ON {tableName}.Id = {includeTableName}.Id";
+            //    sql.Append(inludeSql);
+            //}
 
             return Task.FromResult<IEnumerable<T>>(Array.Empty<T>());
         }
 
-        public Task<T> GetAsync<T>() where T : BaseEntity
+        public Task<T> GetAsync<T>(int id) where T : BaseEntity
         {
             throw new NotImplementedException();
         }

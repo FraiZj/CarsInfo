@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CarsInfo.BLL.Models\CarsInfo.BLL.Models.csproj" />
+    <ProjectReference Include="..\CarsInfo.DAL\CarsInfo.DAL.csproj" />
+  </ItemGroup>
+
+</Project>
