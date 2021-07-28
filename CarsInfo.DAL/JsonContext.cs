@@ -24,12 +24,21 @@ namespace CarsInfo.DAL
         public async Task DeleteAsync<T>(int id) where T : BaseEntity
         {
             var entities = await ReadAllAsync<T>();
-            await WriteAllAsync(entities.Where(e => e.Id != id));
+            var entity = entities.FirstOrDefault(e => e.Id == id);
+
+            if (entity is null)
+            {
+                return;
+            }
+
+            entity.IsDeleted = true;
+            await WriteAllAsync(entities);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync<T>() where T : BaseEntity
         {
-            return await ReadAllAsync<T>();
+            var entities = await ReadAllAsync<T>();
+            return entities.Where(e => !e.IsDeleted);
         }
 
         public async Task<T> GetAsync<T>(int id) where T : BaseEntity

@@ -6,10 +6,10 @@ namespace CarsInfo.BLL.Contracts
 {
     public interface ICarsService
     {
-        public Task<IEnumerable<CarDto>> GetAllAsync();
-        public Task<CarDto> GetByIdAsync(int id);
-        public Task AddAsync(CarEditorDto entity);
-        public Task UpdateAsync(CarEditorDto entity);
-        public Task DeleteByIdAsync(int id);
+        Task<IEnumerable<CarDto>> GetAllAsync();
+        Task<CarDto> GetByIdAsync(int id);
+        Task AddAsync(CarEditorDto entity);
+        Task UpdateAsync(CarEditorDto entity);
+        Task DeleteByIdAsync(int id);
     }
 }

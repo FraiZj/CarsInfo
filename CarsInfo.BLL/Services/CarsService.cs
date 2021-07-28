@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
 {
@@ -12,11 +14,13 @@ namespace CarsInfo.BLL.Services
     {
         private readonly IGenericRepository<Car> _carsRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<CarsService> _logger;
 
-        public CarsService(IGenericRepository<Car> carsRepository, IMapper mapper)
+        public CarsService(IGenericRepository<Car> carsRepository, IMapper mapper, ILogger<CarsService> logger)
         {
             _carsRepository = carsRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task AddAsync(CarEditorDto entity)
@@ -38,10 +42,18 @@ namespace CarsInfo.BLL.Services
 
         public async Task<IEnumerable<CarDto>> GetAllAsync()
         {
-            var cars = await _carsRepository.GetAllAsync();
-            var carsDtos = _mapper.Map<IEnumerable<CarDto>>(cars);
+            try
+            {
+                var cars = await _carsRepository.GetAllAsync();
+                var carsDtos = _mapper.Map<IEnumerable<CarDto>>(cars);
 
-            return carsDtos;
+                return carsDtos;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all cars");
+                return new List<CarDto>();
+            }
         }
 
         public async Task<CarDto> GetByIdAsync(int id)

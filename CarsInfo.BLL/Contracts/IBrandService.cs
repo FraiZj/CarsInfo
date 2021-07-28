@@ -6,10 +6,10 @@ namespace CarsInfo.BLL.Contracts
 {
     public interface IBrandService
     {
-        public Task<IEnumerable<BrandDto>> GetAllAsync();
-        public Task<BrandDto> GetByIdAsync(int id);
-        public Task AddAsync(BrandDto entity);
-        public Task UpdateAsync(BrandDto entity);
-        public Task DeleteByIdAsync(int id);
+        Task<IEnumerable<BrandDto>> GetAllAsync();
+        Task<BrandDto> GetByIdAsync(int id);
+        Task AddAsync(BrandDto entity);
+        Task UpdateAsync(BrandDto entity);
+        Task DeleteByIdAsync(int id);
     }
 }

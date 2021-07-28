@@ -2,15 +2,15 @@
 
 namespace CarsInfo.DAL.Entities
 {
-    [Table(name: "tbl.UserCar")]
-    public class UserCar : BaseEntity
+    [Table(name: "tbl.UserRoles")]
+    public class UserRole : BaseEntity
     {
         public int UserId { get; set; }
-
-        public int CarId { get; set; }
+        
+        public int RoleId { get; set; }
 
         public User User { get; set; }
-        
-        public Car Car { get; set; }
+
+        public Role Role { get; set; }
     }
 }

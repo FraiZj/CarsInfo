@@ -17,5 +17,7 @@ namespace CarsInfo.DAL.Entities
         public ICollection<UserCar> UserCars { get; set; }
         
         public ICollection<Comment> Comments { get; set; }
+
+        public ICollection<UserRole> UserRoles { get; set; }
     }
 }

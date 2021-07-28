@@ -6,6 +6,7 @@ using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
 {
@@ -13,17 +14,26 @@ namespace CarsInfo.BLL.Services
     {
         private readonly IGenericRepository<Brand> _brandRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<BrandService> _logger;
 
-        public BrandService(IGenericRepository<Brand> brandRepository, IMapper mapper)
+        public BrandService(IGenericRepository<Brand> brandRepository, IMapper mapper, ILogger<BrandService> logger)
         {
             _brandRepository = brandRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task AddAsync(BrandDto entity)
         {
-            var brand = _mapper.Map<Brand>(entity);
-            await _brandRepository.AddAsync(brand);
+            try
+            {
+                var brand = _mapper.Map<Brand>(entity);
+                await _brandRepository.AddAsync(brand);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred during creating brand");
+            }
         }
 
         public async Task DeleteByIdAsync(int id)
