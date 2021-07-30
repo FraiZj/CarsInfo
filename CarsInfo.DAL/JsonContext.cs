@@ -77,7 +77,7 @@ namespace CarsInfo.DAL
         {
             var tableName = GetTableName(typeof(T));
             var fileInfo = new FileInfo($"{DataPath}/{tableName}.json");
-            using var sr = new StreamWriter(fileInfo.Open(FileMode.Create));
+            await using var sr = new StreamWriter(fileInfo.Open(FileMode.Create));
             var json = JsonConvert.SerializeObject(entities);
             await sr.WriteAsync(json);
         }

@@ -11,6 +11,8 @@ namespace CarsInfo.Infrastructure.DI
         {
             services.AddTransient<ICarsService, CarsService>();
             services.AddTransient<IBrandService, BrandService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ICommentService, CommentService>();
             services.AddAutoMapper(typeof(CarMapperProfile));
         }
     }

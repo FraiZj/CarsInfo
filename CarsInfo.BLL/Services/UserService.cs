@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
 {
@@ -14,22 +16,29 @@ namespace CarsInfo.BLL.Services
     {
         private readonly IGenericRepository<User> _usersRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IGenericRepository<User> usersRepository, IMapper mapper)
+        public UserService(
+            IGenericRepository<User> usersRepository, 
+            IMapper mapper, 
+            ILogger<UserService> logger)
         {
             _usersRepository = usersRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task AddAsync(UserDto entity)
         {
             try
             {
+                ValidateUserDto(entity);
                 var user = _mapper.Map<User>(entity);
                 await _usersRepository.AddAsync(user);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                _logger.LogError(e, "An error occurred while creating user");
             }
         }
 
@@ -44,8 +53,9 @@ namespace CarsInfo.BLL.Services
             {
                 await _usersRepository.DeleteAsync(id);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                _logger.LogError(e, $"An error occurred while deleting user with id={id}");
             }
         }
 
@@ -57,8 +67,9 @@ namespace CarsInfo.BLL.Services
                 var usersDtos = _mapper.Map<IEnumerable<UserDto>>(users);
                 return usersDtos;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                _logger.LogError(e, "An error occurred while fetching users");
                 return new List<UserDto>();
             }
         }
@@ -71,8 +82,9 @@ namespace CarsInfo.BLL.Services
                 var userDto = _mapper.Map<UserDto>(user);
                 return userDto;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                _logger.LogError(e, $"An error occurred while fetching user with id={id}");
                 return null;
             }
         }
@@ -81,12 +93,23 @@ namespace CarsInfo.BLL.Services
         {
             try
             {
+                ValidateUserDto(entity);
                 var user = _mapper.Map<User>(entity);
                 await _usersRepository.UpdateAsync(user);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                _logger.LogError(e, $"An error occurred while updating user with id={entity.Id}");
             }
+        }
+
+        private static void ValidateUserDto(UserDto user)
+        {
+            ValidationHelper.ThrowIfNull(user);
+            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.Email);
+            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.FirstName);
+            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.LastName);
+            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.Password);
         }
     }
 }

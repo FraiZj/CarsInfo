@@ -31,8 +31,8 @@ namespace CarsInfo.DAL.Entities
 		public BodyType BodyType { get; set; }
 
 		public ICollection<UserCar> UserCars { get; set; }
-		
-		public ICollection<CarPicture> CarPictures { get; set; }
+
+        public ICollection<CarPicture> CarPictures { get; set; } = new List<CarPicture>();
 
         public ICollection<Comment> Comments { get; set; }
     }

@@ -24,10 +24,16 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<CarDto> Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             var car = await _carsService.GetByIdAsync(id);
-            return car;
+
+            if (car is null)
+            {
+                return NotFound($"Car with id={id} is not found");
+            }
+
+            return Ok(car);
         }
 
         [HttpPost]

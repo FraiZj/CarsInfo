@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Contracts;
@@ -12,11 +13,14 @@ namespace CarsInfo.BLL.Services
 {
     public class CarsService : ICarsService
     {
-        private readonly IGenericRepository<Car> _carsRepository;
+        private readonly ICarsRepository _carsRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<CarsService> _logger;
 
-        public CarsService(IGenericRepository<Car> carsRepository, IMapper mapper, ILogger<CarsService> logger)
+        public CarsService(
+            ICarsRepository carsRepository,
+            IMapper mapper, 
+            ILogger<CarsService> logger)
         {
             _carsRepository = carsRepository;
             _mapper = mapper;
@@ -25,55 +29,79 @@ namespace CarsInfo.BLL.Services
 
         public async Task AddAsync(CarEditorDto entity)
         {
-            var car = new Car
+            try
             {
-                Id = entity.Id,
-                BrandId = entity.BrandId,
-                Model = entity.Model
-            };
-
-            await _carsRepository.AddAsync(car);
+                ValidateCarEditorDto(entity);
+                var car = _mapper.Map<Car>(entity);
+                await _carsRepository.AddAsync(car);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while creating car");
+            }
         }
 
         public async Task DeleteByIdAsync(int id)
         {
-            await _carsRepository.DeleteAsync(id);
+            try
+            {
+                await _carsRepository.DeleteAsync(id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"An error occurred while deleting car with id={id}");
+            }
         }
 
         public async Task<IEnumerable<CarDto>> GetAllAsync()
         {
             try
             {
-                var cars = await _carsRepository.GetAllAsync();
+                var cars = await _carsRepository.GetAllAsyncWithIncludes();
                 var carsDtos = _mapper.Map<IEnumerable<CarDto>>(cars);
-
                 return carsDtos;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError(ex, "An error occurred while fetching all cars");
+                _logger.LogError(e, "An error occurred while fetching all cars");
                 return new List<CarDto>();
             }
         }
 
         public async Task<CarDto> GetByIdAsync(int id)
         {
-            var car = await _carsRepository.GetAsync(id);
-            var carDto = _mapper.Map<CarDto>(car);
+            try
+            {
+                var car = await _carsRepository.GetAsyncWithIncludes(id);
+                var carDto = _mapper.Map<CarDto>(car);
 
-            return carDto;
+                return carDto;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"An error occurred while fetching car with id={id}");
+                return null;
+            }
         }
 
         public async Task UpdateAsync(CarEditorDto entity)
         {
-            var car = new Car
+            try
             {
-                Id = entity.Id,
-                BrandId = entity.BrandId,
-                Model = entity.Model
-            };
+                ValidateCarEditorDto(entity);
+                var car = _mapper.Map<Car>(entity);
+                await _carsRepository.UpdateAsync(car);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"An error occurred while updating car with id={entity.Id}");
+            }
+        }
 
-            await _carsRepository.UpdateAsync(car);
+        private static void ValidateCarEditorDto(CarEditorDto car)
+        {
+            ValidationHelper.ThrowIfNull(car);
+            ValidationHelper.ThrowIfStringNullOrWhiteSpace(car.Model);
         }
     }
 }

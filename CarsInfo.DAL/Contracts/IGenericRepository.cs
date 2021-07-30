@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CarsInfo.DAL.Entities;
 
@@ -15,6 +14,8 @@ namespace CarsInfo.DAL.Contracts
 
         Task<T> GetAsync(int id);
 
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> GetAsync(object filter);
+
+        Task<IEnumerable<T>> GetAllAsync(object filter = null);
     }
 }
