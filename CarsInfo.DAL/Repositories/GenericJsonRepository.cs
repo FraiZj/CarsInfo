@@ -24,12 +24,12 @@ namespace CarsInfo.DAL.Repositories
             return _context.DeleteAsync<T>(id);
         }
 
-        public Task<T> GetAsync(object filter)
+        public Task<T> GetAsync()
         {
             throw new System.NotImplementedException();
         }
 
-        public Task<IEnumerable<T>> GetAllAsync(object filter = null)
+        public Task<IEnumerable<T>> GetAllAsync()
         {
             return _context.GetAllAsync<T>();
         }

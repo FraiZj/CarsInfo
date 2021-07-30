@@ -34,13 +34,12 @@ namespace CarsInfo.DAL
             }
         }
 
-        public async Task<TReturn> QueryFirstOrDefaultAsync<T, TFirst, TSecond, TThird, TReturn>(
-            string sql, Func<T, TFirst, TSecond, TThird, TReturn> map, object parameters = null) 
-            where T : BaseEntity 
-            where TFirst : BaseEntity 
-            where TSecond : BaseEntity 
+        public async Task<T> QueryFirstOrDefaultAsync<T, TFirst, TSecond, TThird>(
+            string sql, Func<T, TFirst, TSecond, TThird, T> map, object parameters = null)
+            where T : BaseEntity
+            where TFirst : BaseEntity
+            where TSecond : BaseEntity
             where TThird : BaseEntity
-            where TReturn : BaseEntity
         {
             try
             {
@@ -67,13 +66,11 @@ namespace CarsInfo.DAL
             }
         }
 
-        public async Task<IEnumerable<TReturn>> QueryAsync<T, TFirst, TSecond, TThird, TReturn>(
-            string sql, Func<T, TFirst, TSecond, TThird, TReturn> map, object parameters = null)
-            where T : BaseEntity
-            where TFirst : BaseEntity
+        public async Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond>(
+            string sql, Func<T, TFirst, TSecond, T> map, object parameters = null) 
+            where T : BaseEntity 
+            where TFirst : BaseEntity 
             where TSecond : BaseEntity
-            where TThird : BaseEntity
-            where TReturn : BaseEntity
         {
             try
             {
@@ -82,8 +79,26 @@ namespace CarsInfo.DAL
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while fetching data");
-                return new List<TReturn>();
-            };
+                return new List<T>();
+            }
+        }
+
+        public async Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond, TThird>(
+            string sql, Func<T, TFirst, TSecond, TThird, T> map, object parameters = null)
+            where T : BaseEntity
+            where TFirst : BaseEntity
+            where TSecond : BaseEntity
+            where TThird : BaseEntity
+        {
+            try
+            {
+                return await _connection.QueryAsync(sql, map, parameters);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching data");
+                return new List<T>();
+            }
         }
 
         public async Task<int> ExecuteAsync(string sql, object parameters = null)

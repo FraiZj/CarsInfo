@@ -36,18 +36,24 @@ namespace CarsInfo.DAL.Repositories
             await Context.ExecuteAsync(sql, new { id });
         }
 
-        public virtual async Task<IEnumerable<T>> GetAllAsync(object filter = null)
+        //public virtual async Task<IEnumerable<T>> GetAllAsync(object filter = null)
+        //{
+        //    var properties = ParseProperties(filter);
+        //    var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
+        //    var sql = $"SELECT * FROM [{TableName}]";
+
+        //    if (filter is not null)
+        //    {
+        //        sql += $" WHERE {sqlPairs}";
+        //    }
+
+        //    return await Context.QueryAsync<T>(sql, properties.AllPairs);
+        //}
+
+        public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            var properties = ParseProperties(filter);
-            var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
             var sql = $"SELECT * FROM [{TableName}]";
-
-            if (filter is not null)
-            {
-                sql += $" WHERE {sqlPairs}";
-            }
-
-            return await Context.QueryAsync<T>(sql, properties.AllPairs);
+            return await Context.QueryAsync<T>(sql);
         }
 
         public virtual async Task<T> GetAsync(int id)
@@ -56,19 +62,19 @@ namespace CarsInfo.DAL.Repositories
             return await Context.QueryFirstOrDefaultAsync<T>(sql, new { id });
         }
 
-        public virtual async Task<T> GetAsync(object filter)
-        {
-            var properties = ParseProperties(filter);
-            var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-            var sql = $"SELECT TOP 1 * FROM [{TableName}]";
+        //public virtual async Task<T> GetAsync(object filter)
+        //{
+        //    var properties = ParseProperties(filter);
+        //    var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
+        //    var sql = $"SELECT TOP 1 * FROM [{TableName}]";
 
-            if (filter is not null)
-            {
-                sql += $" WHERE {sqlPairs}";
-            }
+        //    if (filter is not null)
+        //    {
+        //        sql += $" WHERE {sqlPairs}";
+        //    }
 
-            return await Context.QueryFirstOrDefaultAsync<T>(sql, properties.AllPairs);
-        }
+        //    return await Context.QueryFirstOrDefaultAsync<T>(sql, properties.AllPairs);
+        //}
 
         public virtual async Task UpdateAsync(T entity)
         {
@@ -123,9 +129,10 @@ namespace CarsInfo.DAL.Repositories
             return propertyContainer;
         }
 
-        protected static string GetSqlPairs(IEnumerable<string> keys, string separator = ", ")
+        protected static string GetSqlPairs(IEnumerable<string> keys, string tableAlias = null, string separator = ", ")
         {
-            var pairs = keys.Select(key => $"{key}=@{key}").ToList();
+            var prefix = tableAlias is null ? string.Empty : $"{tableAlias}.";
+            var pairs = keys.Select(key => $"{prefix}{key}=@{key}").ToList();
             return string.Join(separator, pairs);
         }
 

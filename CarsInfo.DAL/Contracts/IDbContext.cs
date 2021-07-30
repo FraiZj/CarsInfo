@@ -9,23 +9,27 @@ namespace CarsInfo.DAL.Contracts
     {
         Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null) where T : BaseEntity;
 
-        Task<TReturn> QueryFirstOrDefaultAsync<T, TFirst, TSecond, TThird, TReturn>(
-            string sql, Func<T, TFirst, TSecond, TThird, TReturn> map, object parameters = null)
+        Task<T> QueryFirstOrDefaultAsync<T, TFirst, TSecond, TThird>(
+            string sql, Func<T, TFirst, TSecond, TThird, T> map, object parameters = null)
             where T : BaseEntity
             where TFirst : BaseEntity
             where TSecond : BaseEntity
-            where TThird : BaseEntity
-            where TReturn : BaseEntity;
+            where TThird : BaseEntity;
         
         Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null) where T : BaseEntity;
 
-        Task<IEnumerable<TReturn>> QueryAsync<T, TFirst, TSecond, TThird, TReturn>(
-            string sql, Func<T, TFirst, TSecond, TThird, TReturn> map, object parameters = null)
+        Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond>(
+            string sql, Func<T, TFirst, TSecond, T> map, object parameters = null)
+            where T : BaseEntity
+            where TFirst : BaseEntity
+            where TSecond : BaseEntity;
+
+        Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond, TThird>(
+            string sql, Func<T, TFirst, TSecond, TThird, T> map, object parameters = null)
             where T : BaseEntity
             where TFirst : BaseEntity
             where TSecond : BaseEntity
-            where TThird : BaseEntity
-            where TReturn : BaseEntity;
+            where TThird : BaseEntity;
 
         Task<int> ExecuteAsync(string sql, object parameters = null);
     }

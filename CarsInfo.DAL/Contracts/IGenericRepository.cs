@@ -14,8 +14,6 @@ namespace CarsInfo.DAL.Contracts
 
         Task<T> GetAsync(int id);
 
-        Task<T> GetAsync(object filter);
-
-        Task<IEnumerable<T>> GetAllAsync(object filter = null);
+        Task<IEnumerable<T>> GetAllAsync();
     }
 }

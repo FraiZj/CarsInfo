@@ -57,7 +57,7 @@ namespace CarsInfo.BLL.Services
         {
             try
             {
-                var cars = await _carsRepository.GetAllAsyncWithIncludes();
+                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync();
                 var carsDtos = _mapper.Map<IEnumerable<CarDto>>(cars);
                 return carsDtos;
             }
@@ -72,7 +72,7 @@ namespace CarsInfo.BLL.Services
         {
             try
             {
-                var car = await _carsRepository.GetAsyncWithIncludes(id);
+                var car = await _carsRepository.GetWithAllIncludesAsync(id);
                 var carDto = _mapper.Map<CarDto>(car);
 
                 return carDto;
