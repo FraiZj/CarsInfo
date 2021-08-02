@@ -13,10 +13,10 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync()
         {
-            var sql = @$"SELECT * FROM [{TableName}] c
-                         INNER JOIN [tbl.Brands] br 
+            var sql = @$"SELECT * FROM {TableName} c
+                         INNER JOIN Brand br 
                          ON c.BrandId = br.Id
-                         INNER JOIN [tbl.CarPictures] cp
+                         INNER JOIN CarPicture cp
                          ON c.Id = cp.CarId";
 
             //if (filter is null)
@@ -69,12 +69,12 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<Car> GetWithAllIncludesAsync(int id)
         {
-            var sql = @$"SELECT TOP 1 * FROM [{TableName}] c
-                         INNER JOIN [tbl.Brands] br 
+            var sql = @$"SELECT TOP 1 * FROM {TableName} c
+                         INNER JOIN Brand br 
                          ON c.BrandId = br.Id
-                         INNER JOIN [tbl.BodyTypes] bt
+                         INNER JOIN BodyType bt
                          ON c.BodyTypeId = br.Id
-                         INNER JOIN [tbl.CarPictures] cp
+                         INNER JOIN CarPicture cp
                          ON c.Id = cp.CarId
                          WHERE c.Id=@id ";
 

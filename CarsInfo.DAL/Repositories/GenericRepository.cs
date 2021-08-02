@@ -52,7 +52,7 @@ namespace CarsInfo.DAL.Repositories
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
-            var sql = $"SELECT * FROM [{TableName}]";
+            var sql = $"SELECT * FROM {TableName}";
             return await Context.QueryAsync<T>(sql);
         }
 

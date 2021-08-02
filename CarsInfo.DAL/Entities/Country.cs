@@ -2,7 +2,7 @@
 
 namespace CarsInfo.DAL.Entities
 {
-	[Table(name: "tbl.Country")]
+    [Table("Country")]
 	public class Country : BaseEntity
 	{
 		public string Name { get; set; }

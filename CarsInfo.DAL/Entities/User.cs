@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarsInfo.DAL.Entities
 {
-    [Table(name: "tbl.Users")]
+    [Table("User")]
     public class User : BaseEntity
     {
         public string FirstName { get; set; }
@@ -14,10 +14,10 @@ namespace CarsInfo.DAL.Entities
         
         public string Password { get; set; }
 
-        public ICollection<UserCar> UserCars { get; set; }
+        public ICollection<Car> Cars { get; set; }
         
         public ICollection<Comment> Comments { get; set; }
 
-        public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<Role> Roles { get; set; }
     }
 }

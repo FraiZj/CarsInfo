@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarsInfo.DAL.Entities
 {
-    [Table(name: "tbl.Comments")]
+    [Table("Comment")]
     public class Comment : BaseEntity
     {
         public int UserId { get; set; }
