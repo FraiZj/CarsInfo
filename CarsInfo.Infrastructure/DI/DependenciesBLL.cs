@@ -1,6 +1,6 @@
-﻿using CarsInfo.BLL.Contracts;
+﻿using System.Reflection;
+using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Services;
-using CarsInfo.Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CarsInfo.Infrastructure.DI
@@ -13,7 +13,7 @@ namespace CarsInfo.Infrastructure.DI
             services.AddTransient<IBrandService, BrandService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ICommentService, CommentService>();
-            services.AddAutoMapper(typeof(CarMapperProfile));
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
     }
 }

@@ -3,7 +3,7 @@ using AutoMapper;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Entities;
 
-namespace CarsInfo.Infrastructure.Mappers
+namespace CarsInfo.Infrastructure.MappersBLL
 {
     public class CarMapperProfile : Profile
     {
@@ -20,7 +20,7 @@ namespace CarsInfo.Infrastructure.Mappers
 
             CreateMap<CarEditorDto, Car>()
                 .ForMember(car => car.CarPictures, opt => opt.MapFrom(
-                    carDto => carDto.CarPicturesUrls.Select(cp => new CarPicture {PictureLink = cp})));
+                    carDto => carDto.CarPicturesUrls.Select(cp => new CarPicture { PictureLink = cp })));
 
             CreateMap<Car, CarEditorDto>()
                 .ForMember(carDto => carDto.CarPicturesUrls, opt => opt.MapFrom(
