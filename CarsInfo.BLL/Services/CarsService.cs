@@ -84,6 +84,22 @@ namespace CarsInfo.BLL.Services
             }
         }
 
+        public async Task<CarEditorDto> GetCarEditorDtoByIdAsync(int id)
+        {
+            try
+            {
+                var car = await _carsRepository.GetWithAllIncludesAsync(id);
+                var carDto = _mapper.Map<CarEditorDto>(car);
+
+                return carDto;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"An error occurred while fetching car with id={id}");
+                return null;
+            }
+        }
+
         public async Task UpdateAsync(CarEditorDto entity)
         {
             try

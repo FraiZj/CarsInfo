@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using CarsInfo.DB;
 using CarsInfo.Infrastructure.DI;
@@ -5,9 +6,12 @@ using CarsInfo.WebApi.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CarsInfo.WebApi
@@ -28,33 +32,34 @@ namespace CarsInfo.WebApi
             var masterConnectionString = _configuration.GetConnectionString("MasterDb");
             var connectionString = _configuration.GetConnectionString("CarsInfoDb");
             DbInitializer.Initialize(masterConnectionString);
+
             services.AddDependenciesDAL(connectionString);
             services.AddDependenciesBLL();
 
-            services.AddSingleton<ITokenFactory, JwtTokenFactory>();
-
             var apiAuthSettings = GetApiAuthSettings(services);
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(apiAuthSettings.Secret)),
-                        ValidIssuer = apiAuthSettings.Issuer,
-                        ValidateIssuer = true,
-                        ValidateAudience = false
-                    };
-                });
+            services.AddJwtAuthentication(apiAuthSettings);
 
-            services.AddAuthorization();
-
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+            }).AddNewtonsoftJson();
             services.AddSwaggerGen();
+        }
+
+        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+        {
+            var builder = new ServiceCollection()
+                .AddLogging()
+                .AddMvc()
+                .AddNewtonsoftJson()
+                .Services.BuildServiceProvider();
+
+            return builder
+                .GetRequiredService<IOptions<MvcOptions>>()
+                .Value
+                .InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>()
+                .First();
         }
 
         private ApiAuthSetting GetApiAuthSettings(IServiceCollection services)

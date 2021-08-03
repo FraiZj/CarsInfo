@@ -73,10 +73,18 @@ namespace CarsInfo.DAL.Repositories
                          INNER JOIN Brand br 
                          ON c.BrandId = br.Id
                          INNER JOIN BodyType bt
-                         ON c.BodyTypeId = br.Id
+                         ON c.BodyTypeId = bt.Id
+                         INNER JOIN FuelType ft
+                         ON c.FuelTypeId = ft.Id
+                         INNER JOIN Country co
+                         ON c.CountryId = co.Id
+                         INNER JOIN Gearbox g
+                         ON c.CountryId = g.Id
                          INNER JOIN CarPicture cp
                          ON c.Id = cp.CarId
-                         WHERE c.Id=@id ";
+                         INNER JOIN Comment com
+                         ON c.Id = com.Id
+                         WHERE c.Id=@id";
 
             return await Context.QueryFirstOrDefaultAsync<Car, Brand, BodyType, CarPicture>(sql,
                 (car, brand, bodyType, carPicture) =>

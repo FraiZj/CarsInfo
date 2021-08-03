@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarsInfo.WebApi.Controllers
@@ -46,6 +47,21 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] CarEditorDto car)
         {
+            await _carsService.UpdateAsync(car);
+            return Ok(car);
+        }
+
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<CarEditorDto> patchCar)
+        {
+            var car = await _carsService.GetCarEditorDtoByIdAsync(id);
+            patchCar.ApplyTo(car, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Model state is invalid.");
+            }
+
             await _carsService.UpdateAsync(car);
             return Ok(car);
         }
