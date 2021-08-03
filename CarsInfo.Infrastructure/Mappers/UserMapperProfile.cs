@@ -4,7 +4,7 @@ using CarsInfo.DAL.Entities;
 
 namespace CarsInfo.Infrastructure.Mappers
 {
-    class UserMapperProfile : Profile
+    public class UserMapperProfile : Profile
     {
         public UserMapperProfile()
         {

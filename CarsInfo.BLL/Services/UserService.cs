@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -14,12 +15,12 @@ namespace CarsInfo.BLL.Services
 {
     public class UserService : IUserService
     {
-        private readonly IGenericRepository<User> _usersRepository;
+        private readonly IUsersRepository _usersRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
 
         public UserService(
-            IGenericRepository<User> usersRepository, 
+            IUsersRepository usersRepository, 
             IMapper mapper, 
             ILogger<UserService> logger)
         {
@@ -42,9 +43,37 @@ namespace CarsInfo.BLL.Services
             }
         }
 
-        public Task<IEnumerable<Claim>> AuthorizeAsync(UserDto entity)
+        public async Task<ICollection<Claim>> AuthorizeAsync(UserDto entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ValidationHelper.ThrowIfNull(entity);
+                ValidationHelper.ThrowIfStringNullOrWhiteSpace(entity.Email);
+                ValidationHelper.ThrowIfStringNullOrWhiteSpace(entity.Password);
+
+                var user = await _usersRepository.GetWithRolesAsync(entity.Email);
+
+                if (user is null)
+                {
+                    return new List<Claim>();
+                }
+
+                if (!BCrypt.Net.BCrypt.Verify(entity.Password, user.Password))
+                {
+                    return new List<Claim>();
+                }
+
+                var claims = user.Roles.Select(
+                    userRole => new Claim(ClaimTypes.Role, userRole.Name)).ToList();
+                claims.Add(new Claim(ClaimTypes.Email, user.Email));
+
+                return claims;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"An error occurred while authorizing user with email={entity.Email}");
+                return new List<Claim>();
+            }
         }
 
         public async Task DeleteByIdAsync(int id)
