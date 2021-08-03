@@ -31,7 +31,7 @@ namespace CarsInfo.WebApi
         {
             var masterConnectionString = _configuration.GetConnectionString("MasterDb");
             var connectionString = _configuration.GetConnectionString("CarsInfoDb");
-            DbInitializer.Initialize(masterConnectionString);
+            DbInitializer.Initialize(masterConnectionString, connectionString);
 
             services.AddDependenciesDAL(connectionString);
             services.AddDependenciesBLL();
