@@ -2,7 +2,7 @@
 
 namespace CarsInfo.DAL.Entities
 {
-	[Table(name: "tbl.FuelType")]
+    [Table("FuelType")]
 	public class FuelType : BaseEntity
 	{
 		public string Name { get; set; }

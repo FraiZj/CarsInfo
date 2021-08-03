@@ -18,6 +18,7 @@ namespace CarsInfo.Infrastructure.DI
             // repositories
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<ICarsRepository, CarsRepository>();
+            services.AddTransient<IUsersRepository, UsersRepository>();
         }
     }
 }

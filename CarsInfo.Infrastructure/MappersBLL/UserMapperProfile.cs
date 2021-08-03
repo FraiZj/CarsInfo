@@ -2,9 +2,9 @@
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Entities;
 
-namespace CarsInfo.Infrastructure.Mappers
+namespace CarsInfo.Infrastructure.MappersBLL
 {
-    class UserMapperProfile : Profile
+    public class UserMapperProfile : Profile
     {
         public UserMapperProfile()
         {

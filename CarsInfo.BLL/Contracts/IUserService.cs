@@ -17,6 +17,6 @@ namespace CarsInfo.BLL.Contracts
 
         Task DeleteByIdAsync(int id);
 
-        Task<IEnumerable<Claim>> AuthorizeAsync(UserDto entity);
+        Task<ICollection<Claim>> AuthorizeAsync(UserDto entity);
     }
 }

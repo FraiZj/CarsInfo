@@ -2,7 +2,7 @@
 
 namespace CarsInfo.DAL.Entities
 {
-	[Table(name: "tbl.Gearbox")]
+	[Table("Gearbox")]
 	public class Gearbox : BaseEntity
 	{
 		public string Name { get; set; }

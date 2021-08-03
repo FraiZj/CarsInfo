@@ -39,15 +39,6 @@ CREATE TABLE [User] (
 	Password nvarchar(500) NOT NULL
 )
 
-CREATE TABLE Comment (
-	Id int PRIMARY KEY IDENTITY(1,1),
-	IsDeleted bit DEFAULT 0,
-	UserId int NOT NULL,
-	Text nvarchar(150) NOT NULL,
-	PublishDate DATETIMEOFFSET NOT NULL DEFAULT GETDATE(),
-	CONSTRAINT FK_Comment_User FOREIGN KEY (UserId) REFERENCES [User](Id)
-)
-
 CREATE TABLE Car (
 	Id int PRIMARY KEY IDENTITY(1,1),
 	IsDeleted bit DEFAULT 0,
@@ -63,6 +54,25 @@ CREATE TABLE Car (
 	CONSTRAINT FK_Car_BodyType FOREIGN KEY (BodyTypeId) REFERENCES BodyType(Id), 
 	CONSTRAINT FK_Car_Gearbox FOREIGN KEY (GearboxId) REFERENCES Gearbox(Id), 
 	CONSTRAINT FK_Car_Country FOREIGN KEY (CountryId) REFERENCES Country(Id), 
+)
+
+CREATE TABLE CarPicture (
+	Id int PRIMARY KEY IDENTITY(1,1),
+	IsDeleted bit DEFAULT 0,
+	CarId int NOT NULL,
+	PictureLink nvarchar(500) NOT NULL,
+	CONSTRAINT FK_CarPicture_Car FOREIGN KEY (CarId) REFERENCES Car(Id)
+)
+
+CREATE TABLE Comment (
+	Id int PRIMARY KEY IDENTITY(1,1),
+	IsDeleted bit DEFAULT 0,
+	UserId int NOT NULL,
+	CarId int NOT NULL,
+	Text nvarchar(150) NOT NULL,
+	PublishDate DATETIMEOFFSET NOT NULL DEFAULT GETDATE(),
+	CONSTRAINT FK_Comment_User FOREIGN KEY (UserId) REFERENCES [User](Id),
+	CONSTRAINT FK_Comment_Car FOREIGN KEY (CarId) REFERENCES Car(Id)
 )
 
 CREATE TABLE UserCar (

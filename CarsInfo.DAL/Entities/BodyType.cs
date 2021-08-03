@@ -2,7 +2,7 @@
 
 namespace CarsInfo.DAL.Entities
 {
-	[Table(name: "tbl.BodyTypes")]
+	[Table("BodyType")]
 	public class BodyType : BaseEntity
 	{
 		public string Name { get; set; }

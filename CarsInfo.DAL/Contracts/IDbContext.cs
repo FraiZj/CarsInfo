@@ -9,6 +9,11 @@ namespace CarsInfo.DAL.Contracts
     {
         Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null) where T : BaseEntity;
 
+        Task<T> QueryFirstOrDefaultAsync<T, TFirst>(
+            string sql, Func<T, TFirst, T> map, object parameters = null)
+            where T : BaseEntity
+            where TFirst : BaseEntity;
+
         Task<T> QueryFirstOrDefaultAsync<T, TFirst, TSecond, TThird>(
             string sql, Func<T, TFirst, TSecond, TThird, T> map, object parameters = null)
             where T : BaseEntity
@@ -17,6 +22,11 @@ namespace CarsInfo.DAL.Contracts
             where TThird : BaseEntity;
         
         Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null) where T : BaseEntity;
+
+        Task<IEnumerable<T>> QueryAsync<T, TFirst>(
+            string sql, Func<T, TFirst, T> map, object parameters = null)
+            where T : BaseEntity
+            where TFirst : BaseEntity;
 
         Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond>(
             string sql, Func<T, TFirst, TSecond, T> map, object parameters = null)

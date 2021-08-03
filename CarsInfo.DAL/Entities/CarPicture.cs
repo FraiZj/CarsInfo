@@ -2,7 +2,7 @@
 
 namespace CarsInfo.DAL.Entities
 {
-    [Table(name: "tbl.CarPictures")]
+    [Table("CarPicture")]
     public class CarPicture : BaseEntity
 	{
 		public int CarId { get; set; }

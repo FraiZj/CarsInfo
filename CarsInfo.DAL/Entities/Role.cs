@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CarsInfo.DAL.Entities
 {
-    [Table(name: "tbl.Roles")]
+    [Table("Role")]
     public class Role : BaseEntity
     {
         public string Name { get; set; }
 
-        public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<User> Users { get; set; }
     }
 }
