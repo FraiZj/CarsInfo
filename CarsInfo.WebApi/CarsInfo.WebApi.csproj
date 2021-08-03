@@ -18,8 +18,4 @@
     <ProjectReference Include="..\CarsInfo.WebApi.ViewModels\CarsInfo.WebApi.ViewModels.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Assistance\" />
-  </ItemGroup>
-
 </Project>
