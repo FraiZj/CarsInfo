@@ -2,7 +2,7 @@
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Entities;
 
-namespace CarsInfo.Infrastructure.Mappers
+namespace CarsInfo.Infrastructure.MappersBLL
 {
     public class CommentMapperProfile : Profile
     {
