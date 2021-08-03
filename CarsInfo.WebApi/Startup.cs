@@ -1,9 +1,8 @@
 using System.Linq;
-using System.Text;
 using CarsInfo.DB;
 using CarsInfo.Infrastructure.DI;
+using CarsInfo.WebApi.Assistance;
 using CarsInfo.WebApi.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CarsInfo.WebApi
 {
@@ -31,7 +29,7 @@ namespace CarsInfo.WebApi
         {
             var masterConnectionString = _configuration.GetConnectionString("MasterDb");
             var connectionString = _configuration.GetConnectionString("CarsInfoDb");
-            DbInitializer.Initialize(masterConnectionString, connectionString);
+            DbInitializer.Initialize(masterConnectionString, masterConnectionString);
 
             services.AddDependenciesDAL(connectionString);
             services.AddDependenciesBLL();
@@ -42,6 +40,7 @@ namespace CarsInfo.WebApi
             services.AddControllers(options =>
             {
                 options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+                options.Filters.Add(typeof(ValidateModelAttribute));
             }).AddNewtonsoftJson();
             services.AddSwaggerGen();
         }
@@ -79,7 +78,6 @@ namespace CarsInfo.WebApi
             }
 
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarsInfo API V1");

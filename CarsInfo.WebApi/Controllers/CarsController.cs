@@ -2,12 +2,15 @@
 using System.Threading.Tasks;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.BLL.Models.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("cars")]
+    [Authorize(Roles = Roles.Admin)]
     public class CarsController : ControllerBase
     {
         private readonly ICarsService _carsService;
@@ -18,6 +21,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IEnumerable<CarDto>> Get()
         {
             var cars = await _carsService.GetAllAsync();
@@ -25,6 +29,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(int id)
         {
             var car = await _carsService.GetByIdAsync(id);

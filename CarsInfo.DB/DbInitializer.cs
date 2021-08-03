@@ -13,8 +13,8 @@ namespace CarsInfo.DB
         public static void Initialize(string masterDbConnectionString, string carsInfoConnectionString)
         {
             CreateDatabase(masterDbConnectionString);
-            CreateSchema(carsInfoConnectionString);
-            SeedData(carsInfoConnectionString);
+            CreateSchema(carsInfoConnectionString, masterDbConnectionString);
+            SeedData(carsInfoConnectionString, masterDbConnectionString);
         }
 
         private static void CreateDatabase(string masterDbConnectionString)
@@ -37,9 +37,9 @@ namespace CarsInfo.DB
             }
         }
 
-        private static void CreateSchema(string carsInfoConnectionString)
+        private static void CreateSchema(string carsInfoConnectionString, string masterDbConnectionString)
         {
-            if (!CheckDatabaseExists(carsInfoConnectionString))
+            if (!CheckDatabaseExists(masterDbConnectionString) || TablesExist(carsInfoConnectionString))
             {
                 return;
             }
@@ -57,9 +57,9 @@ namespace CarsInfo.DB
             }
         }
 
-        private static void SeedData(string carsInfoConnectionString)
+        private static void SeedData(string carsInfoConnectionString, string masterDbConnectionString)
         {
-            if (TablesExist(carsInfoConnectionString))
+            if (!CheckDatabaseExists(masterDbConnectionString) || TablesExist(carsInfoConnectionString))
             {
                 return;
             }
@@ -79,7 +79,7 @@ namespace CarsInfo.DB
 
         private static bool TablesExist(string carsInfoConString)
         {
-            const string cmdText = @"SELECT TOP 1 * FROM [User]";
+            const string cmdText = @"USE CarsInfo; SELECT TOP 1 * FROM [User]";
             var isExist = false;
 
             using (var con = new SqlConnection(carsInfoConString))

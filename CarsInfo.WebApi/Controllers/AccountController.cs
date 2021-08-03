@@ -24,30 +24,22 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = _mapper.Map<UserDto>(model);
-                await _userService.AddAsync(user);
-                var claims = await _userService.AuthorizeAsync(user);
-                var token =_tokenFactory.CreateToken(claims);
-                return Ok(token);
-            }
+            var user = _mapper.Map<UserDto>(model);
+            await _userService.AddAsync(user);
+            var claims = await _userService.AuthorizeAsync(user);
+            var token = _tokenFactory.CreateToken(claims);
 
-            return BadRequest("Model state is invalid");
+            return Ok(token);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = _mapper.Map<UserDto>(model);
-                var claims = await _userService.AuthorizeAsync(user);
-                var token = _tokenFactory.CreateToken(claims);
-                return Ok(token);
-            }
+            var user = _mapper.Map<UserDto>(model);
+            var claims = await _userService.AuthorizeAsync(user);
+            var token = _tokenFactory.CreateToken(claims);
 
-            return BadRequest("Model state is invalid");
+            return Ok(token);
         }
     }
 }
