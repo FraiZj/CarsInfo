@@ -3,6 +3,7 @@ using CarsInfo.DB;
 using CarsInfo.Infrastructure.DI;
 using CarsInfo.WebApi.Assistance;
 using CarsInfo.WebApi.Authorization;
+using CarsInfo.WebApi.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ namespace CarsInfo.WebApi
 
             services.AddDependenciesDAL(connectionString);
             services.AddDependenciesBLL();
+            services.AddViewModelMapper();
 
             var apiAuthSettings = GetApiAuthSettings(services);
             services.AddJwtAuthentication(apiAuthSettings);
@@ -43,6 +45,15 @@ namespace CarsInfo.WebApi
                 options.Filters.Add(typeof(ValidateModelAttribute));
             }).AddNewtonsoftJson();
             services.AddSwaggerGen();
+
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.WithOrigins("http://localhost:1234/")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed((x) => true)
+                    .AllowCredentials();
+            }));
         }
 
         private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
@@ -86,7 +97,7 @@ namespace CarsInfo.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("MyPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 

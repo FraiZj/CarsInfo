@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
+using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Contracts;
-using CarsInfo.DAL.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
@@ -14,17 +13,17 @@ namespace CarsInfo.BLL.Services
     public class CarsService : ICarsService
     {
         private readonly ICarsRepository _carsRepository;
-        private readonly IMapper _mapper;
         private readonly ILogger<CarsService> _logger;
+        private readonly CarServiceMapper _mapper;
 
         public CarsService(
             ICarsRepository carsRepository,
-            IMapper mapper, 
-            ILogger<CarsService> logger)
+            ILogger<CarsService> logger,
+            CarServiceMapper mapper)
         {
             _carsRepository = carsRepository;
-            _mapper = mapper;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task AddAsync(CarEditorDto entity)
@@ -32,7 +31,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 ValidateCarEditorDto(entity);
-                var car = _mapper.Map<Car>(entity);
+                var car = _mapper.MapToCar(entity);
                 await _carsRepository.AddAsync(car);
             }
             catch (Exception e)
@@ -58,7 +57,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync();
-                var carsDtos = _mapper.Map<IEnumerable<CarDto>>(cars);
+                var carsDtos = _mapper.MapToCarsDtos(cars);
                 return carsDtos;
             }
             catch (Exception e)
@@ -73,7 +72,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 var car = await _carsRepository.GetWithAllIncludesAsync(id);
-                var carDto = _mapper.Map<CarDto>(car);
+                var carDto = _mapper.MapToCarDto(car);
 
                 return carDto;
             }
@@ -89,7 +88,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 var car = await _carsRepository.GetWithAllIncludesAsync(id);
-                var carDto = _mapper.Map<CarEditorDto>(car);
+                var carDto = _mapper.MapToCarEditorDto(car);
 
                 return carDto;
             }
@@ -105,7 +104,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 ValidateCarEditorDto(entity);
-                var car = _mapper.Map<Car>(entity);
+                var car = _mapper.MapToCar(entity);
                 await _carsRepository.UpdateAsync(car);
             }
             catch (Exception e)

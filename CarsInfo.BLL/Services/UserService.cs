@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AutoMapper;
 using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
+using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Contracts;
-using CarsInfo.DAL.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
@@ -16,13 +15,13 @@ namespace CarsInfo.BLL.Services
     public class UserService : IUserService
     {
         private readonly IUsersRepository _usersRepository;
-        private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
+        private readonly UserServiceMapper _mapper;
 
         public UserService(
-            IUsersRepository usersRepository, 
-            IMapper mapper, 
-            ILogger<UserService> logger)
+            IUsersRepository usersRepository,
+            ILogger<UserService> logger,
+            UserServiceMapper mapper)
         {
             _usersRepository = usersRepository;
             _mapper = mapper;
@@ -34,7 +33,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 ValidateUserDto(entity);
-                var user = _mapper.Map<User>(entity);
+                var user = _mapper.MapToUser(entity);
                 await _usersRepository.AddAsync(user);
             }
             catch (Exception e)
@@ -93,7 +92,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 var users = await _usersRepository.GetAllAsync();
-                var usersDtos = _mapper.Map<IEnumerable<UserDto>>(users);
+                var usersDtos = _mapper.MapToUsersDtos(users);
                 return usersDtos;
             }
             catch (Exception e)
@@ -107,8 +106,8 @@ namespace CarsInfo.BLL.Services
         {
             try
             {
-                var user = await _usersRepository.GetAllAsync();
-                var userDto = _mapper.Map<UserDto>(user);
+                var user = await _usersRepository.GetAsync(id);
+                var userDto = _mapper.MapToUserDto(user);
                 return userDto;
             }
             catch (Exception e)
@@ -123,7 +122,7 @@ namespace CarsInfo.BLL.Services
             try
             {
                 ValidateUserDto(entity);
-                var user = _mapper.Map<User>(entity);
+                var user = _mapper.MapToUser(entity);
                 await _usersRepository.UpdateAsync(user);
             }
             catch (Exception e)
