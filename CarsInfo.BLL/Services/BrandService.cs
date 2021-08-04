@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
