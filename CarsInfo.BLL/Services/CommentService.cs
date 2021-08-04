@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using CarsInfo.BLL.Contracts;
+using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
@@ -10,9 +10,11 @@ namespace CarsInfo.BLL.Services
     public class CommentService : ICommentService
     {
         private readonly IGenericRepository<Comment> _commentRepository;
-        private readonly IMapper _mapper;
+        private readonly CommentServiceMapper _mapper;
 
-        public CommentService(IGenericRepository<Comment> commentRepository, IMapper mapper)
+        public CommentService(
+            IGenericRepository<Comment> commentRepository, 
+            CommentServiceMapper mapper)
         {
             _commentRepository = commentRepository;
             _mapper = mapper;
@@ -20,7 +22,7 @@ namespace CarsInfo.BLL.Services
 
         public async Task AddAsync(CommentDto commentDto)
         {
-            var comment = _mapper.Map<Comment>(commentDto);
+            var comment = _mapper.MapToComment(commentDto);
             await _commentRepository.AddAsync(comment);
         }
 

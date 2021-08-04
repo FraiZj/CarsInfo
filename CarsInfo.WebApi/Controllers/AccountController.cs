@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
 using CarsInfo.BLL.Contracts;
-using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.WebApi.Authorization;
+using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +10,13 @@ namespace CarsInfo.WebApi.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IMapper _mapper;
         private readonly ITokenFactory _tokenFactory;
+        private readonly AccountControllerMapper _mapper;
 
-        public AccountController(IUserService userService, IMapper mapper, ITokenFactory tokenFactory)
+        public AccountController(
+            IUserService userService,
+            AccountControllerMapper mapper,
+            ITokenFactory tokenFactory)
         {
             _userService = userService;
             _mapper = mapper;
@@ -24,7 +26,7 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var user = _mapper.Map<UserDto>(model);
+            var user = _mapper.MapToUserDto(model);
             await _userService.AddAsync(user);
             var claims = await _userService.AuthorizeAsync(user);
             var token = _tokenFactory.CreateToken(claims);
@@ -35,7 +37,7 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var user = _mapper.Map<UserDto>(model);
+            var user = _mapper.MapToUserDto(model);
             var claims = await _userService.AuthorizeAsync(user);
             var token = _tokenFactory.CreateToken(claims);
 
