@@ -13,11 +13,11 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<IEnumerable<User>> GetAllWithRolesAsync()
         {
-            var sql = @$"SELECT * FROM {TableName} u
-                         INNER JOIN UserRole ur 
-                         ON u.UserId = ur.UserId
-                         INNER JOIN Role r
-                         ON ur.RoleId = r.Id";
+            var sql = @$"SELECT * FROM {TableName} user
+                         INNER JOIN UserRole
+                         ON user.UserId = UserRole.UserId
+                         INNER JOIN Role
+                         ON UserRole.RoleId = Role.Id";
 
             return await Context.QueryAsync<User, Role>(sql,
                 (user, role) =>
@@ -29,12 +29,12 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<User> GetWithRolesAsync(string email)
         {
-            var sql = @$"SELECT TOP 1 * FROM {TableName} u
-                         INNER JOIN UserRole ur 
-                         ON u.UserId = ur.UserId
-                         INNER JOIN Role r
-                         ON ur.RoleId = r.Id
-                         WHERE u.Email = {email}";
+            var sql = @$"SELECT TOP 1 * FROM {TableName} user
+                         INNER JOIN UserRole 
+                         ON user.UserId = UserRole.UserId
+                         INNER JOIN Role
+                         ON UserRole.RoleId = Role.Id
+                         WHERE user.Email = {email}";
 
             return await Context.QueryFirstOrDefaultAsync<User, Role>(sql,
                 (user, role) =>
