@@ -34,13 +34,6 @@ namespace CarsInfo.DAL.Contracts
             where TFirst : BaseEntity
             where TSecond : BaseEntity;
 
-        Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond, TThird>(
-            string sql, Func<T, TFirst, TSecond, TThird, T> map, object parameters = null)
-            where T : BaseEntity
-            where TFirst : BaseEntity
-            where TSecond : BaseEntity
-            where TThird : BaseEntity;
-
         Task<int> ExecuteAsync(string sql, object parameters = null);
     }
 }

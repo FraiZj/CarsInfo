@@ -59,7 +59,7 @@ namespace CarsInfo.DB
 
         private static void SeedData(string carsInfoConnectionString, string masterDbConnectionString)
         {
-            if (!CheckDatabaseExists(masterDbConnectionString) || TablesExist(carsInfoConnectionString))
+            if (!CheckDatabaseExists(masterDbConnectionString) || !TablesExist(carsInfoConnectionString) || SeedDataExist(carsInfoConnectionString))
             {
                 return;
             }
@@ -77,9 +77,30 @@ namespace CarsInfo.DB
             }
         }
 
-        private static bool TablesExist(string carsInfoConString)
+        private static bool SeedDataExist(string carsInfoConString)
         {
             const string cmdText = @"USE CarsInfo; SELECT TOP 1 * FROM [User]";
+            var isExist = false;
+
+            using (var con = new SqlConnection(carsInfoConString))
+            {
+                con.Open();
+                using (var cmd = new SqlCommand(cmdText, con))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        isExist = reader.HasRows;
+                    }
+                }
+                con.Close();
+            }
+
+            return isExist;
+        }
+
+        private static bool TablesExist(string carsInfoConString)
+        {
+            const string cmdText = @"USE CarsInfo; SELECT * FROM INFORMATION_SCHEMA.TABLES";
             var isExist = false;
 
             using (var con = new SqlConnection(carsInfoConString))

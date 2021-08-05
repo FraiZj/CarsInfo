@@ -25,10 +25,6 @@ namespace CarsInfo.BLL.Mappers
             {
                 Id = car.Id,
                 Brand = car.Brand?.Name,
-                BodyType = car.BodyType?.Name,
-                FuelType = car.FuelType?.Name,
-                Gearbox = car.Gearbox?.Name,
-                Country = car.Country?.Name,
                 CarPicturesUrls = car.CarPictures?.Select(cp => cp?.PictureLink).ToList(),
                 Description = car.Description,
                 Model = car.Model,
@@ -52,10 +48,6 @@ namespace CarsInfo.BLL.Mappers
             {
                 Id = car.Id,
                 BrandId = car.BrandId,
-                BodyTypeId = car.BodyTypeId,
-                FuelTypeId = car.FuelTypeId,
-                GearboxId = car.GearboxId,
-                CountryId = car.CountryId,
                 CarPicturesUrls = car.CarPictures?.Select(cp => cp.PictureLink).ToList(),
                 Description = car.Description,
                 Model = car.Model
@@ -73,10 +65,6 @@ namespace CarsInfo.BLL.Mappers
             {
                 Id = car.Id,
                 BrandId = car.BrandId,
-                BodyTypeId = car.BodyTypeId,
-                FuelTypeId = car.FuelTypeId,
-                GearboxId = car.GearboxId,
-                CountryId = car.CountryId,
                 CarPictures = car.CarPicturesUrls?.Select(cp => new CarPicture { PictureLink = cp}).ToList(),
                 Description = car.Description,
                 Model = car.Model
