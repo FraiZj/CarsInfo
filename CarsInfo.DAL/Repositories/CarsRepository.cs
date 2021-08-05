@@ -13,22 +13,11 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync()
         {
-            var sql = @$"SELECT * FROM {TableName} c
-                         LEFT JOIN Brand br 
-                         ON c.BrandId = br.Id
-                         LEFT JOIN CarPicture cp
-                         ON c.Id = cp.CarId";
-
-            //if (filter is null)
-            //{
-            //    return await Context.QueryAsync<Car, Brand, CarPicture>(sql,
-            //        (car, brand, carPicture) =>
-            //        {
-            //            car.Brand = brand;
-            //            car.CarPictures.Add(carPicture);
-            //            return car;
-            //        });
-            //}
+            var sql = @$"SELECT * FROM {TableName} car
+                         LEFT JOIN Brand
+                         ON car.BrandId = Brand.Id
+                         LEFT JOIN CarPicture
+                         ON car.Id = CarPicture.CarId";
 
             //var properties = ParseProperties(filter);
             //var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
@@ -38,7 +27,12 @@ namespace CarsInfo.DAL.Repositories
                 (car, brand, carPicture) =>
                 {
                     car.Brand = brand;
-                    car.CarPictures.Add(carPicture);
+
+                    if (carPicture is not null)
+                    {
+                        car.CarPictures.Add(carPicture);
+                    }
+
                     return car;
                 });
         }
@@ -69,29 +63,31 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<Car> GetWithAllIncludesAsync(int id)
         {
-            var sql = @$"SELECT TOP 1 * FROM {TableName} c
-                         LEFT JOIN Brand br 
-                         ON c.BrandId = br.Id
-                         LEFT JOIN BodyType bt
-                         ON c.BodyTypeId = bt.Id
-                         LEFT JOIN FuelType ft
-                         ON c.FuelTypeId = ft.Id
-                         LEFT JOIN Country co
-                         ON c.CountryId = co.Id
-                         LEFT JOIN Gearbox g
-                         ON c.CountryId = g.Id
-                         LEFT JOIN CarPicture cp
-                         ON c.Id = cp.CarId
-                         LEFT JOIN Comment com
-                         ON c.Id = com.Id
-                         WHERE c.Id=@id";
+            var sql = @$"SELECT TOP 1 * FROM {TableName} car
+                         LEFT JOIN Brand
+                         ON car.BrandId = Brand.Id
+                         LEFT JOIN CarPicture
+                         ON car.Id = CarPicture.CarId
+                         LEFT JOIN Comment
+                         ON car.Id = Comment.CarId
+                         WHERE car.Id=@id";
 
-            return await Context.QueryFirstOrDefaultAsync<Car, Brand, BodyType, CarPicture>(sql,
-                (car, brand, bodyType, carPicture) =>
+            
+            return await Context.QueryFirstOrDefaultAsync<Car, Brand, CarPicture, Comment>(sql,
+                (car, brand, carPicture, comment) =>
                 {
                     car.Brand = brand;
-                    car.BodyType = bodyType;
-                    car.CarPictures.Add(carPicture);
+
+                    if (carPicture is not null)
+                    {
+                        car.CarPictures.Add(carPicture);
+                    }
+
+                    if (comment is not null)
+                    {
+                        car.Comments.Add(comment);
+                    }
+                    
                     return car;
                 }, new { id });
         }
