@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 
@@ -50,10 +53,45 @@ namespace CarsInfo.DAL.Repositories
         //    return await Context.QueryAsync<T>(sql, properties.AllPairs);
         //}
 
+        public async Task<T> GetAsync(ICollection<FilterModel> filters)
+        {
+            var filter = ConfigureFilter(filters);
+            var sql = $"SELECT TOP 1 * FROM [{TableName}] {filter}";
+            return await Context.QueryFirstOrDefaultAsync<T>(sql);
+        }
+
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             var sql = $"SELECT * FROM {TableName}";
             return await Context.QueryAsync<T>(sql);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync(ICollection<JoinModel> joins, ICollection<FilterModel> filters)
+        {
+            var filter = ConfigureFilter(filters);
+            var join = ConfigureJoins(joins);
+            var sql = $"SELECT * FROM [{TableName}] {join} {filter}";
+            return await Context.QueryAsync<T>(sql);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync<TFirst, TSecond>(ICollection<Expression<Func<T, object>>> joins, ICollection<FilterModel> filters)
+        {
+            var join = GetJoins(joins);
+            var sql = $"SELECT * FROM [{TableName}] {join}";
+            return await Context.QueryAsync<T>(sql);
+        }
+
+        private string GetJoins(IEnumerable<Expression<Func<T, object>>> joins)
+        {
+            var result = new StringBuilder();
+
+            foreach (var join in joins)
+            {
+                var joinTable = join.GetReturnType().Name;
+                result.Append(@$"LEFT JOIN {joinTable} ON {joinTable}.Id = {TableName}.Id ");
+            }
+
+            return result.ToString();
         }
 
         public virtual async Task<T> GetAsync(int id)
@@ -61,20 +99,6 @@ namespace CarsInfo.DAL.Repositories
             var sql = $"SELECT * FROM [{TableName}] WHERE Id=@id";
             return await Context.QueryFirstOrDefaultAsync<T>(sql, new { id });
         }
-
-        //public virtual async Task<T> GetAsync(object filter)
-        //{
-        //    var properties = ParseProperties(filter);
-        //    var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-        //    var sql = $"SELECT TOP 1 * FROM [{TableName}]";
-
-        //    if (filter is not null)
-        //    {
-        //        sql += $" WHERE {sqlPairs}";
-        //    }
-
-        //    return await Context.QueryFirstOrDefaultAsync<T>(sql, properties.AllPairs);
-        //}
 
         public virtual async Task UpdateAsync(T entity)
         {
@@ -90,6 +114,40 @@ namespace CarsInfo.DAL.Repositories
             return tableAttribute?.Name;
         }
 
+        protected string ConfigureFilter(IEnumerable<FilterModel> filters)
+        {
+            var result = new StringBuilder("WHERE ");
+
+            foreach (var filter in filters)
+            {
+                filter.Value = filter.Value is string ? 
+                    new string($"'{filter.Value}'") : 
+                    filter.Value;
+
+                result.Append($"{filter.Field} {filter.Operator} {filter.Value} ");
+
+                if (!string.IsNullOrEmpty(filter.Separator))
+                {
+                    result.Append($"{filter.Separator} ");
+                }
+            }
+
+            return result.ToString();
+        }
+
+        protected string ConfigureJoins(IEnumerable<JoinModel> joins)
+        {
+            var result = new StringBuilder();
+
+            foreach (var join in joins)
+            {
+                result.Append(@$"LEFT JOIN {join.ForeignTable} 
+                    ON {join.ForeignTable}.{join.ForeignField} = {TableName}.{join.PrimaryField} ");
+            }
+
+            return result.ToString();
+        }
+
         protected static PropertyContainer ParseProperties<TU>(TU obj)
         {
             var propertyContainer = new PropertyContainer();
@@ -100,7 +158,7 @@ namespace CarsInfo.DAL.Repositories
             }
 
             var properties = typeof(T).GetProperties();
-            
+
             foreach (var property in properties)
             {
                 if (property.PropertyType.IsInterface)

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 
@@ -29,9 +32,24 @@ namespace CarsInfo.DAL.Repositories
             throw new System.NotImplementedException();
         }
 
+        public Task<T> GetAsync(ICollection<FilterModel> filters)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<IEnumerable<T>> GetAllAsync()
         {
             return _context.GetAllAsync<T>();
+        }
+
+        public Task<IEnumerable<T>> GetAllAsync(ICollection<JoinModel> joins, ICollection<FilterModel> filters)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<IEnumerable<T>> GetAllAsync(ICollection<Expression<Func<T, object>>> joins, ICollection<FilterModel> filters)
+        {
+            throw new NotImplementedException();
         }
 
         public Task<T> GetAsync(int id)

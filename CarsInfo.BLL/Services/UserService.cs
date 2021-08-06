@@ -64,6 +64,7 @@ namespace CarsInfo.BLL.Services
 
                 var claims = user.Roles.Select(
                     userRole => new Claim(ClaimTypes.Role, userRole.Name)).ToList();
+                claims.Add(new Claim("Id", user.Id.ToString()));
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
 
                 return claims;

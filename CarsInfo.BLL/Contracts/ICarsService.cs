@@ -15,7 +15,9 @@ namespace CarsInfo.BLL.Contracts
         Task AddAsync(CarEditorDto entity);
 
         Task UpdateAsync(CarEditorDto entity);
-
+        
         Task DeleteByIdAsync(int id);
+
+        Task LikeAsync(int userId, int carId);
     }
 }

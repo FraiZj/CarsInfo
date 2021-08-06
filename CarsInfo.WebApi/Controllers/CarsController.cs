@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
@@ -10,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("cars")]
-    [Authorize(Roles = Roles.Admin)]
     public class CarsController : ControllerBase
     {
         private readonly ICarsService _carsService;
@@ -77,5 +78,16 @@ namespace CarsInfo.WebApi.Controllers
             await _carsService.DeleteByIdAsync(id);
             return Ok($"Car with id={id} has been deleted");
         }
+
+        [Authorize(Roles = Roles.User)]
+        [HttpPost("{id:int}/like")]
+        public async Task<IActionResult> Like(int id)
+        {
+            var userId = GetCurrentUserId();
+            await _carsService.LikeAsync(userId, id);
+            return Ok($"Car with id={id} has been deleted");
+        }
+
+        private int GetCurrentUserId() => Convert.ToInt32(User.Claims.First(c => c.Type == "Id").Value);
     }
 }

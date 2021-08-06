@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
+using CarsInfo.DAL.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
@@ -13,15 +16,18 @@ namespace CarsInfo.BLL.Services
     public class CarsService : ICarsService
     {
         private readonly ICarsRepository _carsRepository;
+        private readonly IGenericRepository<UserCar> _userCarRepository;
         private readonly ILogger<CarsService> _logger;
         private readonly CarServiceMapper _mapper;
 
         public CarsService(
             ICarsRepository carsRepository,
+            IGenericRepository<UserCar> userCarRepository,
             ILogger<CarsService> logger,
             CarServiceMapper mapper)
         {
             _carsRepository = carsRepository;
+            _userCarRepository = userCarRepository;
             _logger = logger;
             _mapper = mapper;
         }
@@ -52,11 +58,57 @@ namespace CarsInfo.BLL.Services
             }
         }
 
+        public async Task LikeAsync(int userId, int carId)
+        {
+            try
+            {
+                var userCar = await _userCarRepository.GetAsync(new List<FilterModel>
+                {
+                    new("UserId", userId.ToString(), separator: "AND"),
+                    new("CarId", carId.ToString())
+                });
+
+                if (userCar is null)
+                {
+                    await _userCarRepository.AddAsync(new UserCar
+                    {
+                        UserId = userId,
+                        CarId = carId
+                    });
+
+                    return;
+                }
+
+                await _userCarRepository.DeleteAsync(userCar.Id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while add favorite car");
+            }
+        }
+
         public async Task<IEnumerable<CarDto>> GetAllAsync()
         {
             try
             {
                 var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync();
+
+                var g = await _carsRepository.GetAllAsync(new List<Expression<Func<Car, object>>>
+                {
+                    c => c.Brand,
+                    c => c.CarPictures
+                }, new List<FilterModel>());
+
+                var c = await _carsRepository.GetAllAsync(new List<JoinModel>
+                {
+                    new("Brand", "Id"),
+                    new("CarPicture", "Id"),
+
+                }, new List<FilterModel>
+                {
+                    new("Brand.Name", "BMW")
+                });
+
                 var carsDtos = _mapper.MapToCarsDtos(cars);
                 return carsDtos;
             }
