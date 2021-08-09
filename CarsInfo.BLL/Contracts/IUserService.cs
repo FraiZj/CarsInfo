@@ -9,7 +9,7 @@ namespace CarsInfo.BLL.Contracts
     {
         Task<IEnumerable<UserDto>> GetAllAsync();
 
-        Task<UserDto> GetByIdAsync(int id);
+        Task<UserDto> GetByEmailAsync(string email);
         
         Task AddAsync(UserDto entity);
 

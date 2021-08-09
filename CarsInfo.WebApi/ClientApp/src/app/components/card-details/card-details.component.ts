@@ -34,6 +34,4 @@ export class CardDetailsComponent implements OnInit {
 
     return parseInt(routeId as string);
   }
-
-
 }

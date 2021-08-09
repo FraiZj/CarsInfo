@@ -21,6 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { CarsListComponent } from './components/cars-list/cars-list.component';
 import { CardDetailsComponent } from './components/card-details/card-details.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { CarEditorComponent } from './components/car-editor/car-editor.component';
 
 const modules = [
   MatButtonModule,
@@ -42,7 +43,8 @@ const modules = [
     RegisterComponent,
     CarsListComponent,
     CardDetailsComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    CarEditorComponent
   ],
   imports: [
     ...modules,
