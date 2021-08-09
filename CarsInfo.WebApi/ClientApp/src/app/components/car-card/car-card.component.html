@@ -8,7 +8,7 @@
     <p>{{ car.description }}</p>
   </mat-card-content>
   <mat-card-actions>
-    <a (click)="navigateToDetails(car.id)">
+    <a [routerLink]="[car.id]">
       <button mat-button>Details</button>
     </a>
     <button mat-button>Like</button>

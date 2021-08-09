@@ -7,6 +7,13 @@ namespace CarsInfo.BLL.Mappers
 {
     public class UserServiceMapper
     {
+        private readonly CarServiceMapper _carServiceMapper;
+
+        public UserServiceMapper(CarServiceMapper carServiceMapper)
+        {
+            _carServiceMapper = carServiceMapper;
+        }
+
         public UserDto MapToUserDto(User user)
         {
             if (user is null)
@@ -20,7 +27,8 @@ namespace CarsInfo.BLL.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                FavoriteCars = null
+                FavoriteCars = _carServiceMapper.MapToCarsDtos(user.Cars),
+                Roles = user.Roles.Select(r => r.Name).ToList()
             };
         }
 

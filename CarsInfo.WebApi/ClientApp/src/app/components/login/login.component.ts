@@ -1,5 +1,7 @@
+import { AuthService } from './../../services/auth.service';
 import { Component } from '@angular/core';
-import { Validators, FormControl } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -7,14 +9,24 @@ import { Validators, FormControl } from '@angular/forms';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  email = new FormControl('', [Validators.required, Validators.email]);
-  hide = true;
+  loginForm = this.formBuilder.group({
+    email: ['', Validators.required, Validators.email],
+    password: ['', Validators.required],
+  });
 
-  getErrorMessage() {
-    if (this.email.hasError('required')) {
-      return 'You must enter a value';
-    }
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router) { }
 
-    return this.email.hasError('email') ? 'Not a valid email' : '';
+  onSubmit() {
+    this.authService.login(this.loginForm.value).subscribe(
+      () => {
+        this.router.navigateByUrl('/cars');
+      },
+      (exc) => {
+        this.router.navigate(['/login']);
+      }
+    );
   }
 }

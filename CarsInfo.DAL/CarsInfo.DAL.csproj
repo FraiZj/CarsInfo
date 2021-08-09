@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Assistance\**" />
     <Compile Remove="data\**" />
+    <EmbeddedResource Remove="Assistance\**" />
     <EmbeddedResource Remove="data\**" />
+    <None Remove="Assistance\**" />
     <None Remove="data\**" />
   </ItemGroup>
 
@@ -15,10 +18,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assistance\" />
   </ItemGroup>
 
 </Project>

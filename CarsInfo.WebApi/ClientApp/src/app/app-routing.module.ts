@@ -1,3 +1,4 @@
+import { AuthGuard } from './helpers/auth-guard';
 import { CardDetailsComponent } from './components/card-details/card-details.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
@@ -5,6 +6,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CarsListComponent } from './components/cars-list/cars-list.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { Roles } from './helpers/roles';
+import { CarEditorComponent } from './components/car-editor/car-editor.component';
 
 const routes: Routes = [
   {
@@ -27,6 +30,14 @@ const routes: Routes = [
     path: '404',
     component: NotFoundComponent
   },
+  {
+    path: 'addCar',
+    component: CarEditorComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: [Roles.Admin]
+    }
+  }
 ];
 
 @NgModule({

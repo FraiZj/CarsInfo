@@ -13,11 +13,8 @@ namespace CarsInfo.DAL.Entities
         public string Email { get; set; }
         
         public string Password { get; set; }
+        public ICollection<Car> Cars { get; set; } = new List<Car>();
 
-        public ICollection<Car> Cars { get; set; }
-        
-        public ICollection<Comment> Comments { get; set; }
-
-        public ICollection<Role> Roles { get; set; }
+        public ICollection<Role> Roles { get; set; } = new List<Role>();
     }
 }

@@ -29,12 +29,12 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<User> GetWithRolesAsync(string email)
         {
-            var sql = @$"SELECT TOP 1 * FROM {TableName} user
+            var sql = @$"SELECT TOP 1 * FROM [{TableName}] u
                          INNER JOIN UserRole 
-                         ON user.UserId = UserRole.UserId
+                         ON u.Id = UserRole.UserId
                          INNER JOIN Role
                          ON UserRole.RoleId = Role.Id
-                         WHERE user.Email = {email}";
+                         WHERE u.Email = '{email}'";
 
             return await Context.QueryFirstOrDefaultAsync<User, Role>(sql,
                 (user, role) =>

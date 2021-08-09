@@ -24,24 +24,32 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
             var user = _mapper.MapToUserDto(model);
             await _userService.AddAsync(user);
             var claims = await _userService.AuthorizeAsync(user);
             var token = _tokenFactory.CreateToken(claims);
 
-            return Ok(token);
+            var userDto = await _userService.GetByEmailAsync(user.Email);
+            var userViewModel = _mapper.MapToUserViewModel(userDto);
+            userViewModel.Token = token;
+
+            return Ok(userViewModel);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login([FromBody] LoginViewModel model)
         {
             var user = _mapper.MapToUserDto(model);
             var claims = await _userService.AuthorizeAsync(user);
             var token = _tokenFactory.CreateToken(claims);
 
-            return Ok(token);
+            var userDto = await _userService.GetByEmailAsync(user.Email);
+            var userViewModel = _mapper.MapToUserViewModel(userDto);
+            userViewModel.Token = token;
+
+            return Ok(userViewModel);
         }
     }
 }

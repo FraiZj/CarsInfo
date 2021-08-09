@@ -1,17 +1,10 @@
-<form action="post">
-  <div class="example-container">
-    <mat-form-field appearance="fill">
-      <mat-label>Enter your email</mat-label>
-      <input matInput placeholder="pat@example.com" [formControl]="email" required>
-      <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>Enter your password</mat-label>
-      <input matInput [type]="hide ? 'password' : 'text'">
-      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-      </button>
-    </mat-form-field>
-    <button mat-raised-button color="warn">Login</button>
-  </div>
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+  <label for="email">Email: </label>
+  <input id="email" type="email" formControlName="email">
+
+  <label for="password">Password: </label>
+  <input id="password" type="password" formControlName="password">
+
+  <button type="submit" [disabled]="!loginForm.valid">Login</button>
 </form>
