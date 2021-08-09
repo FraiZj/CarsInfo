@@ -31,7 +31,11 @@ namespace CarsInfo.WebApi.Controllers
             var claims = await _userService.AuthorizeAsync(user);
             var token = _tokenFactory.CreateToken(claims);
 
-            return Ok(token);
+            var userDto = await _userService.GetByEmailAsync(user.Email);
+            var userViewModel = _mapper.MapToUserViewModel(userDto);
+            userViewModel.Token = token;
+
+            return Ok(userViewModel);
         }
 
         [HttpPost("login")]
@@ -41,7 +45,11 @@ namespace CarsInfo.WebApi.Controllers
             var claims = await _userService.AuthorizeAsync(user);
             var token = _tokenFactory.CreateToken(claims);
 
-            return Ok(token);
+            var userDto = await _userService.GetByEmailAsync(user.Email);
+            var userViewModel = _mapper.MapToUserViewModel(userDto);
+            userViewModel.Token = token;
+
+            return Ok(userViewModel);
         }
     }
 }

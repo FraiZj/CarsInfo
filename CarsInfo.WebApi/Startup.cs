@@ -42,7 +42,6 @@ namespace CarsInfo.WebApi
             services.AddControllers(options =>
             {
                 options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
-                options.Filters.Add(typeof(ValidateModelAttribute));
             }).AddNewtonsoftJson();
             services.AddSwaggerGen();
 

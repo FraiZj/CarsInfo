@@ -132,17 +132,17 @@ namespace CarsInfo.BLL.Services
             }
         }
 
-        public async Task<UserDto> GetByIdAsync(int id)
+        public async Task<UserDto> GetByEmailAsync(string email)
         {
             try
             {
-                var user = await _usersRepository.GetAsync(id);
+                var user = await _usersRepository.GetWithRolesAsync(email);
                 var userDto = _mapper.MapToUserDto(user);
                 return userDto;
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"An error occurred while fetching user with id={id}");
+                _logger.LogError(e, $"An error occurred while fetching user with email={email}");
                 return null;
             }
         }
