@@ -14,8 +14,6 @@ namespace CarsInfo.DAL.Entities
 
 		public Brand Brand { get; set; }
 
-		public ICollection<User> Users { get; set; }
-
         public ICollection<CarPicture> CarPictures { get; set; } = new List<CarPicture>();
 
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

@@ -42,6 +42,7 @@ namespace CarsInfo.BLL.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                Password = BCrypt.Net.BCrypt.HashPassword(user.Password)
             };
         }
     }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 
@@ -22,12 +24,12 @@ namespace CarsInfo.DAL.Repositories
             TableName = GetTableName(typeof(T));
         }
 
-        public virtual async Task AddAsync(T entity)
+        public virtual async Task<int> AddAsync(T entity)
         {
             var propertyContainer = ParseProperties(entity);
             var sql = $@"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) 
                          VALUES(@{string.Join(", @", propertyContainer.ValueNames)})";
-            await Context.ExecuteAsync(sql, propertyContainer.ValuePairs);
+            return await Context.ExecuteAsync(sql, propertyContainer.ValuePairs);
         }
 
         public virtual async Task DeleteAsync(int id)
@@ -36,23 +38,24 @@ namespace CarsInfo.DAL.Repositories
             await Context.ExecuteAsync(sql, new { id });
         }
 
-        //public virtual async Task<IEnumerable<T>> GetAllAsync(object filter = null)
-        //{
-        //    var properties = ParseProperties(filter);
-        //    var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-        //    var sql = $"SELECT * FROM [{TableName}]";
-
-        //    if (filter is not null)
-        //    {
-        //        sql += $" WHERE {sqlPairs}";
-        //    }
-
-        //    return await Context.QueryAsync<T>(sql, properties.AllPairs);
-        //}
+        public async Task<T> GetAsync(ICollection<FilterModel> filters)
+        {
+            var filter = ConfigureFilter(filters);
+            var sql = $"SELECT TOP 1 * FROM [{TableName}] {filter}";
+            return await Context.QueryFirstOrDefaultAsync<T>(sql);
+        }
 
         public virtual async Task<IEnumerable<T>> GetAllAsync()
         {
             var sql = $"SELECT * FROM {TableName}";
+
+            return await Context.QueryAsync<T>(sql);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync(ICollection<FilterModel> filters)
+        {
+            var filter = ConfigureFilter(filters);
+            var sql = $"SELECT * FROM [{TableName}] {filter}";
             return await Context.QueryAsync<T>(sql);
         }
 
@@ -61,20 +64,6 @@ namespace CarsInfo.DAL.Repositories
             var sql = $"SELECT * FROM [{TableName}] WHERE Id=@id";
             return await Context.QueryFirstOrDefaultAsync<T>(sql, new { id });
         }
-
-        //public virtual async Task<T> GetAsync(object filter)
-        //{
-        //    var properties = ParseProperties(filter);
-        //    var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-        //    var sql = $"SELECT TOP 1 * FROM [{TableName}]";
-
-        //    if (filter is not null)
-        //    {
-        //        sql += $" WHERE {sqlPairs}";
-        //    }
-
-        //    return await Context.QueryFirstOrDefaultAsync<T>(sql, properties.AllPairs);
-        //}
 
         public virtual async Task UpdateAsync(T entity)
         {
@@ -88,6 +77,27 @@ namespace CarsInfo.DAL.Repositories
         {
             var tableAttribute = Attribute.GetCustomAttribute(memberInfo, typeof(TableAttribute)) as TableAttribute;
             return tableAttribute?.Name;
+        }
+
+        protected string ConfigureFilter(IEnumerable<FilterModel> filters)
+        {
+            var result = new StringBuilder("WHERE ");
+
+            foreach (var filter in filters)
+            {
+                filter.Value = filter.Value is string ?
+                    new string($"'{filter.Value}'") :
+                    filter.Value;
+
+                result.Append($"{filter.Field} {filter.Operator} {filter.Value} ");
+
+                if (!string.IsNullOrEmpty(filter.Separator))
+                {
+                    result.Append($"{filter.Separator} ");
+                }
+            }
+
+            return result.ToString();
         }
 
         protected static PropertyContainer ParseProperties<TU>(TU obj)

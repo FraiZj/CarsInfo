@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 using Dapper;
+using DapperExtensions;
 using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.DAL
@@ -136,7 +137,8 @@ namespace CarsInfo.DAL
         {
             try
             {
-                return await _connection.ExecuteAsync(sql, parameters);
+                var id = await _connection.QueryFirstOrDefaultAsync<int>($"{sql}; SELECT SCOPE_IDENTITY()", parameters);
+                return id;
             }
             catch (Exception e)
             {

@@ -7,7 +7,10 @@ using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.BLL.Models.Enums;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
+using CarsInfo.DAL.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
@@ -15,15 +18,21 @@ namespace CarsInfo.BLL.Services
     public class UserService : IUserService
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly IGenericRepository<UserRole> _userRoleRepository;
+        private readonly IGenericRepository<Role> _roleRepository;
         private readonly ILogger<UserService> _logger;
         private readonly UserServiceMapper _mapper;
 
         public UserService(
             IUsersRepository usersRepository,
+            IGenericRepository<UserRole> userRoleRepository,
+            IGenericRepository<Role> roleRepository,
             ILogger<UserService> logger,
             UserServiceMapper mapper)
         {
             _usersRepository = usersRepository;
+            _userRoleRepository = userRoleRepository;
+            _roleRepository = roleRepository;
             _mapper = mapper;
             _logger = logger;
         }
@@ -34,12 +43,32 @@ namespace CarsInfo.BLL.Services
             {
                 ValidateUserDto(entity);
                 var user = _mapper.MapToUser(entity);
-                await _usersRepository.AddAsync(user);
+                var userId = await _usersRepository.AddAsync(user);
+                var roleId = await GetRoleIdAsync(Roles.User);
+                await _userRoleRepository.AddAsync(new UserRole
+                {
+                    UserId = userId,
+                    RoleId = roleId
+                });
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while creating user");
             }
+        }
+        
+        public async Task<int> GetRoleIdAsync(string roleName)
+        {
+            ValidationHelper.ThrowIfStringNullOrWhiteSpace(roleName);
+
+            var role = await _roleRepository.GetAsync(new List<FilterModel>
+            {
+                new("Name", Roles.User)
+            });
+
+            ValidationHelper.ThrowIfNull(role);
+
+            return role.Id;
         }
 
         public async Task<ICollection<Claim>> AuthorizeAsync(UserDto entity)
@@ -65,6 +94,7 @@ namespace CarsInfo.BLL.Services
                 var claims = user.Roles.Select(
                     userRole => new Claim(ClaimTypes.Role, userRole.Name)).ToList();
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
+                claims.Add(new Claim("Id", user.Id.ToString()));
 
                 return claims;
             }

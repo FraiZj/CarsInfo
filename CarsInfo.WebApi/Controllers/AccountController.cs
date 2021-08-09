@@ -24,7 +24,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
             var user = _mapper.MapToUserDto(model);
             await _userService.AddAsync(user);
@@ -35,7 +35,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login([FromBody] LoginViewModel model)
         {
             var user = _mapper.MapToUserDto(model);
             var claims = await _userService.AuthorizeAsync(user);

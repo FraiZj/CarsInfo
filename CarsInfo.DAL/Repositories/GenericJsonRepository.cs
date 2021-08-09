@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 
@@ -14,9 +15,10 @@ namespace CarsInfo.DAL.Repositories
             _context = context;
         }
 
-        public Task AddAsync(T entity)
+        public async Task<int> AddAsync(T entity)
         {
-            return _context.AddAsync(entity);
+            await _context.AddAsync(entity);
+            return 1;
         }
 
         public Task DeleteAsync(int id)
@@ -29,9 +31,19 @@ namespace CarsInfo.DAL.Repositories
             throw new System.NotImplementedException();
         }
 
+        public Task<T> GetAsync(ICollection<FilterModel> filters)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task<IEnumerable<T>> GetAllAsync()
         {
             return _context.GetAllAsync<T>();
+        }
+
+        public Task<IEnumerable<T>> GetAllAsync(ICollection<FilterModel> filters)
+        {
+            throw new System.NotImplementedException();
         }
 
         public Task<T> GetAsync(int id)

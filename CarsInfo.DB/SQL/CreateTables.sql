@@ -44,6 +44,8 @@ CREATE TABLE Comment (
 )
 
 CREATE TABLE UserCar (
+	Id int UNIQUE IDENTITY(1,1),
+	IsDeleted bit DEFAULT 0,
 	UserId int,
 	CarId int,
 	CONSTRAINT PK_UserCar PRIMARY KEY (UserId, CarId),
@@ -58,6 +60,8 @@ CREATE TABLE [Role] (
 )
 
 CREATE TABLE UserRole (
+	Id int UNIQUE IDENTITY(1,1),
+	IsDeleted bit DEFAULT 0,
 	UserId int,
 	RoleId int,
 	CONSTRAINT PK_UserRole PRIMARY KEY (UserId, RoleId),
