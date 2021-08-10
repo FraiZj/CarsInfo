@@ -22,9 +22,9 @@ namespace CarsInfo.WebApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IEnumerable<CarDto>> Get()
+        public async Task<IEnumerable<CarDto>> Get(string brand = null)
         {
-            var cars = await _carsService.GetAllAsync();
+            var cars = await _carsService.GetAllAsync(brand);
             return cars;
         }
 

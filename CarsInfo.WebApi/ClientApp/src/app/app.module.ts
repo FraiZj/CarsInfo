@@ -1,3 +1,4 @@
+import { JwtInterseptor } from './helpers/jwt-interceptor';
 import { LoginComponent } from './components/login/login.component';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -17,11 +18,13 @@ import { CarCardComponent } from './components/car-card/car-card.component';
 import { RegisterComponent } from './components/register/register.component';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CarsListComponent } from './components/cars-list/cars-list.component';
 import { CardDetailsComponent } from './components/card-details/card-details.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { CarEditorComponent } from './components/car-editor/car-editor.component';
+import { CarsFilterComponent } from './components/cars-filter/cars-filter.component';
+import {MatSelectModule} from '@angular/material/select';
 
 const modules = [
   MatButtonModule,
@@ -31,7 +34,8 @@ const modules = [
   MatToolbarModule,
   MatCardModule,
   MatSidenavModule,
-  MatListModule
+  MatListModule,
+  MatSelectModule
 ];
 
 @NgModule({
@@ -44,7 +48,8 @@ const modules = [
     CarsListComponent,
     CardDetailsComponent,
     NotFoundComponent,
-    CarEditorComponent
+    CarEditorComponent,
+    CarsFilterComponent
   ],
   imports: [
     ...modules,
@@ -57,7 +62,9 @@ const modules = [
   exports: [
     ...modules
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterseptor, multi: true },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -6,7 +6,7 @@ namespace CarsInfo.BLL.Contracts
 {
     public interface ICarsService
     {
-        Task<IEnumerable<CarDto>> GetAllAsync();
+        Task<IEnumerable<CarDto>> GetAllAsync(string brand = null);
 
         Task<CarDto> GetByIdAsync(int id);
 

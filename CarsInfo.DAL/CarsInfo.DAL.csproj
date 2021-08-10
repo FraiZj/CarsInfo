@@ -5,11 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Assistance\**" />
     <Compile Remove="data\**" />
-    <EmbeddedResource Remove="Assistance\**" />
     <EmbeddedResource Remove="data\**" />
-    <None Remove="Assistance\**" />
     <None Remove="data\**" />
   </ItemGroup>
 

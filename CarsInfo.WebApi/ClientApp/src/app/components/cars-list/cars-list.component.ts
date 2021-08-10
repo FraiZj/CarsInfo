@@ -18,7 +18,10 @@ export class CarsListComponent implements OnInit {
   }
 
   getCars(): void {
-    this.cars$ = this.carsService.getCars();
-    this.cars$.subscribe(x => x.forEach((console.log)));
+    this.cars$ = this.carsService.getCars("");
+  }
+
+  filter(value: string): void {
+    this.cars$ = this.carsService.getCars(value);
   }
 }

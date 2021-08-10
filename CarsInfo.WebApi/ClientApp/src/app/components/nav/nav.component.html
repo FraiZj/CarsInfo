@@ -1,15 +1,15 @@
 <mat-nav-list class="list-horizontal nav">
   <mat-list-item class="logo">
-    <a [routerLink]="['']"><strong>Cars Info</strong></a>
+    <a [routerLink]="['cars']"><strong>Cars Info</strong></a>
   </mat-list-item>
   <mat-list-item>
-      <a [routerLink]="['/login']">Home</a>
+      <a [routerLink]="['/cars']">Cars</a>
   </mat-list-item>
-  <a mat-list-item [routerLink]="['/login']">Home</a>
+  <a mat-list-item [routerLink]="['/addCar']">Add car</a>
   <mat-list-item>
-      <a [routerLink]="['/register']">About</a>
+      <a [routerLink]="['/login']">Login</a>
   </mat-list-item>
   <mat-list-item>
-      <a [routerLink]="['/contact']">Contact Us</a>
+      <a [routerLink]="['/register']">Register</a>
   </mat-list-item>
 </mat-nav-list>

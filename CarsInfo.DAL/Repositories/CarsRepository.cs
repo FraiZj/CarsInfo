@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 
@@ -11,7 +13,7 @@ namespace CarsInfo.DAL.Repositories
             : base(context)
         { }
 
-        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync()
+        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(ICollection<FilterModel> filters = null)
         {
             var sql = @$"SELECT * FROM {TableName} car
                          LEFT JOIN Brand
@@ -19,11 +21,13 @@ namespace CarsInfo.DAL.Repositories
                          LEFT JOIN CarPicture
                          ON car.Id = CarPicture.CarId";
 
-            //var properties = ParseProperties(filter);
-            //var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-            //sql += $" WHERE {sqlPairs}";
-
-            return await Context.QueryAsync<Car, Brand, CarPicture>(sql,
+            if (filters is not null)
+            {
+                var filter = ConfigureFilter(filters);
+                sql += $" {filter}";
+            }
+            
+            var cars = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
                 (car, brand, carPicture) =>
                 {
                     car.Brand = brand;
@@ -35,6 +39,8 @@ namespace CarsInfo.DAL.Repositories
 
                     return car;
                 });
+
+            return GroupSet(cars);
         }
 
         //public async Task<Car> GetAsyncWithAllIncludesAsync()
@@ -63,7 +69,7 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<Car> GetWithAllIncludesAsync(int id)
         {
-            var sql = @$"SELECT TOP 1 * FROM {TableName} car
+            var sql = @$"SELECT * FROM {TableName} car
                          LEFT JOIN Brand
                          ON car.BrandId = Brand.Id
                          LEFT JOIN CarPicture
@@ -90,6 +96,28 @@ namespace CarsInfo.DAL.Repositories
                     
                     return car;
                 }, new { id });
+        }
+
+        private IEnumerable<Car> GroupSet(IEnumerable<Car> cars)
+        {
+            return cars.GroupBy(c => c.Id).Select(g =>
+            {
+                var groupedCar = g.First();
+                if (!groupedCar.CarPictures.Any())
+                {
+                    groupedCar.CarPictures = new List<CarPicture>();
+                }
+
+                foreach (var car in g.Skip(1))
+                {
+                    if (car.CarPictures.Any())
+                    {
+                        groupedCar.CarPictures.Add(car.CarPictures.First());
+                    }
+                }
+
+                return groupedCar;
+            });
         }
     }
 }
