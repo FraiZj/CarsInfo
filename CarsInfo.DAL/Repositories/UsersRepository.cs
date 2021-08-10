@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
@@ -19,29 +20,55 @@ namespace CarsInfo.DAL.Repositories
                          INNER JOIN Role
                          ON UserRole.RoleId = Role.Id";
 
-            return await Context.QueryAsync<User, Role>(sql,
+            var users = await Context.QueryAsync<User, Role>(sql,
                 (user, role) =>
                 {
                     user.Roles.Add(role);
                     return user;
                 });
+
+            return GroupSet(users);
         }
 
         public async Task<User> GetWithRolesAsync(string email)
         {
-            var sql = @$"SELECT TOP 1 * FROM [{TableName}] u
+            var sql = @$"SELECT u.*, Role.* FROM [{TableName}] u
                          INNER JOIN UserRole 
                          ON u.Id = UserRole.UserId
                          INNER JOIN Role
                          ON UserRole.RoleId = Role.Id
                          WHERE u.Email = '{email}'";
 
-            return await Context.QueryFirstOrDefaultAsync<User, Role>(sql,
+            var users = (await Context.QueryAsync<User, Role>(sql,
                 (user, role) =>
                 {
                     user.Roles.Add(role);
                     return user;
-                });
+                })).ToList();
+
+            return users.Count == 0 ? null : GroupSet(users).FirstOrDefault();
+        }
+
+        private IEnumerable<User> GroupSet(IEnumerable<User> users)
+        {
+            return users.GroupBy(u => u.Id).Select(g =>
+            {
+                var groupedUser = g.First();
+                if (!groupedUser.Roles.Any())
+                {
+                    groupedUser.Roles = new List<Role>();
+                }
+
+                foreach (var user in g.Skip(1))
+                {
+                    if (user.Roles.Any())
+                    {
+                        groupedUser.Roles.Add(user.Roles.First());
+                    }
+                }
+
+                return groupedUser;
+            });
         }
     }
 }

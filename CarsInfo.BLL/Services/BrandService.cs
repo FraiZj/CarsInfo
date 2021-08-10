@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
@@ -27,6 +28,9 @@ namespace CarsInfo.BLL.Services
         {
             try
             {
+                ValidationHelper.ThrowIfNull(entity);
+                ValidationHelper.ThrowIfStringNullOrWhiteSpace(entity.Name);
+
                 var brand = _mapper.MapToBrand(entity);
                 await _brandRepository.AddAsync(brand);
             }
@@ -57,6 +61,9 @@ namespace CarsInfo.BLL.Services
 
         public async Task UpdateAsync(BrandDto entity)
         {
+            ValidationHelper.ThrowIfNull(entity);
+            ValidationHelper.ThrowIfStringNullOrWhiteSpace(entity.Name);
+
             var brand = _mapper.MapToBrand(entity);
             await _brandRepository.UpdateAsync(brand);
         }

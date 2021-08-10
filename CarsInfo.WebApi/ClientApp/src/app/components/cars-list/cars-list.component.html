@@ -1,2 +1,17 @@
-<app-car-card *ngFor='let car of cars$ | async' [car]="car">
-</app-car-card>
+<app-cars-filter (filterEvent)="filter($event)"></app-cars-filter>
+
+<ng-container *ngIf="cars$ | async as cars">
+  <ng-container *ngIf="cars.length > 0; else carsNotFoundBlock">
+    <app-car-card  *ngFor='let car of cars' [car]="car">
+    </app-car-card>
+  </ng-container>
+</ng-container>
+
+<ng-template #carsNotFoundBlock>
+  <div style="margin-left: 20px;">
+    Cars not found
+  </div>
+</ng-template>
+
+
+

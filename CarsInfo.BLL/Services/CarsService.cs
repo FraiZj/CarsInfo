@@ -5,7 +5,9 @@ using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
+using CarsInfo.DAL.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.BLL.Services
@@ -13,15 +15,18 @@ namespace CarsInfo.BLL.Services
     public class CarsService : ICarsService
     {
         private readonly ICarsRepository _carsRepository;
+        private readonly IGenericRepository<CarPicture> _carsPictureRepository;
         private readonly ILogger<CarsService> _logger;
         private readonly CarServiceMapper _mapper;
 
         public CarsService(
             ICarsRepository carsRepository,
+            IGenericRepository<CarPicture> carsPictureRepository,
             ILogger<CarsService> logger,
             CarServiceMapper mapper)
         {
             _carsRepository = carsRepository;
+            _carsPictureRepository = carsPictureRepository;
             _logger = logger;
             _mapper = mapper;
         }
@@ -32,7 +37,16 @@ namespace CarsInfo.BLL.Services
             {
                 ValidateCarEditorDto(entity);
                 var car = _mapper.MapToCar(entity);
-                await _carsRepository.AddAsync(car);
+                var carId = await _carsRepository.AddAsync(car);
+
+                foreach (var carPicture in entity.CarPicturesUrls)
+                {
+                    await _carsPictureRepository.AddAsync(new CarPicture
+                    {
+                        CarId = carId,
+                        PictureLink = carPicture
+                    });
+                }
             }
             catch (Exception e)
             {
@@ -52,11 +66,16 @@ namespace CarsInfo.BLL.Services
             }
         }
 
-        public async Task<IEnumerable<CarDto>> GetAllAsync()
+        public async Task<IEnumerable<CarDto>> GetAllAsync(string brand = null)
         {
             try
             {
-                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync();
+                var cars = string.IsNullOrWhiteSpace(brand) ?
+                    await _carsRepository.GetAllWithBrandAndPicturesAsync() :
+                    await _carsRepository.GetAllWithBrandAndPicturesAsync(new List<FilterModel>
+                    {
+                        new("Brand.Name", $"{brand}%", "LIKE")
+                    });
                 var carsDtos = _mapper.MapToCarsDtos(cars);
                 return carsDtos;
             }
