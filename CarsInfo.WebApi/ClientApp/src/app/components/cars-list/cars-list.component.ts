@@ -18,10 +18,10 @@ export class CarsListComponent implements OnInit {
   }
 
   getCars(): void {
-    this.cars$ = this.carsService.getCars("");
+    this.cars$ = this.carsService.getCars();
   }
 
-  filter(value: string): void {
-    this.cars$ = this.carsService.getCars(value);
+  filter(values: string[]): void {
+    this.cars$ = this.carsService.getCars(values);
   }
 }

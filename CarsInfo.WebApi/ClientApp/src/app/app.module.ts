@@ -1,9 +1,8 @@
-import { JwtInterseptor } from './helpers/jwt-interceptor';
+import { CarsFilterComponent } from './components/cars-filter/cars-filter.component';
 import { LoginComponent } from './components/login/login.component';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -23,10 +22,13 @@ import { CarsListComponent } from './components/cars-list/cars-list.component';
 import { CardDetailsComponent } from './components/card-details/card-details.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { CarEditorComponent } from './components/car-editor/car-editor.component';
-import { CarsFilterComponent } from './components/cars-filter/cars-filter.component';
 import {MatSelectModule} from '@angular/material/select';
+import { JwtInterceptor } from './helpers/jwt-interceptor';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { CarsBrandFilterComponent } from './components/cars-brand-filter/cars-brand-filter.component';
 
-const modules = [
+const angularMaterialModules = [
   MatButtonModule,
   MatFormFieldModule,
   MatInputModule,
@@ -35,7 +37,9 @@ const modules = [
   MatCardModule,
   MatSidenavModule,
   MatListModule,
-  MatSelectModule
+  MatSelectModule,
+  MatChipsModule,
+  MatAutocompleteModule,
 ];
 
 @NgModule({
@@ -49,21 +53,23 @@ const modules = [
     CardDetailsComponent,
     NotFoundComponent,
     CarEditorComponent,
-    CarsFilterComponent
+    CarsFilterComponent,
+    CarsBrandFilterComponent
   ],
   imports: [
-    ...modules,
+    // library modules
+    ...angularMaterialModules,
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   exports: [
-    ...modules
+    ...angularMaterialModules
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterseptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })

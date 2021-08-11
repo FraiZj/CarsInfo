@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
@@ -39,14 +40,21 @@ namespace CarsInfo.BLL.Services
                 var car = _mapper.MapToCar(entity);
                 var carId = await _carsRepository.AddAsync(car);
 
-                foreach (var carPicture in entity.CarPicturesUrls)
-                {
-                    await _carsPictureRepository.AddAsync(new CarPicture
+                await _carsPictureRepository.AddRangeAsync(entity.CarPicturesUrls.Select(
+                    carPicture => new CarPicture
                     {
                         CarId = carId,
                         PictureLink = carPicture
-                    });
-                }
+                    }).ToList());
+
+                //foreach (var carPicture in entity.CarPicturesUrls)
+                //{
+                //    await _carsPictureRepository.AddAsync(new CarPicture
+                //    {
+                //        CarId = carId,
+                //        PictureLink = carPicture
+                //    });
+                //}
             }
             catch (Exception e)
             {
@@ -66,16 +74,18 @@ namespace CarsInfo.BLL.Services
             }
         }
 
-        public async Task<IEnumerable<CarDto>> GetAllAsync(string brand = null)
+        public async Task<IEnumerable<CarDto>> GetAllAsync(IEnumerable<string> brands = null)
         {
             try
             {
-                var cars = string.IsNullOrWhiteSpace(brand) ?
-                    await _carsRepository.GetAllWithBrandAndPicturesAsync() :
-                    await _carsRepository.GetAllWithBrandAndPicturesAsync(new List<FilterModel>
-                    {
-                        new("Brand.Name", $"{brand}%", "LIKE")
-                    });
+                var filter = new List<FilterModel>();
+
+                foreach (var brand in brands ?? new List<string>())
+                {
+                    filter.Add(new FilterModel("Brand.Name", brand, separator: "OR"));
+                }
+
+                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filter);
                 var carsDtos = _mapper.MapToCarsDtos(cars);
                 return carsDtos;
             }

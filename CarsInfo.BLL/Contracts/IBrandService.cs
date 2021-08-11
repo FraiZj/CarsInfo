@@ -6,7 +6,7 @@ namespace CarsInfo.BLL.Contracts
 {
     public interface IBrandService
     {
-        Task<IEnumerable<BrandDto>> GetAllAsync();
+        Task<IEnumerable<BrandDto>> GetAllAsync(string name);
         Task<BrandDto> GetByIdAsync(int id);
         Task AddAsync(BrandDto entity);
         Task UpdateAsync(BrandDto entity);

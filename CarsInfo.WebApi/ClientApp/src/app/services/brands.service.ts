@@ -11,8 +11,12 @@ export class BrandsService {
 
   constructor(private http: HttpClient) {}
 
-  public getBrands(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(this.url);
+  public getBrands(name?: string): Observable<Brand[]> {
+    return this.http.get<Brand[]>(this.url, {
+      params: {
+        "name": name ?? ""
+      }
+    });
   }
 
   public addBrand(brandName: string): Observable<Brand> {

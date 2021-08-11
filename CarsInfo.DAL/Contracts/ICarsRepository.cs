@@ -7,7 +7,7 @@ namespace CarsInfo.DAL.Contracts
 {
     public interface ICarsRepository : IGenericRepository<Car>
     {
-        Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(ICollection<FilterModel> filters = null);
+        Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(IList<FilterModel> filters = null);
         
         Task<Car> GetWithAllIncludesAsync(int id);
     }

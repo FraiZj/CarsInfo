@@ -13,7 +13,7 @@ namespace CarsInfo.DAL.Repositories
             : base(context)
         { }
 
-        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(ICollection<FilterModel> filters = null)
+        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(IList<FilterModel> filters = null)
         {
             var sql = @$"SELECT * FROM {TableName} car
                          LEFT JOIN Brand
@@ -21,7 +21,7 @@ namespace CarsInfo.DAL.Repositories
                          LEFT JOIN CarPicture
                          ON car.Id = CarPicture.CarId";
 
-            if (filters is not null)
+            if (filters is not null && filters.Any())
             {
                 var filter = ConfigureFilter(filters);
                 sql += $" {filter}";
