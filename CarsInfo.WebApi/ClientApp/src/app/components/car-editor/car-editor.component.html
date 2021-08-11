@@ -12,7 +12,7 @@
       <mat-option *ngFor="let brand of brands$ | async" [value]="brand.id">
         {{ brand.name }}
       </mat-option>
-      <div id="new-brand-input">
+      <div>
         <div [formGroup]="brandEditorForm" style="display: inline-block; padding-bottom: 10px; margin: 0 0 0 16px;">
           <input matInput formControlName="brand" type="text" id="" placeholder="Add new brand" name="brandName">
         </div>

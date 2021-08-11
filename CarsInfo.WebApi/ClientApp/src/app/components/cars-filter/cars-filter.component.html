@@ -1,2 +1,6 @@
-<label for="brand-filter">Brand:</label>
-<input type="text" id="brand-filter" (input)="onFilter($event)">
+<div id="filter-section">
+  <form class="filter-form">
+    <cars-brand-filter (filterBrandEvent)="onBrandFilter($event)"></cars-brand-filter>
+  </form>
+</div>
+

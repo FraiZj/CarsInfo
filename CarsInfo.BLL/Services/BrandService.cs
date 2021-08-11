@@ -5,6 +5,7 @@ using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 using Microsoft.Extensions.Logging;
@@ -45,9 +46,18 @@ namespace CarsInfo.BLL.Services
             await _brandRepository.DeleteAsync(id);
         }
 
-        public async Task<IEnumerable<BrandDto>> GetAllAsync()
+        public async Task<IEnumerable<BrandDto>> GetAllAsync(string name)
         {
-            var brands = await _brandRepository.GetAllAsync();
+            var filters = new List<FilterModel>();
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                filters = new List<FilterModel>
+                {
+                    new("Name", $"{name}%", "LIKE")
+                };
+            }
+
+            var brands = await _brandRepository.GetAllAsync(filters);
             var brandsDtos = _mapper.MapToBrandsDtos(brands);
             return brandsDtos;
         }

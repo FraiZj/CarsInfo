@@ -17,9 +17,9 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<BrandDto>> Get()
+        public async Task<IEnumerable<BrandDto>> Get(string name)
         {
-            var brands = await _brandService.GetAllAsync();
+            var brands = await _brandService.GetAllAsync(name);
             return brands;
         }
 

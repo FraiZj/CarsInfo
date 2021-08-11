@@ -1,0 +1,24 @@
+<mat-form-field [style.width.px]="width" appearance="fill">
+  <mat-label>Brands</mat-label>
+  <mat-chip-list #chipList aria-label="Brand selection">
+    <mat-chip
+      *ngFor="let brand of selectedBrands"
+      [selectable]="selectable"
+      [removable]="removable"
+      (removed)="OnBrandRemove(brand)">
+      {{ brand }}
+      <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+    </mat-chip>
+    <input
+      placeholder="Input brand name"
+      [formControl]="brandFormControl"
+      [matAutocomplete]="auto"
+      [matChipInputFor]="chipList"
+      (input)="onBrandInput($event)">
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onBrandSelect($event)">
+    <mat-option *ngFor="let brand of filteredBrands$ | async" [value]="brand">
+      {{ brand.name }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

@@ -1,4 +1,4 @@
-<app-cars-filter (filterEvent)="filter($event)"></app-cars-filter>
+<cars-filter (filterEvent)="filter($event)"></cars-filter>
 
 <ng-container *ngIf="cars$ | async as cars">
   <ng-container *ngIf="cars.length > 0; else carsNotFoundBlock">

@@ -32,13 +32,43 @@ namespace CarsInfo.DAL.Repositories
             return await Context.ExecuteAsync(sql, propertyContainer.ValuePairs);
         }
 
+        public async Task AddRangeAsync(IList<T> entities)
+        {
+            var propertyContainer = ParseProperties(entities.First());
+            var sql = $@"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) 
+                         VALUES {CombineValuesToInsert(entities, propertyContainer)}";
+            await Context.ExecuteAsync(sql);
+        }
+
+        protected string CombineValuesToInsert(IList<T> entities, PropertyContainer propertyContainer)
+        {
+            var result = new List<string>();
+
+            foreach (var entity in entities)
+            {
+                var rowValues = new List<object>();
+                
+                foreach (var valueName in propertyContainer.ValueNames)
+                {
+                    var value = typeof(T).GetProperty(valueName)?.GetValue(entity);
+                    value = value is string ? new string($"'{value}'") : value;
+                    value = value is bool ? Convert.ToByte(value) : value;
+                    rowValues.Add(value);
+                }
+
+                result.Add($"({string.Join(", ", rowValues)})");
+            }
+
+            return string.Join(", ", result);
+        }
+
         public virtual async Task DeleteAsync(int id)
         {
             var sql = $"DELETE FROM [{TableName}] WHERE Id=@id";
             await Context.ExecuteAsync(sql, new { id });
         }
 
-        public async Task<T> GetAsync(ICollection<FilterModel> filters)
+        public async Task<T> GetAsync(IList<FilterModel> filters)
         {
             var filter = ConfigureFilter(filters);
             var sql = $"SELECT TOP 1 * FROM [{TableName}] {filter}";
@@ -52,10 +82,16 @@ namespace CarsInfo.DAL.Repositories
             return await Context.QueryAsync<T>(sql);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(ICollection<FilterModel> filters)
+        public async Task<IEnumerable<T>> GetAllAsync(IList<FilterModel> filters)
         {
-            var filter = ConfigureFilter(filters);
-            var sql = $"SELECT * FROM [{TableName}] {filter}";
+            var sql = $"SELECT * FROM [{TableName}]";
+
+            if (filters is not null && filters.Any())
+            {
+                var filter = ConfigureFilter(filters);
+                sql += $" {filter}";
+            }
+            
             return await Context.QueryAsync<T>(sql);
         }
 
@@ -79,19 +115,20 @@ namespace CarsInfo.DAL.Repositories
             return tableAttribute?.Name;
         }
 
-        protected string ConfigureFilter(IEnumerable<FilterModel> filters)
+        protected string ConfigureFilter(IList<FilterModel> filters)
         {
             var result = new StringBuilder("WHERE ");
 
-            foreach (var filter in filters)
+            for (var i = 0; i < filters.Count; i++)
             {
+                var filter = filters[i];
                 filter.Value = filter.Value is string ?
                     new string($"'{filter.Value}'") :
                     filter.Value;
 
                 result.Append($"{filter.Field} {filter.Operator} {filter.Value} ");
 
-                if (!string.IsNullOrEmpty(filter.Separator))
+                if (!string.IsNullOrEmpty(filter.Separator) && i != filters.Count - 1)
                 {
                     result.Append($"{filter.Separator} ");
                 }

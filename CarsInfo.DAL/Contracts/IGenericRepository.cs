@@ -8,6 +8,8 @@ namespace CarsInfo.DAL.Contracts
     public interface IGenericRepository<T> where T : BaseEntity
     {
         Task<int> AddAsync(T entity);
+        
+        Task AddRangeAsync(IList<T> entities);
 
         Task UpdateAsync(T entity);
 
@@ -15,10 +17,10 @@ namespace CarsInfo.DAL.Contracts
 
         Task<T> GetAsync(int id);
 
-        Task<T> GetAsync(ICollection<FilterModel> filters);
+        Task<T> GetAsync(IList<FilterModel> filters);
 
         Task<IEnumerable<T>> GetAllAsync();
 
-        Task<IEnumerable<T>> GetAllAsync(ICollection<FilterModel> filters);
+        Task<IEnumerable<T>> GetAllAsync(IList<FilterModel> filters);
     }
 }

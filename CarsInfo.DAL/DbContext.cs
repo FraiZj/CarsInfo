@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 using Dapper;
-using DapperExtensions;
 using Microsoft.Extensions.Logging;
 
 namespace CarsInfo.DAL

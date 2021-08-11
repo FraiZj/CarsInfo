@@ -21,6 +21,11 @@ namespace CarsInfo.DAL.Repositories
             return 1;
         }
 
+        public Task AddRangeAsync(IList<T> entities)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Task DeleteAsync(int id)
         {
             return _context.DeleteAsync<T>(id);
@@ -31,7 +36,7 @@ namespace CarsInfo.DAL.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Task<T> GetAsync(ICollection<FilterModel> filters)
+        public Task<T> GetAsync(IList<FilterModel> filters)
         {
             throw new System.NotImplementedException();
         }
@@ -41,7 +46,7 @@ namespace CarsInfo.DAL.Repositories
             return _context.GetAllAsync<T>();
         }
 
-        public Task<IEnumerable<T>> GetAllAsync(ICollection<FilterModel> filters)
+        public Task<IEnumerable<T>> GetAllAsync(IList<FilterModel> filters)
         {
             throw new System.NotImplementedException();
         }
