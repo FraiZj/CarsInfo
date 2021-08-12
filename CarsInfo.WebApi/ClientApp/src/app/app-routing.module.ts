@@ -1,43 +1,27 @@
-import { AuthGuard } from './helpers/auth-guard';
-import { CardDetailsComponent } from './components/card-details/card-details.component';
-import { RegisterComponent } from './components/register/register.component';
-import { LoginComponent } from './components/login/login.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CarsListComponent } from './components/cars-list/cars-list.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
-import { Roles } from './helpers/roles';
-import { CarEditorComponent } from './components/car-editor/car-editor.component';
 
 const routes: Routes = [
   {
+    path: '',
+    loadChildren: () => import('./modules/core/core.module').then(m => m.CoreModule)
+  },
+  {
     path: 'login',
-    component: LoginComponent
+    loadChildren: () => import('./modules/login/login.module').then(m => m.LoginModule)
   },
   {
     path: 'register',
-    component: RegisterComponent
+    loadChildren: () => import('./modules/register/register.module').then(m => m.RegisterModule)
   },
   {
     path: 'cars',
-    component: CarsListComponent
+    loadChildren: () => import('./modules/cars-list/cars-list.module').then(m => m.CarsListModule)
   },
   {
-    path: 'cars/:id',
-    component: CardDetailsComponent
+    path: 'new-car',
+    loadChildren: () => import('./modules/car-editor/car-editor.module').then(m => m.CarEditorModule)
   },
-  {
-    path: '404',
-    component: NotFoundComponent
-  },
-  {
-    path: 'addCar',
-    component: CarEditorComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: [Roles.Admin]
-    }
-  }
 ];
 
 @NgModule({

@@ -1,0 +1,24 @@
+.car-card {
+  max-width: 600px;
+  padding: 0 0 16px 0;
+  margin: 10px;
+
+  .car-card-header-image {
+    border-top-left-radius: 5%;
+    background-size: cover;
+  }
+
+  .car-card-content {
+    padding: 10px 16px;
+    margin: 0;
+  }
+
+  .car-card-actions {
+    padding-top: 0;
+    padding-left: 10px;
+  }
+
+  .car-card-image {
+    width: 600px;
+  }
+}
