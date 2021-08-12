@@ -11,13 +11,11 @@ import { map } from 'rxjs/operators';
 })
 export class AuthService {
   private currentUserSubject!: BehaviorSubject<User>;
-  public currentUser!: Observable<User>;
 
   constructor(
     @Inject("BASE_API_URL") private readonly url: string,
     private http: HttpClient) {
     this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser') as string));
-    this.currentUser = this.currentUserSubject.asObservable();
   }
 
   public getCurrentUserValue(): User {
@@ -46,6 +44,5 @@ export class AuthService {
 
   public logout(): void {
     localStorage.removeItem('currentUser');
-    this.currentUserSubject.complete();
   }
 }
