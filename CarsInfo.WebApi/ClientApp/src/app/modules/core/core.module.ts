@@ -1,3 +1,4 @@
+import { AuthenticationModule } from './../authentication/authentication.module';
 import { NgModule } from "@angular/core";
 import { CoreRoutingModule } from "./core-routing.module";
 import { NotFoundComponent } from "./components/not-found/not-found.component";
@@ -14,7 +15,8 @@ import { MatListModule } from "@angular/material/list";
     MatListModule,
 
     // app modules
-    CoreRoutingModule
+    CoreRoutingModule,
+    AuthenticationModule
   ],
   exports: [
     NavComponent,

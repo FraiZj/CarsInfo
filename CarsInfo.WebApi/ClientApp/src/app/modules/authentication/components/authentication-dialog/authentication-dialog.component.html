@@ -1,0 +1,15 @@
+<div>
+  <div style="float:right; margin: 0; padding: 0;" mat-dialog-actions>
+    <mat-icon class="clickable" (click)="closeDialog()" aria-hidden="false">close</mat-icon>
+  </div>
+  <h1 mat-dialog-title>{{ title }}</h1>
+  <div mat-dialog-content style="width: 260px;">
+    <login *ngIf="title == 'Login'"
+      (switchToRegisterEvent)="switchToRegister()"
+      (onLoginEvent)="onLogin()"></login>
+    <register *ngIf="title == 'Register'"
+      (switchToLoginEvent)="switchToLogin()"
+      (onLoginEvent)="onLogin()"></register>
+  </div>
+</div>
+
