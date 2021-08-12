@@ -1,0 +1,13 @@
+<mat-card class="car-card">
+  <img class="car-card-image" *ngIf='car.carPicturesUrls.length > 0' [src]="car.carPicturesUrls[0]" />
+  <mat-card-content class="car-card-content">
+    <mat-card-title>{{ car.brand }}</mat-card-title>
+    <mat-card-subtitle>{{ car.model }}</mat-card-subtitle>
+  </mat-card-content>
+  <mat-card-actions class="car-card-actions">
+    <a [routerLink]="[car.id]">
+      <button mat-button>Details</button>
+    </a>
+    <button mat-button>Like</button>
+  </mat-card-actions>
+</mat-card>
