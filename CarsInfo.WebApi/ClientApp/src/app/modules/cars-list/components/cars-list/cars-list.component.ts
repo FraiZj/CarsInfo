@@ -1,3 +1,4 @@
+import { Filter } from './../../../cars-filter/interfaces/filter';
 import { Observable } from 'rxjs';
 import { CarsService } from '../../../shared/services/cars.service';
 import { Component, OnInit } from '@angular/core';
@@ -21,7 +22,7 @@ export class CarsListComponent implements OnInit {
     this.cars$ = this.carsService.getCars();
   }
 
-  filter(values: string[]): void {
-    this.cars$ = this.carsService.getCars(values);
+  filter(filter: Filter): void {
+    this.cars$ = this.carsService.getCars(filter);
   }
 }

@@ -1,9 +1,16 @@
 mat-nav-list.list-horizontal {
   padding: 0;
-  .mat-list-item {
+
+  .logo {
+    width: 200px;
+    font-size: 20px;
+  }
+
+  mat-list-item {
+    font-size: 17px;
     display: inline-block;
-    height: auto;
-    width: auto;
+    height: 50px;
+    width: 100px;
   }
 }
 

@@ -10,11 +10,13 @@ import { MatInputModule } from "@angular/material/input";
 import { SharedModule } from "../shared/shared.module";
 import { CarsBrandFilterComponent } from "./components/cars-brand-filter/cars-brand-filter.component";
 import { CarsFilterComponent } from "./components/cars-filter/cars-filter.component";
+import { CarsModelFilterComponent } from './components/cars-model-filter/cars-model-filter.component';
 
 @NgModule({
   declarations: [
     CarsFilterComponent,
-    CarsBrandFilterComponent
+    CarsBrandFilterComponent,
+    CarsModelFilterComponent
   ],
   imports: [
     // library modules

@@ -1,3 +1,4 @@
+import { Filter } from './../../interfaces/filter';
 import { Component, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
@@ -7,9 +8,24 @@ import { EventEmitter } from '@angular/core';
   styleUrls: ['./cars-filter.component.scss']
 })
 export class CarsFilterComponent {
-  @Output() filterEvent = new EventEmitter<string[]>();
+  private brands: string[] = [];
+  private model: string = '';
+  @Output() filterEvent = new EventEmitter<Filter>();
 
-  onBrandFilter(brands: string[]) {
-    this.filterEvent.emit(brands);
+  onBrandFilter(brands: string[]): void {
+    this.brands = brands;
+    this.emitFilterEvent();
+  }
+
+  onModelFilter(model: string): void {
+    this.model = model;
+    this.emitFilterEvent();
+  }
+
+  private emitFilterEvent() {
+    this.filterEvent.emit({
+      brands: this.brands,
+      model: this.model
+    });
   }
 }

@@ -15,11 +15,11 @@ namespace CarsInfo.DAL.Repositories
 
         public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(IList<FilterModel> filters = null)
         {
-            var sql = @$"SELECT * FROM {TableName} car
+            var sql = @$"SELECT * FROM {TableName}
                          LEFT JOIN Brand
-                         ON car.BrandId = Brand.Id
+                         ON {TableName}.BrandId = Brand.Id
                          LEFT JOIN CarPicture
-                         ON car.Id = CarPicture.CarId";
+                         ON {TableName}.Id = CarPicture.CarId";
 
             if (filters is not null && filters.Any())
             {

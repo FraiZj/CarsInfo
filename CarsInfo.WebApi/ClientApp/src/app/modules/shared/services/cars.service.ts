@@ -3,6 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Car } from "../interfaces/car";
+import { Filter } from '../../cars-filter/interfaces/filter';
 
 @Injectable({
   providedIn: 'root'
@@ -14,20 +15,25 @@ export class CarsService {
       this.url += "/cars";
     }
 
-  public getCars(brands?: string[]): Observable<Car[]> {
-    const params = this.configureParams(brands);
+  public getCars(filter?: Filter): Observable<Car[]> {
+    const params = this.configureParams(filter);
     return this.http.get<Car[]>(this.url, {
       params: params
     });
   }
 
-  private configureParams(brands?: string[]) {
+  private configureParams(filter?: Filter) {
     let params: {
       brands?: string[];
+      model?: string
     } = {};
 
-    if (brands !== undefined) {
-      params.brands = brands;
+    if (filter?.brands !== undefined) {
+      params.brands = filter.brands;
+    }
+
+    if (filter?.model !== undefined && filter.model !== null && filter.model !== '') {
+      params.model = filter.model;
     }
 
     return params;
