@@ -10,6 +10,6 @@ namespace CarsInfo.BLL.Models.Dtos
 
         public int Skip { get; set; } = 0;
 
-        public int Take { get; set; } = 6;
+        public int Take { get; set; } = 3;
     }
 }

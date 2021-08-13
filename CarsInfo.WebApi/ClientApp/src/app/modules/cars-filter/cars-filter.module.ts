@@ -10,7 +10,6 @@ import { SharedModule } from "../shared/shared.module";
 import { CarsBrandFilterComponent } from "./components/cars-brand-filter/cars-brand-filter.component";
 import { CarsFilterComponent } from "./components/cars-filter/cars-filter.component";
 import { CarsModelFilterComponent } from './components/cars-model-filter/cars-model-filter.component';
-import { CarsFilterPaginationComponent } from './components/cars-filter-pagination/cars-filter-pagination.component';
 import { MatSelectModule } from "@angular/material/select";
 import { MatPaginatorModule } from '@angular/material/paginator'
 
@@ -18,8 +17,7 @@ import { MatPaginatorModule } from '@angular/material/paginator'
   declarations: [
     CarsFilterComponent,
     CarsBrandFilterComponent,
-    CarsModelFilterComponent,
-    CarsFilterPaginationComponent
+    CarsModelFilterComponent
   ],
   imports: [
     // library modules

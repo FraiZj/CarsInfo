@@ -92,7 +92,7 @@ namespace CarsInfo.BLL.Services
                 }
 
                 var filters = _filterService.ConfigureCarFilter(filter);
-                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filters);
+                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filters, filter.Skip, filter.Take);
                 var carsDtos = _mapper.MapToCarsDtos(cars);
 
                 return carsDtos;

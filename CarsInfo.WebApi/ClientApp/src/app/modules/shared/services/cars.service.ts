@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Car } from "../interfaces/car";
-import { Filter } from '../../cars-filter/interfaces/filter';
+import { FilterWithPaginator } from '../../cars-list/interfaces/filterWithPaginator';
 
 @Injectable({
   providedIn: 'root'
@@ -15,14 +15,14 @@ export class CarsService {
       this.url += "/cars";
     }
 
-  public getCars(filter?: Filter): Observable<Car[]> {
+  public getCars(filter?: FilterWithPaginator): Observable<Car[]> {
     const params = this.configureParams(filter);
     return this.http.get<Car[]>(this.url, {
       params: params
     });
   }
 
-  private configureParams(filter?: Filter) {
+  private configureParams(filter?: FilterWithPaginator) {
     let params: {
       brands?: string[];
       model?: string;
