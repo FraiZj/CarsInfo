@@ -1,9 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using CarsInfo.DB;
 using CarsInfo.Infrastructure.DI;
 using CarsInfo.WebApi.Assistance;
 using CarsInfo.WebApi.Authorization;
 using CarsInfo.WebApi.Mappers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 
 namespace CarsInfo.WebApi
 {
@@ -43,7 +47,8 @@ namespace CarsInfo.WebApi
             {
                 options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
             }).AddNewtonsoftJson();
-            services.AddSwaggerGen();
+
+            services.SetupSwagger();
 
             services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
             {
