@@ -13,20 +13,26 @@ namespace CarsInfo.DAL.Repositories
             : base(context)
         { }
 
-        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(IList<FilterModel> filters = null)
+        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(IList<FilterModel> filters = null, int skip = 0, int take = 6)
         {
-            var sql = @$"SELECT * FROM {TableName}
-                         LEFT JOIN Brand
-                         ON {TableName}.BrandId = Brand.Id
-                         LEFT JOIN CarPicture
-                         ON {TableName}.Id = CarPicture.CarId";
+            var filter = filters?.Any() ?? false ? ConfigureFilter(filters) : string.Empty;
+            var sql = $@"SELECT * FROM (
+	                        SELECT Car.Id AS CarId FROM Car
+	                        LEFT JOIN Brand
+	                        ON Car.BrandId = Brand.Id
+                            { filter }
+	                        GROUP BY Car.Id, Brand.Name
+	                        ORDER BY Brand.Name 
+	                        OFFSET {skip} ROWS
+	                        FETCH NEXT {take} ROWS ONLY
+	                    ) as CarsIds
+                        LEFT JOIN Car
+                        ON CarsIds.CarId = Car.Id
+                        LEFT JOIN Brand
+                        ON Car.BrandId = Brand.Id
+                        LEFT JOIN CarPicture
+                        ON Car.Id = CarPicture.CarId";
 
-            if (filters is not null && filters.Any())
-            {
-                var filter = ConfigureFilter(filters);
-                sql += $" {filter}";
-            }
-            
             var cars = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
                 (car, brand, carPicture) =>
                 {

@@ -2,7 +2,7 @@
 
 <ng-container *ngIf="cars$ | async as cars">
   <ng-container *ngIf="cars.length > 0; else carsNotFoundBlock">
-    <app-car-card *ngFor='let car of cars' [car]="car">
+    <app-car-card style="display: inline-block;" *ngFor='let car of cars' [car]="car">
     </app-car-card>
   </ng-container>
 </ng-container>

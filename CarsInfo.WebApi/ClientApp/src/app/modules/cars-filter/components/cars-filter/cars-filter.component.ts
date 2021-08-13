@@ -1,5 +1,6 @@
+import { Pagination } from './../../interfaces/pagination';
 import { Filter } from './../../interfaces/filter';
-import { Component, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
 @Component({
@@ -10,6 +11,10 @@ import { EventEmitter } from '@angular/core';
 export class CarsFilterComponent {
   private brands: string[] = [];
   private model: string = '';
+  pagination: Pagination= {
+    skip: 0,
+    take: 6
+  };
   @Output() filterEvent = new EventEmitter<Filter>();
 
   onBrandFilter(brands: string[]): void {
@@ -22,10 +27,17 @@ export class CarsFilterComponent {
     this.emitFilterEvent();
   }
 
+  onPageFilter(pagination: Pagination): void {
+    this.pagination = pagination;
+    this.emitFilterEvent();
+  }
+
   private emitFilterEvent() {
     this.filterEvent.emit({
       brands: this.brands,
-      model: this.model
+      model: this.model,
+      skip: this.pagination.skip,
+      take: this.pagination.take
     });
   }
 }

@@ -1,0 +1,8 @@
+<mat-form-field appearance="fill">
+  <mat-label>Cars per page</mat-label>
+  <mat-select [value]='pagination.take'>
+    <mat-option selected *ngFor="let value of carsPerPage" [value]="value" (click)="onCarsPerPageChange(value)">
+      {{ value }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

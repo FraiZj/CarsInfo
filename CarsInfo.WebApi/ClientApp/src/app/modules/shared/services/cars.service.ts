@@ -25,8 +25,13 @@ export class CarsService {
   private configureParams(filter?: Filter) {
     let params: {
       brands?: string[];
-      model?: string
-    } = {};
+      model?: string;
+      skip: number;
+      take: number;
+    } = {
+      skip: 0,
+      take: 6
+    };
 
     if (filter?.brands !== undefined) {
       params.brands = filter.brands;
@@ -35,6 +40,9 @@ export class CarsService {
     if (filter?.model !== undefined && filter.model !== null && filter.model !== '') {
       params.model = filter.model;
     }
+
+    params.skip = filter?.skip ?? 0;
+    params.take = filter?.take ?? 6;
 
     return params;
   }
