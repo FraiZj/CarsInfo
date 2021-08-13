@@ -7,6 +7,7 @@ namespace CarsInfo.WebApi.Mappers
         public static void AddViewModelMapper(this IServiceCollection services)
         {
             services.AddSingleton<AccountControllerMapper>();
+            services.AddSingleton<CarsControllerMapper>();
         }
     }
 }

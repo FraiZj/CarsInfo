@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Models.Dtos;
 using CarsInfo.BLL.Models.Enums;
+using CarsInfo.WebApi.Mappers;
+using CarsInfo.WebApi.ViewModels.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +17,14 @@ namespace CarsInfo.WebApi.Controllers
     public class CarsController : ControllerBase
     {
         private readonly ICarsService _carsService;
+        private readonly CarsControllerMapper _mapper;
 
-        public CarsController(ICarsService carsService)
+        public CarsController(
+            ICarsService carsService,
+            CarsControllerMapper mapper)
         {
             _carsService = carsService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -57,17 +64,21 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<CarEditorDto> patchCar)
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<CarEditorViewModel> patchCar)
         {
             var car = await _carsService.GetCarEditorDtoByIdAsync(id);
-            patchCar.ApplyTo(car, ModelState);
+            var carViewModel = _mapper.MapToCarEditorViewModel(car);
+
+            patchCar.ApplyTo(carViewModel, ModelState);
+            var updatedCar = _mapper.MapToCarEditorDto(carViewModel);
+            updatedCar.Id = car.Id;
 
             if (!ModelState.IsValid)
             {
-                return BadRequest("Model state is invalid.");
+                return BadRequest(ModelState.Values.First().Errors.First().ErrorMessage);
             }
 
-            await _carsService.UpdateAsync(car);
+            await _carsService.UpdateAsync(updatedCar);
             return Ok(car);
         }
 
