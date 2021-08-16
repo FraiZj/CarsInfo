@@ -11,9 +11,13 @@ const routes: Routes = [
     loadChildren: () => import('./modules/cars-list/cars-list.module').then(m => m.CarsListModule)
   },
   {
-    path: 'new-car',
+    path: 'add-car',
     loadChildren: () => import('./modules/car-editor/car-editor.module').then(m => m.CarEditorModule)
-  }
+  },
+  {
+    path: 'cars/:id',
+    loadChildren: () => import('./modules/car-details/car-details.module').then(m => m.CarDetailsModule)
+  },
 ];
 
 @NgModule({
