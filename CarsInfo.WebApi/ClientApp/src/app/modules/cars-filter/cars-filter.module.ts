@@ -1,3 +1,4 @@
+import { BrandsModule } from './../brands/brands.module';
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -33,7 +34,8 @@ import { MatPaginatorModule } from '@angular/material/paginator'
     FormsModule,
 
     // app modules
-    SharedModule
+    SharedModule,
+    BrandsModule
   ],
   exports: [
     CarsFilterComponent
