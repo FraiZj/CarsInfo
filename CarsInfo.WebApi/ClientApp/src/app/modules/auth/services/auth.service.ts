@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
-import { JwtPayload } from "app/modules/shared/interfaces/jwt-payload";
-import { User } from "app/modules/shared/interfaces/user";
-import { UserClaims } from "app/modules/shared/interfaces/user-claims";
-import { UserLogin } from "app/modules/shared/interfaces/user-login";
-import { UserRegister } from "app/modules/shared/interfaces/user-register";
+import { JwtPayload } from "app/modules/auth/interfaces/jwt-payload";
+import { User } from "app/modules/auth/interfaces/user";
+import { UserClaims } from "app/modules/auth/interfaces/user-claims";
+import { UserLogin } from "app/modules/auth/interfaces/user-login";
+import { UserRegister } from "app/modules/auth/interfaces/user-register";
 import jwtDecode from "jwt-decode";
 import { BehaviorSubject, Observable } from "rxjs";
 import { map } from "rxjs/operators";
