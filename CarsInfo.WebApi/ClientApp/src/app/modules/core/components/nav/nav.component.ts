@@ -2,8 +2,8 @@ import { AuthenticationDialogComponent } from './../../../authentication/compone
 import { MatDialog } from '@angular/material/dialog';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/modules/shared/services/auth.service';
-import { AuthenticationOption } from 'src/app/modules/authentication/types/authentication-option';
+import { AuthenticationOption } from 'app/modules/authentication/types/authentication-option';
+import { AuthService } from 'app/modules/auth/services/auth.service';
 
 
 
@@ -21,19 +21,16 @@ export class NavComponent {
 
   onLogout(): void {
     this.authService.logout();
-    console.log('logout')
     this.router.navigate(['/cars']);
   }
 
   openDialog(form: AuthenticationOption): void {
     const dialogRef = this.dialog.open(AuthenticationDialogComponent, {
-      data:{
+      data: {
         form
       }
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
-    });
+    dialogRef.afterClosed();
   }
 }

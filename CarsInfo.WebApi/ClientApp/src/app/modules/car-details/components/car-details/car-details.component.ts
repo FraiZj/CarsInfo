@@ -1,8 +1,8 @@
 import { CarsService } from '../../../shared/services/cars.service';
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { Car } from 'src/app/modules/shared/interfaces/car';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Car } from 'app/modules/shared/interfaces/car';
 
 @Component({
   selector: 'app-card-details',

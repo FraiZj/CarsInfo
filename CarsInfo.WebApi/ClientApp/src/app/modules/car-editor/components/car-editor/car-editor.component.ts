@@ -4,7 +4,7 @@ import { CarsService } from '../../../shared/services/cars.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BrandsService } from 'src/app/modules/shared/services/brands.service';
+import { BrandsService } from 'app/modules/shared/services/brands.service';
 
 @Component({
   templateUrl: './car-editor.component.html',
