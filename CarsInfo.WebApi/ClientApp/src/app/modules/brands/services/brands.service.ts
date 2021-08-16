@@ -1,9 +1,10 @@
+import { BrandsModule } from './../brands.module';
 import { Brand } from '../interfaces/brand';
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 @Injectable({
-  providedIn: 'root'
+  providedIn: BrandsModule
 })
 export class BrandsService {
   constructor(

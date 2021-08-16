@@ -12,7 +12,7 @@ import { CarsService } from 'app/modules/cars/services/cars.service';
 })
 export class CarsListComponent implements OnInit {
   private static readonly ItemsTakePerLoad: number = 6;
-  private static readonly ItemsSkipPerLoad: number = 6;
+  private static readonly ItemsSkipPerLoad: number = 0;
   private filter: FilterWithPaginator = {
     skip: CarsListComponent.ItemsSkipPerLoad,
     take: CarsListComponent.ItemsTakePerLoad
