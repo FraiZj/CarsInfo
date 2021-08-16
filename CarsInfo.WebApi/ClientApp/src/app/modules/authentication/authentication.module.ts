@@ -1,3 +1,4 @@
+
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { AuthenticationRoutingModule } from './authentication-routing.module';
+import { AuthModule } from '../auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { AuthenticationRoutingModule } from './authentication-routing.module';
     RegisterComponent
   ],
   imports: [
+    // library modules
     CommonModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -26,11 +28,11 @@ import { AuthenticationRoutingModule } from './authentication-routing.module';
     MatIconModule,
     ReactiveFormsModule,
 
-    AuthenticationRoutingModule
+    // app modules
+    AuthModule
   ],
   exports: [
     AuthenticationDialogComponent,
-    AuthenticationRoutingModule
   ]
 })
 export class AuthenticationModule { }

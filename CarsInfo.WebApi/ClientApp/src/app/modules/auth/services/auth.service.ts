@@ -1,16 +1,17 @@
-import { UserClaims } from './../interfaces/user-claims';
-import { UserRegister } from '../interfaces/user-register';
-import { UserLogin } from '../interfaces/user-login';
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
+import { JwtPayload } from "app/modules/shared/interfaces/jwt-payload";
+import { User } from "app/modules/shared/interfaces/user";
+import { UserClaims } from "app/modules/shared/interfaces/user-claims";
+import { UserLogin } from "app/modules/shared/interfaces/user-login";
+import { UserRegister } from "app/modules/shared/interfaces/user-register";
+import jwtDecode from "jwt-decode";
 import { BehaviorSubject, Observable } from "rxjs";
-import { User } from "../interfaces/user";
-import { map } from 'rxjs/operators';
-import jwtDecode from 'jwt-decode';
-import { JwtPayload } from '../interfaces/jwt-payload';
+import { map } from "rxjs/operators";
+import { AuthModule } from "../auth.module";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: AuthModule
 })
 export class AuthService {
   private static readonly JwtToken: string = 'jwt-token';

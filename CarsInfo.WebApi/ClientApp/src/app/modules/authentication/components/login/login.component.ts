@@ -1,4 +1,4 @@
-import { AuthService } from '../../../shared/services/auth.service';
+import { AuthService } from '../../../auth/services/auth.service';
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';

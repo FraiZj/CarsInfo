@@ -2,8 +2,8 @@ import { AuthenticationDialogComponent } from './../../../authentication/compone
 import { MatDialog } from '@angular/material/dialog';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'app/modules/shared/services/auth.service';
 import { AuthenticationOption } from 'app/modules/authentication/types/authentication-option';
+import { AuthService } from 'app/modules/auth/services/auth.service';
 
 
 

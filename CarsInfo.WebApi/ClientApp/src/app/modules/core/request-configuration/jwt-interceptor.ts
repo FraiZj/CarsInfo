@@ -2,7 +2,7 @@ import { CoreModule } from './../core.module';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AuthService } from '../../shared/services/auth.service';
+import { AuthService } from 'app/modules/auth/services/auth.service';
 
 @Injectable({
   providedIn: CoreModule

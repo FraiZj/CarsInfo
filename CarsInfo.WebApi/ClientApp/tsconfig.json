@@ -21,7 +21,8 @@
       "dom"
     ],
     "paths": {
-      "@core/*": ["app/modules/core/*"]
+      "@core/*": ["app/modules/core/*"],
+      "@auth/*": ["app/modules/auth/*"]
     }
   },
   "angularCompilerOptions": {

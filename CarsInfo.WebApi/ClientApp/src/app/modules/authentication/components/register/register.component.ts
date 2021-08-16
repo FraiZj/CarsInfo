@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from 'app/modules/shared/services/auth.service';
+import { AuthService } from 'app/modules/auth/services/auth.service';
 
 @Component({
   selector: 'register',

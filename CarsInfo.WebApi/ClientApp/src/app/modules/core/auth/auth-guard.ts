@@ -3,8 +3,8 @@ import { CoreModule } from './../core.module';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../../shared/services/auth.service';
 import { AuthenticationDialogComponent } from '../../authentication/components/authentication-dialog/authentication-dialog.component';
+import { AuthService } from 'app/modules/auth/services/auth.service';
 
 @Injectable({providedIn: CoreModule})
 export class AuthGuard implements CanActivate {
