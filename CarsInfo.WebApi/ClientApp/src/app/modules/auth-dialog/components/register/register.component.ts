@@ -9,21 +9,20 @@ import { AuthService } from 'app/modules/auth/services/auth.service';
   styleUrls: ['./register.component.scss', './../../auth-dialog.module.scss']
 })
 export class RegisterComponent {
-  registerForm = this.formBuilder.group({
+  @Output() public switchToLoginEvent = new EventEmitter();
+  @Output() public onLoginEvent = new EventEmitter();
+  public registerForm = this.formBuilder.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     email: ['', Validators.required, Validators.email],
     password: ['', Validators.required],
   });
-  @Output() switchToLoginEvent = new EventEmitter();
-  @Output() onLoginEvent = new EventEmitter();
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router) { }
+    private authService: AuthService) { }
 
-  onSubmit() {
+  public onSubmit(): void {
     this.authService.register(this.registerForm.value).subscribe(
       () => {
         this.onLoginEvent.emit();
@@ -31,7 +30,7 @@ export class RegisterComponent {
     );
   }
 
-  switchToLogin() {
+  public switchToLogin(): void {
     this.switchToLoginEvent.emit();
   }
 }

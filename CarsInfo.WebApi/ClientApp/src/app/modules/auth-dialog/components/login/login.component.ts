@@ -9,19 +9,18 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss', './../../auth-dialog.module.scss']
 })
 export class LoginComponent {
-  loginForm = this.formBuilder.group({
+  @Output() public switchToRegisterEvent = new EventEmitter();
+  @Output() public onLoginEvent = new EventEmitter();
+  public loginForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
-  @Output() switchToRegisterEvent = new EventEmitter();
-  @Output() onLoginEvent = new EventEmitter();
 
   constructor(
-    private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router) { }
+    private readonly formBuilder: FormBuilder,
+    private readonly authService: AuthService) { }
 
-  onSubmit() {
+  public onSubmit(): void {
     this.authService.login(this.loginForm.value).subscribe(
       () => {
         this.onLoginEvent.emit();
@@ -29,7 +28,7 @@ export class LoginComponent {
     );
   }
 
-  switchToRegister() {
+  public switchToRegister(): void {
     this.switchToRegisterEvent.emit();
   }
 }

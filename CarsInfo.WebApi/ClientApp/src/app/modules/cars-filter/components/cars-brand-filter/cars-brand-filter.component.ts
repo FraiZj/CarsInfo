@@ -1,8 +1,8 @@
 import { Component, EventEmitter, HostBinding, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { Brand } from 'app/modules/shared/interfaces/brand';
-import { BrandsService } from 'app/modules/shared/services/brands.service';
+import { Brand } from 'app/modules/brands/interfaces/brand';
+import { BrandsService } from 'app/modules/brands/services/brands.service';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -12,13 +12,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./cars-brand-filter.component.scss']
 })
 export class CarsBrandFilterComponent implements OnInit {
-  @Output() filterBrandEvent = new EventEmitter<string[]>();
-  @HostBinding('style.width.px') width: number = 200;
-
+  @Output() public filterBrandEvent = new EventEmitter<string[]>();
+  @HostBinding('style.width.px') public width: number = 200;
   private static readonly WidthChangeValue: number = 100;
   private static readonly BrandsInFilterMaxValue: number = 5;
   private static readonly FilterDebounceTime: number = 400;
-
   public selectable = true;
   public removable = true;
   public brandFormControl: FormControl = new FormControl();
@@ -55,7 +53,7 @@ export class CarsBrandFilterComponent implements OnInit {
     const value = event.option.viewValue;
 
     if (this.selectedBrands.includes(value) ||
-        this.selectedBrands.length >= CarsBrandFilterComponent.BrandsInFilterMaxValue) {
+      this.selectedBrands.length >= CarsBrandFilterComponent.BrandsInFilterMaxValue) {
       return;
     }
 

@@ -1,50 +1,50 @@
 import { Observable } from 'rxjs';
-import { Brand } from '../../../shared/interfaces/brand';
-import { CarsService } from '../../../shared/services/cars.service';
+import { Brand } from '../../../brands/interfaces/brand';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BrandsService } from 'app/modules/shared/services/brands.service';
+import { FormArray, FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { BrandsService } from 'app/modules/brands/services/brands.service';
+import { CarsService } from 'app/modules/cars/services/cars.service';
 
 @Component({
   templateUrl: './car-editor.component.html',
   styleUrls: ['./car-editor.component.scss']
 })
 export class CarEditorComponent implements OnInit {
-  brands$!: Observable<Brand[]>;
-  brandEditorForm: FormGroup = this.formBuilder.group({
+  public brands$!: Observable<Brand[]>;
+  public brandEditorForm: FormGroup = this.formBuilder.group({
     brand: ['', [Validators.required]]
   });
-  carEditorForm: FormGroup = this.formBuilder.group({
+  public carEditorForm: FormGroup = this.formBuilder.group({
     brandId: ['', [Validators.required]],
     model: ['', [Validators.required]],
-    description:[''],
+    description: [''],
     carPicturesUrls: this.formBuilder.array([]),
 
   });
-  canAddCarPicture!: boolean;
+  public canAddCarPicture!: boolean;
 
   constructor(
-    private formBuilder: FormBuilder,
-    private carsService: CarsService,
-    private brandsService: BrandsService,
-    private router: Router
+    private readonly formBuilder: FormBuilder,
+    private readonly carsService: CarsService,
+    private readonly brandsService: BrandsService,
+    private readonly router: Router
   ) { }
 
-  ngOnInit(): void {
+  public get carPicturesUrls(): FormArray {
+    return this.carEditorForm.get('carPicturesUrls') as FormArray;
+  }
+
+  public get brand(): AbstractControl | null {
+    return this.brandEditorForm.get('brand');
+  }
+
+  public ngOnInit(): void {
     this.brands$ = this.brandsService.getBrands();
     this.canAddCarPicture = this.carPicturesUrls.length < 3;
   }
 
-  get carPicturesUrls(): FormArray {
-    return this.carEditorForm.get('carPicturesUrls') as FormArray;
-  }
-
-  get brand() {
-    return this.brandEditorForm.get('brand');
-  }
-
-  addCarPicture(): void {
+  public addCarPicture(): void {
     if (this.carPicturesUrls.length >= 3) {
       return;
     }
@@ -56,7 +56,7 @@ export class CarEditorComponent implements OnInit {
     }
   }
 
-  removeCarPicture(index: number): void {
+  public removeCarPicture(index: number): void {
     this.carPicturesUrls.removeAt(index);
 
     if (this.carPicturesUrls.length < 3) {
@@ -64,17 +64,14 @@ export class CarEditorComponent implements OnInit {
     }
   }
 
-  addNewBrand(): void {
+  public addNewBrand(): void {
     this.brandsService.addBrand(this.brand?.value)
-      .subscribe(() => this.brands$ = this.brandsService.getBrands(),
-      error => {
-        console.log(error);
-      });
+      .subscribe(() => this.brands$ = this.brandsService.getBrands());
 
     this.carEditorForm.controls['brand'].reset();
   }
 
-  onSubmit(): void {
+  public onSubmit(): void {
     this.carsService.addCar(this.carEditorForm.value)
       .subscribe(() => this.router.navigateByUrl('/cars'));
   }

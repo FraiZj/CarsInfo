@@ -10,34 +10,34 @@ import { AuthenticationDialogData } from '../../interfaces/authentication-dialog
   styleUrls: ['./auth-dialog.component.scss']
 })
 export class AuthDialogComponent implements OnInit {
-  title: AuthenticationOption = 'Login'
   private returnUrl!: string;
+  public title: AuthenticationOption = 'Login'
 
   constructor(
-    public dialogRef: MatDialogRef<AuthDialogComponent>,
-    private router: Router,
+    public readonly dialogRef: MatDialogRef<AuthDialogComponent>,
+    private readonly router: Router,
     @Inject(MAT_DIALOG_DATA) public data: AuthenticationDialogData
-    ) { }
+  ) { }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.title = this.data.form as AuthenticationOption;
     this.returnUrl = this.data.returnUrl ?? '/cars';
   }
 
-  switchToRegister() {
+  public switchToRegister(): void {
     this.title = 'Register';
   }
 
-  switchToLogin() {
+  public switchToLogin(): void {
     this.title = 'Login';
   }
 
-  onLogin() {
+  public onLogin(): void {
     this.closeDialog();
     this.router.navigateByUrl(this.returnUrl);
   }
 
-  closeDialog(): void {
+  public closeDialog(): void {
     this.dialogRef.close();
   }
 }

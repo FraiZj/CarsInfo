@@ -18,8 +18,8 @@ export class AuthService {
   private currentUserTokenSubject!: BehaviorSubject<string | null>;
 
   constructor(
-    @Inject("BASE_API_URL") private readonly url: string,
-    private http: HttpClient) {
+    @Inject("BASE_API_URL") private url: string,
+    private readonly http: HttpClient) {
     const token = localStorage.getItem(AuthService.JwtToken) as string;
     this.currentUserTokenSubject = new BehaviorSubject<string | null>(token);
   }
@@ -47,7 +47,7 @@ export class AuthService {
         this.currentUserTokenSubject.next(user.token);
         return user;
       }
-    ));
+      ));
   }
 
   public login(userLogin: UserLogin): Observable<User> {
@@ -57,7 +57,7 @@ export class AuthService {
         this.currentUserTokenSubject.next(user.token);
         return user;
       }
-    ));
+      ));
   }
 
   public logout(): void {

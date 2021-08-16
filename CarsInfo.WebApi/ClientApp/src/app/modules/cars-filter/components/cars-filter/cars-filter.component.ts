@@ -10,14 +10,14 @@ import { EventEmitter } from '@angular/core';
 export class CarsFilterComponent {
   private brands: string[] = [];
   private model: string = '';
-  @Output() filterEvent = new EventEmitter<Filter>();
+  @Output() public filterEvent = new EventEmitter<Filter>();
 
-  onBrandFilter(brands: string[]): void {
+  public onBrandFilter(brands: string[]): void {
     this.brands = brands;
     this.emitFilterEvent();
   }
 
-  onModelFilter(model: string): void {
+  public onModelFilter(model: string): void {
     this.model = model;
     this.emitFilterEvent();
   }

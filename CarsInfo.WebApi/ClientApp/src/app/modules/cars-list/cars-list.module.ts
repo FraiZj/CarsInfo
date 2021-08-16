@@ -1,3 +1,4 @@
+import { CarsModule } from './../cars/cars.module';
 import { CoreModule } from './../core/core.module';
 import { NgModule } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
@@ -30,7 +31,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     CoreModule,
     CarsFilterModule,
     CarsListRoutingModule,
-    SharedModule
+    CarsModule
   ],
   exports: [
     CarsListRoutingModule
