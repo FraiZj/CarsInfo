@@ -1,5 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
   selector: 'cars-model-filter',
@@ -7,13 +8,15 @@ import { FormControl } from '@angular/forms';
   styleUrls: ['./cars-model-filter.component.scss']
 })
 export class CarsModelFilterComponent {
+  private readonly filterDebounceTime = 400;
   modelFormControl = new FormControl();
   @Output() filterModelEvent = new EventEmitter<string>();
 
-  constructor() { }
-
   onModelInput(event: Event): void {
-    const value = (<HTMLInputElement>event.target).value;
-    this.filterModelEvent.emit(value);
+    this.modelFormControl.valueChanges
+      .pipe(debounceTime(this.filterDebounceTime), distinctUntilChanged())
+      .subscribe(value => {
+        this.filterModelEvent.emit(value);
+      });
   }
 }

@@ -9,12 +9,11 @@
       {{ brand }}
       <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
     </mat-chip>
-    <input
-      placeholder="Input brand name"
+    <input placeholder="Input brand name"
       [formControl]="brandFormControl"
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
-      (input)="onBrandInput($event)">
+      (input)="onBrandInput()">
   </mat-chip-list>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onBrandSelect($event)">
     <mat-option *ngFor="let brand of filteredBrands$ | async" [value]="brand">
