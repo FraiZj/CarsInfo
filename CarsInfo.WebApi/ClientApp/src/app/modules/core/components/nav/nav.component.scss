@@ -1,12 +1,12 @@
 mat-nav-list.list-horizontal {
   padding: 0;
 
-  .logo {
+  #logo {
     width: 200px;
-    font-size: 20px;
+    font-size: 22px;
   }
 
-  mat-list-item {
+  .mat-list-item {
     font-size: 17px;
     display: inline-block;
     height: 50px;
