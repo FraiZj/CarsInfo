@@ -7,15 +7,15 @@ import { AuthService } from 'app/modules/auth/services/auth.service';
 @Injectable({
   providedIn: CoreModule
 })
-export class JwtInterceptor implements HttpInterceptor{
-  constructor(private authService: AuthService) { }
+export class JwtInterceptor implements HttpInterceptor {
+  constructor(private readonly authService: AuthService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let currentUser = this.authService.getCurrentUserClaims();
 
-    if( currentUser && currentUser.token){
+    if (currentUser && currentUser.token) {
       req = req.clone({
-        setHeaders : {
+        setHeaders: {
           Authorization: `Bearer ` + currentUser.token
         }
       });

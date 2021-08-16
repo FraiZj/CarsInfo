@@ -7,8 +7,8 @@ import { Observable } from "rxjs";
 })
 export class BrandsService {
   constructor(
-    @Inject("BASE_API_URL") private readonly url: string,
-    private http: HttpClient) {
+    @Inject("BASE_API_URL") private url: string,
+    private readonly http: HttpClient) {
       this.url += "/brands";
     }
 

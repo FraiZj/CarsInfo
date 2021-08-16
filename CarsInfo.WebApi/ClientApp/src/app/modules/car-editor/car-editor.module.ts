@@ -1,3 +1,4 @@
+import { CarsModule } from './../cars/cars.module';
 import { CoreModule } from './../core/core.module';
 import { CarEditorRoutingModule } from './car-editor-routing.module';
 import { CommonModule } from '@angular/common';
@@ -28,7 +29,7 @@ import { SharedModule } from '../shared/shared.module';
     // app modules
     CarEditorRoutingModule,
     CoreModule,
-    SharedModule
+    CarsModule
   ],
   exports: [
     CarEditorRoutingModule

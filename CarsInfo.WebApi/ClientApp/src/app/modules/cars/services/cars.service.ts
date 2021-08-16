@@ -1,3 +1,4 @@
+import { CarsModule } from './../cars.module';
 import { CarEditor } from '../interfaces/car-editor';
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
@@ -6,12 +7,12 @@ import { Car } from "../interfaces/car";
 import { FilterWithPaginator } from '../../cars-list/interfaces/filterWithPaginator';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: CarsModule
 })
 export class CarsService {
   constructor(
-    @Inject("BASE_API_URL") private readonly url: string,
-    private http: HttpClient) {
+    @Inject("BASE_API_URL") private url: string,
+    private readonly http: HttpClient) {
       this.url += "/cars";
     }
 
@@ -51,7 +52,7 @@ export class CarsService {
     return this.http.get<Car>(`${this.url}/${id}`);
   }
 
-  public addCar(car: CarEditor) {
+  public addCar(car: CarEditor): Observable<CarEditor> {
     return this.http.post<CarEditor>(this.url, car);
   }
 }

@@ -4,12 +4,7 @@
   </div>
   <h1 mat-dialog-title>{{ title }}</h1>
   <div mat-dialog-content style="width: 260px;">
-    <login *ngIf="title == 'Login'"
-      (switchToRegisterEvent)="switchToRegister()"
-      (onLoginEvent)="onLogin()"></login>
-    <register *ngIf="title == 'Register'"
-      (switchToLoginEvent)="switchToLogin()"
-      (onLoginEvent)="onLogin()"></register>
+    <login *ngIf="title == 'Login'" (switchToRegisterEvent)="switchToRegister()" (onLoginEvent)="onLogin()"></login>
+    <register *ngIf="title == 'Register'" (switchToLoginEvent)="switchToLogin()" (onLoginEvent)="onLogin()"></register>
   </div>
 </div>
-
