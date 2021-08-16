@@ -3,8 +3,8 @@ import { Filter } from './../../../cars-filter/interfaces/filter';
 import { Observable } from 'rxjs';
 import { CarsService } from '../../../shared/services/cars.service';
 import { Component, OnInit } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { Car } from 'app/modules/shared/interfaces/car';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-cars-list',

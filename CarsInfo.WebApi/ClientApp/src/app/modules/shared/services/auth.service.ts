@@ -1,3 +1,4 @@
+import { UserClaims } from './../interfaces/user-claims';
 import { UserRegister } from '../interfaces/user-register';
 import { UserLogin } from '../interfaces/user-login';
 import { HttpClient } from "@angular/common/http";
@@ -5,28 +6,44 @@ import { Inject, Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { User } from "../interfaces/user";
 import { map } from 'rxjs/operators';
+import jwtDecode from 'jwt-decode';
+import { JwtPayload } from '../interfaces/jwt-payload';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUserSubject!: BehaviorSubject<User>;
+  private static readonly JwtToken: string = 'jwt-token';
+  private currentUserTokenSubject!: BehaviorSubject<string | null>;
 
   constructor(
     @Inject("BASE_API_URL") private readonly url: string,
     private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser') as string));
+    const token = localStorage.getItem(AuthService.JwtToken) as string;
+    this.currentUserTokenSubject = new BehaviorSubject<string | null>(token);
   }
 
-  public getCurrentUserValue(): User {
-    return this.currentUserSubject.value;
+  public getCurrentUserClaims(): UserClaims | null {
+    if (this.currentUserTokenSubject.value == null) {
+      return null;
+    }
+
+    const jwtPayload = jwtDecode<JwtPayload>(this.currentUserTokenSubject.value);
+    const userClaims: UserClaims = {
+      roles: jwtPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
+      id: +jwtPayload.Id,
+      email: jwtPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
+      token: this.currentUserTokenSubject.value
+    };
+
+    return userClaims;
   }
 
   public register(userRegister: UserRegister): Observable<User> {
     return this.http.post<User>(`${this.url}/register`, userRegister).pipe(
       map((user) => {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user as User);
+        localStorage.setItem(AuthService.JwtToken, user.token);
+        this.currentUserTokenSubject.next(user.token);
         return user;
       }
     ));
@@ -35,14 +52,15 @@ export class AuthService {
   public login(userLogin: UserLogin): Observable<User> {
     return this.http.post<User>(`${this.url}/login`, userLogin).pipe(
       map((user) => {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user as User);
+        localStorage.setItem(AuthService.JwtToken, user.token);
+        this.currentUserTokenSubject.next(user.token);
         return user;
       }
     ));
   }
 
   public logout(): void {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem(AuthService.JwtToken);
+    this.currentUserTokenSubject.next(null);
   }
 }
