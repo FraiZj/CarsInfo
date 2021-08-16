@@ -6,7 +6,6 @@ using CarsInfo.BLL.Assistance;
 using CarsInfo.BLL.Contracts;
 using CarsInfo.BLL.Mappers;
 using CarsInfo.BLL.Models.Dtos;
-using CarsInfo.DAL.Assistance;
 using CarsInfo.DAL.Contracts;
 using CarsInfo.DAL.Entities;
 using Microsoft.Extensions.Logging;
@@ -19,17 +18,20 @@ namespace CarsInfo.BLL.Services
         private readonly IGenericRepository<CarPicture> _carsPictureRepository;
         private readonly ILogger<CarsService> _logger;
         private readonly CarServiceMapper _mapper;
+        private readonly IFilterService _filterService;
 
         public CarsService(
             ICarsRepository carsRepository,
             IGenericRepository<CarPicture> carsPictureRepository,
             ILogger<CarsService> logger,
-            CarServiceMapper mapper)
+            CarServiceMapper mapper,
+            IFilterService filterService)
         {
             _carsRepository = carsRepository;
             _carsPictureRepository = carsPictureRepository;
             _logger = logger;
             _mapper = mapper;
+            _filterService = filterService;
         }
 
         public async Task AddAsync(CarEditorDto entity)
@@ -46,15 +48,6 @@ namespace CarsInfo.BLL.Services
                         CarId = carId,
                         PictureLink = carPicture
                     }).ToList());
-
-                //foreach (var carPicture in entity.CarPicturesUrls)
-                //{
-                //    await _carsPictureRepository.AddAsync(new CarPicture
-                //    {
-                //        CarId = carId,
-                //        PictureLink = carPicture
-                //    });
-                //}
             }
             catch (Exception e)
             {
@@ -74,19 +67,34 @@ namespace CarsInfo.BLL.Services
             }
         }
 
-        public async Task<IEnumerable<CarDto>> GetAllAsync(IEnumerable<string> brands = null)
+        public async Task<IEnumerable<CarDto>> GetAllAsync()
         {
             try
             {
-                var filter = new List<FilterModel>();
+                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync();
+                var carsDtos = _mapper.MapToCarsDtos(cars);
+                return carsDtos;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching all cars");
+                return new List<CarDto>();
+            }
+        }
 
-                foreach (var brand in brands ?? new List<string>())
+        public async Task<IEnumerable<CarDto>> GetAllAsync(FilterDto filter)
+        {
+            try
+            {
+                if (filter is null)
                 {
-                    filter.Add(new FilterModel("Brand.Name", brand, separator: "OR"));
+                    return await GetAllAsync();
                 }
 
-                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filter);
+                var filters = _filterService.ConfigureCarFilter(filter);
+                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filters, filter.Skip, filter.Take);
                 var carsDtos = _mapper.MapToCarsDtos(cars);
+
                 return carsDtos;
             }
             catch (Exception e)

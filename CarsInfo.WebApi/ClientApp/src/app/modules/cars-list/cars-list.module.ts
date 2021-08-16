@@ -9,6 +9,8 @@ import { CarsListComponent } from "./components/cars-list/cars-list.component";
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { SharedModule } from '../shared/shared.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import { SharedModule } from '../shared/shared.module';
     MatCardModule,
     RouterModule,
     CommonModule,
+    InfiniteScrollModule,
+    NgxSpinnerModule,
 
     // app modules
     CoreModule,

@@ -1,6 +1,7 @@
 <div id="filter-section">
   <form class="filter-form">
-    <cars-brand-filter (filterBrandEvent)="onBrandFilter($event)"></cars-brand-filter>
+    <cars-brand-filter style="display: block;" (filterBrandEvent)="onBrandFilter($event)"></cars-brand-filter>
+    <cars-model-filter style="display: block;" (filterModelEvent)="onModelFilter($event)"></cars-model-filter>
   </form>
 </div>
 

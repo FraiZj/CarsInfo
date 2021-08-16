@@ -122,7 +122,7 @@ namespace CarsInfo.DAL.Repositories
             for (var i = 0; i < filters.Count; i++)
             {
                 var filter = filters[i];
-                filter.Value = filter.Value is string ?
+                filter.Value = filter.Value is string && filter.Operator != "IN" ?
                     new string($"'{filter.Value}'") :
                     filter.Value;
 

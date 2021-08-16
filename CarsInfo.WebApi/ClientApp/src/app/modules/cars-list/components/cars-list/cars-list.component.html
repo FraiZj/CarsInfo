@@ -1,11 +1,25 @@
-<cars-filter (filterEvent)="filter($event)"></cars-filter>
+<cars-filter (filterEvent)="getFilteredCars($event)"></cars-filter>
 
-<ng-container *ngIf="cars$ | async as cars">
+<div infiniteScroll
+(scrolled)="onScroll()" *ngIf="cars">
   <ng-container *ngIf="cars.length > 0; else carsNotFoundBlock">
-    <app-car-card *ngFor='let car of cars' [car]="car">
+    <app-car-card style="display: inline-block;" *ngFor='let car of cars' [car]="car">
     </app-car-card>
   </ng-container>
-</ng-container>
+</div>
+
+<div>
+  <div>
+  <ngx-spinner
+    bdOpacity = 0.9
+    bdColor = ""
+    size = "default"
+    color = "#581f87"
+    type = "ball-pulse-sync"
+    [fullScreen] = "false">
+  </ngx-spinner>
+  </div>
+</div>
 
 <ng-template #carsNotFoundBlock>
   <div style="margin-left: 20px;">
