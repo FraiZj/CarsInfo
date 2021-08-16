@@ -1,6 +1,6 @@
+import { AuthDialogModule } from './../auth-dialog/auth-dialog.module';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from './../shared/shared.module';
-import { AuthenticationModule } from './../authentication/authentication.module';
 import { NgModule } from "@angular/core";
 import { NotFoundComponent } from "./components/not-found/not-found.component";
 import { MatListModule } from "@angular/material/list";
@@ -17,7 +17,7 @@ import { NavComponent } from './components/nav/nav.component';
     RouterModule,
 
     // app modules
-    AuthenticationModule,
+    AuthDialogModule,
     SharedModule
   ],
   exports: [

@@ -1,20 +1,20 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationOption } from './../../types/authentication-option';
+import { Router } from '@angular/router';
+import { AuthenticationOption } from '../../types/authentication-option';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthenticationDialogData } from '../../interfaces/authentication-dialog-data';
 
 @Component({
-  selector: 'app-authentication-dialog',
-  templateUrl: './authentication-dialog.component.html',
-  styleUrls: ['./authentication-dialog.component.scss']
+  selector: 'auth-dialog',
+  templateUrl: './auth-dialog.component.html',
+  styleUrls: ['./auth-dialog.component.scss']
 })
-export class AuthenticationDialogComponent implements OnInit {
+export class AuthDialogComponent implements OnInit {
   title: AuthenticationOption = 'Login'
   private returnUrl!: string;
 
   constructor(
-    public dialogRef: MatDialogRef<AuthenticationDialogComponent>,
+    public dialogRef: MatDialogRef<AuthDialogComponent>,
     private router: Router,
     @Inject(MAT_DIALOG_DATA) public data: AuthenticationDialogData
     ) { }

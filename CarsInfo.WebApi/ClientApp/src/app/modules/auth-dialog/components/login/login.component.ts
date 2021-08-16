@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss', './../../authentication.module.scss']
+  styleUrls: ['./login.component.scss', './../../auth-dialog.module.scss']
 })
 export class LoginComponent {
   loginForm = this.formBuilder.group({
