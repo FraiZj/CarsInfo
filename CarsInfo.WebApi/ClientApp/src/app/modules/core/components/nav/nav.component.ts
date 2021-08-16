@@ -1,14 +1,14 @@
-import { AuthenticationDialogComponent } from './../../../authentication/components/authentication-dialog/authentication-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationOption } from 'app/modules/authentication/types/authentication-option';
 import { AuthService } from 'app/modules/auth/services/auth.service';
+import { AuthenticationOption } from 'app/modules/auth-dialog/types/authentication-option';
+import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 
 
 
 @Component({
-  selector: 'app-nav',
+  selector: 'carsInfo-nav',
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss']
 })
@@ -25,7 +25,7 @@ export class NavComponent {
   }
 
   openDialog(form: AuthenticationOption): void {
-    const dialogRef = this.dialog.open(AuthenticationDialogComponent, {
+    const dialogRef = this.dialog.open(AuthDialogComponent, {
       data: {
         form
       }

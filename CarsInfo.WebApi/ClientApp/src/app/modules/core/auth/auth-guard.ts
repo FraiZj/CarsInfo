@@ -3,8 +3,8 @@ import { CoreModule } from './../core.module';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthenticationDialogComponent } from '../../authentication/components/authentication-dialog/authentication-dialog.component';
 import { AuthService } from 'app/modules/auth/services/auth.service';
+import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 
 @Injectable({providedIn: CoreModule})
 export class AuthGuard implements CanActivate {
@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    this.dialog.open(AuthenticationDialogComponent, {
+    this.dialog.open(AuthDialogComponent, {
       data: {
         form: 'Login',
         returnUrl: state.url

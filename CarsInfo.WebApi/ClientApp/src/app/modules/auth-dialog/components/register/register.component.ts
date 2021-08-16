@@ -6,7 +6,7 @@ import { AuthService } from 'app/modules/auth/services/auth.service';
 @Component({
   selector: 'register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss', './../../authentication.module.scss']
+  styleUrls: ['./register.component.scss', './../../auth-dialog.module.scss']
 })
 export class RegisterComponent {
   registerForm = this.formBuilder.group({
