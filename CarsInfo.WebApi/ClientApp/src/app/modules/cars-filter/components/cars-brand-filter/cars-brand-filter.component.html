@@ -5,7 +5,7 @@
       *ngFor="let brand of selectedBrands"
       [selectable]="selectable"
       [removable]="removable"
-      (removed)="OnBrandRemove(brand)">
+      (removed)="onBrandRemove(brand)">
       {{ brand }}
       <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
     </mat-chip>

@@ -12,58 +12,56 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./cars-brand-filter.component.scss']
 })
 export class CarsBrandFilterComponent implements OnInit {
-  private readonly filterDebounceTime = 400;
-  selectable = true;
-  removable = true;
-  brandFormControl = new FormControl();
-  filteredBrands$!: Observable<Brand[]>;
-  selectedBrands: string[] = [];
-  @HostBinding('style.width.px') width: number = 200;
   @Output() filterBrandEvent = new EventEmitter<string[]>();
+  @HostBinding('style.width.px') width: number = 200;
 
-  constructor(private brandsService: BrandsService) { }
+  private static readonly WidthChangeValue: number = 100;
+  private static readonly BrandsInFilterMaxValue: number = 5;
+  private static readonly FilterDebounceTime: number = 400;
 
-  ngOnInit(): void {
+  public selectable = true;
+  public removable = true;
+  public brandFormControl: FormControl = new FormControl();
+  public filteredBrands$!: Observable<Brand[]>;
+  public selectedBrands: string[] = [];
+
+  constructor(private readonly brandsService: BrandsService) { }
+
+  public ngOnInit(): void {
     this.filteredBrands$ = this.brandsService.getBrands();
   }
 
-  onBrandInput(): void {
+  public onBrandInput(): void {
     this.brandFormControl.valueChanges
-      .pipe(debounceTime(this.filterDebounceTime), distinctUntilChanged())
+      .pipe(debounceTime(CarsBrandFilterComponent.FilterDebounceTime), distinctUntilChanged())
       .subscribe(value => {
         this.filteredBrands$ = this.brandsService.getBrands(value);
       });
   }
 
-  OnBrandRemove(brand: string): void {
+  public onBrandRemove(brand: string): void {
     const index = this.selectedBrands.indexOf(brand);
 
-    if (index >= 0) {
-      this.selectedBrands.splice(index, 1);
-      this.width -= 100;
-    }
-
-    this.filterBrandEvent.emit(this.selectedBrands);
-  }
-
-  onBrandSelect(event: MatAutocompleteSelectedEvent): void {
-    const value = event.option.viewValue;
-
-    if (this.selectedBrands.includes(value)) {
+    if (index === -1) {
       return;
     }
 
-    this.filteredBrands$.subscribe(brands => {
-      const contains = brands.map(b => b.name.toLowerCase()).includes(value.toLowerCase());
+    this.selectedBrands.splice(index, 1);
+    this.width -= CarsBrandFilterComponent.WidthChangeValue;
+    this.filterBrandEvent.emit(this.selectedBrands);
+  }
 
-      if (!contains || this.selectedBrands.length >= 5) {
-        return;
-      }
+  public onBrandSelect(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.viewValue;
 
-      this.selectedBrands.push(value);
-      this.width += 100;
-      this.brandFormControl.reset();
-      this.filterBrandEvent.emit(this.selectedBrands);
-    })
+    if (this.selectedBrands.includes(value) ||
+        this.selectedBrands.length >= CarsBrandFilterComponent.BrandsInFilterMaxValue) {
+      return;
+    }
+
+    this.selectedBrands.push(value);
+    this.width += CarsBrandFilterComponent.WidthChangeValue;
+    this.brandFormControl.reset();
+    this.filterBrandEvent.emit(this.selectedBrands);
   }
 }
