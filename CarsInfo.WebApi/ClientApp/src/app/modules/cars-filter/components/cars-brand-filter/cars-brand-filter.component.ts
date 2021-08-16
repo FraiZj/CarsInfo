@@ -1,10 +1,10 @@
 import { Component, EventEmitter, HostBinding, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { Brand } from 'app/modules/shared/interfaces/brand';
+import { BrandsService } from 'app/modules/shared/services/brands.service';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Brand } from 'src/app/modules/shared/interfaces/brand';
-import { BrandsService } from 'src/app/modules/shared/services/brands.service';
 
 @Component({
   selector: 'cars-brand-filter',

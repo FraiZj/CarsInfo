@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Car } from 'src/app/modules/shared/interfaces/car';
+import { Car } from 'app/modules/shared/interfaces/car';
 
 @Component({
   selector: 'app-car-card',

@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
-import { AuthGuard } from 'src/app/helpers/auth-guard';
-import { Roles } from 'src/app/modules/shared/enums/roles';
+import { AuthGuard } from "@core/auth/auth-guard";
+import { Roles } from "../shared/enums/roles";
 import { CarEditorComponent } from "./components/car-editor/car-editor.component";
 
 const routes: Routes = [

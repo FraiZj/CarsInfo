@@ -1,21 +1,20 @@
-import { AuthenticationOption } from './../modules/authentication/types/authentication-option';
-import { AuthenticationDialogComponent } from './../modules/authentication/components/authentication-dialog/authentication-dialog.component';
-import { AuthService } from '../modules/shared/services/auth.service';
+import { CoreModule } from './../core.module';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';
-import { User } from '../modules/shared/interfaces/user';
 import { MatDialog } from '@angular/material/dialog';
+import { AuthService } from '../../shared/services/auth.service';
+import { AuthenticationDialogComponent } from '../../authentication/components/authentication-dialog/authentication-dialog.component';
+import { User } from '../../shared/interfaces/user';
 
-@Injectable({providedIn: 'root'})
+@Injectable({providedIn: CoreModule})
 export class AuthGuard implements CanActivate {
   constructor(
     private authService: AuthService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog
+    ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const currentUser: User = this.authService.getCurrentUserValue();
-
-    console.log(currentUser)
 
     if(currentUser && this.isInRoles(currentUser, route.data.roles)) {
       return true;

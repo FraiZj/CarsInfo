@@ -1,9 +1,12 @@
-import { AuthService } from '../modules/shared/services/auth.service';
+import { CoreModule } from './../core.module';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../shared/services/auth.service';
 
-@Injectable()
+@Injectable({
+  providedIn: CoreModule
+})
 export class JwtInterceptor implements HttpInterceptor{
   constructor(private authService: AuthService) { }
 

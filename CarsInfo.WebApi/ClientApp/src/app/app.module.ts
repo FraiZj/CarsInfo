@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { JwtInterceptor } from './helpers/jwt-interceptor';
+import { JwtInterceptor } from '@core/request-configuration/jwt-interceptor';
 
 @NgModule({
   declarations: [
