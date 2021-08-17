@@ -1,7 +1,6 @@
 import { AuthService } from '../../../auth/services/auth.service';
-import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, Output, EventEmitter } from '@angular/core';
+import { FormBuilder, Validators, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 
 @Component({
   selector: 'login',
@@ -15,17 +14,28 @@ export class LoginComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
+  public validationErrors: string[] = [];
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly authService: AuthService) { }
+    private readonly authService: AuthService
+  ) { }
+
+  public get email(): FormControl {
+    return this.loginForm.get('email') as FormControl;
+  }
+
+  public get password(): FormControl {
+    return this.loginForm.get('password') as FormControl;
+  }
 
   public onSubmit(): void {
-    this.authService.login(this.loginForm.value).subscribe(
-      () => {
-        this.onLoginEvent.emit();
-      }
-    );
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    this.authService.login(this.loginForm.value)
+      .subscribe(this.onLoginEvent.emit);
   }
 
   public switchToRegister(): void {

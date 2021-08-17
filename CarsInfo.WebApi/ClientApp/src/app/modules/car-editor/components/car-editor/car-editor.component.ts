@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { Brand } from '../../../brands/interfaces/brand';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormArray, FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
 import { BrandsService } from 'app/modules/brands/services/brands.service';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 
@@ -18,7 +18,7 @@ export class CarEditorComponent implements OnInit {
   public carEditorForm: FormGroup = this.formBuilder.group({
     brandId: ['', [Validators.required]],
     model: ['', [Validators.required]],
-    description: [''],
+    description: ['', [Validators.maxLength(150)]],
     carPicturesUrls: this.formBuilder.array([]),
 
   });
@@ -31,12 +31,24 @@ export class CarEditorComponent implements OnInit {
     private readonly router: Router
   ) { }
 
+  public get brandId(): FormControl {
+    return this.carEditorForm.get('brandId') as FormControl;
+  }
+
+  public get model(): FormControl {
+    return this.carEditorForm.get('model') as FormControl;
+  }
+
+  public get description(): FormControl {
+    return this.carEditorForm.get('description') as FormControl;
+  }
+
   public get carPicturesUrls(): FormArray {
     return this.carEditorForm.get('carPicturesUrls') as FormArray;
   }
 
-  public get brand(): AbstractControl | null {
-    return this.brandEditorForm.get('brand');
+  public get brand(): FormControl {
+    return this.brandEditorForm.get('brand') as FormControl;
   }
 
   public ngOnInit(): void {
@@ -49,7 +61,7 @@ export class CarEditorComponent implements OnInit {
       return;
     }
 
-    this.carPicturesUrls.push(this.formBuilder.control(''));
+    this.carPicturesUrls.push(this.formBuilder.control('', [Validators.required]));
 
     if (this.carPicturesUrls.length >= 3) {
       this.canAddCarPicture = false;
@@ -57,7 +69,9 @@ export class CarEditorComponent implements OnInit {
   }
 
   public removeCarPicture(index: number): void {
-    this.carPicturesUrls.removeAt(index);
+    if (this.carPicturesUrls.at(index) != null) {
+      this.carPicturesUrls.removeAt(index);
+    }
 
     if (this.carPicturesUrls.length < 3) {
       this.canAddCarPicture = true;
@@ -68,7 +82,7 @@ export class CarEditorComponent implements OnInit {
     this.brandsService.addBrand(this.brand?.value)
       .subscribe(() => this.brands$ = this.brandsService.getBrands());
 
-    this.carEditorForm.controls['brand'].reset();
+    this.carEditorForm.controls['brand'].setValue('');
   }
 
   public onSubmit(): void {

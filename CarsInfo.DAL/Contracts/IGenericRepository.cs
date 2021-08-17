@@ -22,5 +22,7 @@ namespace CarsInfo.DAL.Contracts
         Task<IEnumerable<T>> GetAllAsync();
 
         Task<IEnumerable<T>> GetAllAsync(IList<FilterModel> filters);
+
+        Task<bool?> ContainsAsync(IList<FilterModel> filters);
     }
 }

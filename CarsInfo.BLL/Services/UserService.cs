@@ -57,7 +57,7 @@ namespace CarsInfo.BLL.Services
             }
         }
         
-        public async Task<int> GetRoleIdAsync(string roleName)
+        private async Task<int> GetRoleIdAsync(string roleName)
         {
             ValidationHelper.ThrowIfStringNullOrWhiteSpace(roleName);
 
@@ -102,6 +102,20 @@ namespace CarsInfo.BLL.Services
             {
                 _logger.LogError(e, $"An error occurred while authorizing user with email={entity.Email}");
                 return new List<Claim>();
+            }
+        }
+
+        public async Task<bool?> ContainsUserWithEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _usersRepository.GetWithRolesAsync(email);
+                return user != null;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"An error occurred while fetching user with email={email}");
+                return null;
             }
         }
 

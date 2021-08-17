@@ -64,4 +64,8 @@ export class AuthService {
     localStorage.removeItem(AuthService.JwtToken);
     this.currentUserTokenSubject.next(null);
   }
+
+  public isEmailAvailable(email: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.url}/emailAvailable/${email}`);
+  }
 }

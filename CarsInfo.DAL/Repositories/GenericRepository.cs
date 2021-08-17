@@ -95,6 +95,28 @@ namespace CarsInfo.DAL.Repositories
             return await Context.QueryAsync<T>(sql);
         }
 
+        public async Task<bool?> ContainsAsync(IList<FilterModel> filters)
+        {
+            if (filters is not null && filters.Any())
+            {
+                return null;
+            }
+
+            var filter = ConfigureFilter(filters);
+
+            var sql = @$"
+                        SELECT
+                          CASE WHEN EXISTS 
+                          (
+                                SELECT * FROM {GetTableName(typeof(T))} {filter}
+                          )
+                          THEN 1
+                          ELSE 0
+                        END";
+
+            return await Context.ContainsAsync(sql);
+        }
+
         public virtual async Task<T> GetAsync(int id)
         {
             var sql = $"SELECT * FROM [{TableName}] WHERE Id=@id";

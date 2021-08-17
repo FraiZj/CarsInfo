@@ -22,3 +22,22 @@ a {
 .clickable {
   cursor: pointer;
 }
+
+.alert {
+  position: relative;
+  padding: 5px;
+  margin-bottom: 5px;
+  border: 1px solid transparent;
+
+  &-danger {
+    @extend .alert;
+    background-color: #fed3d3;
+    color: #820000;
+  }
+}
+
+.validation-alert {
+  width: 240px;
+  margin-bottom: 10px;
+}
+
