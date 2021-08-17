@@ -31,6 +31,10 @@ export class CarsListComponent implements OnInit {
       .subscribe(cars => this.cars = cars);
   }
 
+  public trackCarsById(index: number, car: Car): number {
+    return car.id;
+  }
+
   public getFilteredCars(filter: Filter): void {
     this.filter.brands = filter.brands;
     this.filter.model = filter.model;

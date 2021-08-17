@@ -1,3 +1,4 @@
+import { NavItemDirective } from './components/nav/directives/nav-item.directive';
 import { AuthDialogModule } from './../auth-dialog/auth-dialog.module';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from './../shared/shared.module';
@@ -9,7 +10,8 @@ import { NavComponent } from './components/nav/nav.component';
 @NgModule({
   declarations: [
     NotFoundComponent,
-    NavComponent
+    NavComponent,
+    NavItemDirective
   ],
   imports: [
     // library modules
