@@ -1,6 +1,6 @@
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Brand } from '../../../brands/interfaces/brand';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
 import { BrandsService } from 'app/modules/brands/services/brands.service';
@@ -10,7 +10,8 @@ import { CarsService } from 'app/modules/cars/services/cars.service';
   templateUrl: './car-editor.component.html',
   styleUrls: ['./car-editor.component.scss']
 })
-export class CarEditorComponent implements OnInit {
+export class CarEditorComponent implements OnInit, OnDestroy {
+  private readonly subscriptions: Subscription[] = [];
   public brands$!: Observable<Brand[]>;
   public brandEditorForm: FormGroup = this.formBuilder.group({
     brand: ['', [Validators.required]]
@@ -30,6 +31,10 @@ export class CarEditorComponent implements OnInit {
     private readonly brandsService: BrandsService,
     private readonly router: Router
   ) { }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
   public get brandId(): FormControl {
     return this.carEditorForm.get('brandId') as FormControl;
