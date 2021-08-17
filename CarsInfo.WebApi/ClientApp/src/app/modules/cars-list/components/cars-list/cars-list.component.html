@@ -1,7 +1,7 @@
 <cars-filter (filterEvent)="getFilteredCars($event)"></cars-filter>
 
 <div infiniteScroll (scrolled)="onScroll()" *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
-  <car-card style="display: inline-block;" *ngFor='let car of cars' [car]="car">
+  <car-card style="display: inline-block;" *ngFor='let car of cars; trackBy: trackCarsById' [car]="car">
   </car-card>
 </div>
 

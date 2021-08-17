@@ -2,9 +2,9 @@
   <mat-list-item id="logo">
     <a [routerLink]="['cars']"><strong>CARS INFO</strong></a>
   </mat-list-item>
-  <a mat-list-item [routerLink]="['/cars']">Cars</a>
-  <a mat-list-item [routerLink]="['/add-car']">Add car</a>
-  <a mat-list-item (click)="openDialog('Login')">Login</a>
-  <a mat-list-item (click)="openDialog('Register')">Register</a>
-  <a mat-list-item (click)="onLogout()">Logout</a>
+  <a nav-item mat-list-item [routerLink]="['/cars']">Cars</a>
+  <a nav-item mat-list-item [routerLink]="['/add-car']">Add car</a>
+  <a nav-item mat-list-item (click)="openDialog('Login')">Login</a>
+  <a nav-item mat-list-item (click)="openDialog('Register')">Register</a>
+  <a nav-item mat-list-item (click)="onLogout()">Logout</a>
 </mat-nav-list>
