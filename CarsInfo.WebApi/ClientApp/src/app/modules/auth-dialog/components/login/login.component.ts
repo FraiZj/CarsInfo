@@ -1,15 +1,17 @@
 import { AuthService } from '../../../auth/services/auth.service';
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss', './../../auth-dialog.module.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   @Output() public switchToRegisterEvent = new EventEmitter();
   @Output() public onLoginEvent = new EventEmitter();
+  private readonly subscriptions: Subscription[] = [];
   public loginForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
@@ -20,6 +22,10 @@ export class LoginComponent {
     private readonly formBuilder: FormBuilder,
     private readonly authService: AuthService
   ) { }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
   public get email(): FormControl {
     return this.loginForm.get('email') as FormControl;

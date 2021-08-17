@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 @Component({
@@ -7,16 +8,22 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
   templateUrl: './cars-model-filter.component.html',
   styleUrls: ['./cars-model-filter.component.scss']
 })
-export class CarsModelFilterComponent {
+export class CarsModelFilterComponent implements OnDestroy {
+  @Output() public filterModelEvent = new EventEmitter<string>();
   private readonly filterDebounceTime = 400;
-  modelFormControl = new FormControl();
-  @Output() filterModelEvent = new EventEmitter<string>();
+  private readonly subscriptions: Subscription[] = [];
+  public modelFormControl = new FormControl();
 
-  onModelInput(event: Event): void {
-    this.modelFormControl.valueChanges
-      .pipe(debounceTime(this.filterDebounceTime), distinctUntilChanged())
-      .subscribe(value => {
-        this.filterModelEvent.emit(value);
-      });
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
+  onModelInput(): void {
+    this.subscriptions.push(
+      this.modelFormControl.valueChanges
+        .pipe(debounceTime(this.filterDebounceTime), distinctUntilChanged())
+        .subscribe(value => {
+          this.filterModelEvent.emit(value);
+        }));
   }
 }

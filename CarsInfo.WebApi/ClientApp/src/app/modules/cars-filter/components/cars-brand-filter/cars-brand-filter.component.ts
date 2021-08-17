@@ -1,9 +1,9 @@
-import { Component, EventEmitter, HostBinding, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, OnInit, Output, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Brand } from 'app/modules/brands/interfaces/brand';
 import { BrandsService } from 'app/modules/brands/services/brands.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -11,12 +11,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   templateUrl: './cars-brand-filter.component.html',
   styleUrls: ['./cars-brand-filter.component.scss']
 })
-export class CarsBrandFilterComponent implements OnInit {
+export class CarsBrandFilterComponent implements OnInit, OnDestroy {
   @Output() public filterBrandEvent = new EventEmitter<string[]>();
   @HostBinding('style.width.px') public width: number = 200;
   private static readonly WidthChangeValue: number = 100;
   private static readonly BrandsInFilterMaxValue: number = 5;
   private static readonly FilterDebounceTime: number = 400;
+  private readonly subscriptions: Subscription[] = [];
   public selectable = true;
   public removable = true;
   public brandFormControl: FormControl = new FormControl();
@@ -29,12 +30,16 @@ export class CarsBrandFilterComponent implements OnInit {
     this.filteredBrands$ = this.brandsService.getBrands();
   }
 
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
   public onBrandInput(): void {
-    this.brandFormControl.valueChanges
+    this.subscriptions.push(this.brandFormControl.valueChanges
       .pipe(debounceTime(CarsBrandFilterComponent.FilterDebounceTime), distinctUntilChanged())
       .subscribe(value => {
         this.filteredBrands$ = this.brandsService.getBrands(value);
-      });
+      }));
   }
 
   public onBrandRemove(brand: string): void {

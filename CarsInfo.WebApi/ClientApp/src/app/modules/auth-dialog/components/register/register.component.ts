@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/modules/auth/services/auth.service';
+import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -9,10 +10,11 @@ import { take } from 'rxjs/operators';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss', './../../auth-dialog.module.scss']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnDestroy {
   public static readonly PasswordMaxLength: number = 6;
   @Output() public switchToLoginEvent = new EventEmitter();
   @Output() public onLoginEvent = new EventEmitter();
+  private readonly subscriptions: Subscription[] = [];
   public registerForm = this.formBuilder.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
@@ -23,6 +25,10 @@ export class RegisterComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService) { }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
 
   public get firstName(): FormControl {
     return this.registerForm.get('firstName') as FormControl;
