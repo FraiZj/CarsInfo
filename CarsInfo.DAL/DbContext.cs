@@ -145,5 +145,18 @@ namespace CarsInfo.DAL
                 return 0;
             }
         }
+
+        public async Task<bool?> ContainsAsync(string sql)
+        {
+            try
+            {
+                return await _connection.QueryFirstOrDefaultAsync<bool>(sql);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while executing command");
+                return null;
+            }
+        }
     }
 }

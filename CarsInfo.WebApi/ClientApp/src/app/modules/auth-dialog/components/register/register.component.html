@@ -5,6 +5,12 @@
       <mat-label for="firstName">First Name: </mat-label>
       <input matInput id="firstName" type="text" formControlName="firstName">
     </mat-form-field>
+
+    <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert-danger validation-alert">
+      <div *ngIf="firstName.errors?.required">
+        First name is required.
+      </div>
+    </div>
   </div>
 
   <div>
@@ -12,6 +18,12 @@
       <mat-label for="lastName">Last Name: </mat-label>
       <input matInput id="lastName" type="text" formControlName="lastName">
     </mat-form-field>
+
+    <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert-danger validation-alert">
+      <div *ngIf="lastName.errors?.required">
+        Last name is required.
+      </div>
+    </div>
   </div>
 
   <div>
@@ -19,6 +31,18 @@
       <mat-label for="email">Email: </mat-label>
       <input matInput id="email" type="email" formControlName="email">
     </mat-form-field>
+
+    <div *ngIf="email.invalid && (email.dirty || email.touched)" class="alert-danger validation-alert">
+      <div *ngIf="email.errors?.required">
+        Email is required.
+      </div>
+      <div *ngIf="email.errors?.email">
+        Email format is invalid.
+      </div>
+      <div *ngIf="email.errors?.forbidden">
+        Email is not available.
+      </div>
+    </div>
   </div>
 
   <div>
@@ -26,6 +50,15 @@
       <mat-label for="password">Password: </mat-label>
       <input matInput id="password" type="password" formControlName="password">
     </mat-form-field>
+
+    <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert-danger validation-alert">
+      <div *ngIf="password.errors?.required">
+        Password is required.
+      </div>
+      <div *ngIf="password.errors?.minlength">
+        Password min length is 6
+      </div>
+    </div>
   </div>
 
   <div>

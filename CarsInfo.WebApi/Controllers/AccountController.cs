@@ -51,5 +51,18 @@ namespace CarsInfo.WebApi.Controllers
 
             return Ok(userViewModel);
         }
+
+        [HttpGet("emailAvailable/{email}")]
+        public async Task<IActionResult> IsEmailAvailable(string email)
+        {
+            var contains = await _userService.ContainsUserWithEmailAsync(email);
+
+            if (contains is null)
+            {
+                return BadRequest("Could not fetch the result.");
+            }
+
+            return Ok(!contains);
+        }
     }
 }

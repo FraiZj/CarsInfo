@@ -13,7 +13,6 @@ namespace CarsInfo.Infrastructure.DI
         {
             services.AddTransient<IDbConnection, SqlConnection>(provider => new SqlConnection(connectionString));
             services.AddTransient<IDbContext, DbContext>();
-            services.AddTransient<IContext, JsonContext>();
 
             // repositories
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));

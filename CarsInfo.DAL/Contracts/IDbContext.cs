@@ -35,5 +35,7 @@ namespace CarsInfo.DAL.Contracts
             where TSecond : BaseEntity;
 
         Task<int> ExecuteAsync(string sql, object parameters = null);
+        
+        Task<bool?> ContainsAsync(string sql);
     }
 }

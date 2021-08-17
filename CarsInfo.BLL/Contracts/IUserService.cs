@@ -16,7 +16,9 @@ namespace CarsInfo.BLL.Contracts
         Task UpdateAsync(UserDto entity);
 
         Task DeleteByIdAsync(int id);
-
+        
         Task<ICollection<Claim>> AuthorizeAsync(UserDto entity);
+
+        Task<bool?> ContainsUserWithEmailAsync(string email);
     }
 }
