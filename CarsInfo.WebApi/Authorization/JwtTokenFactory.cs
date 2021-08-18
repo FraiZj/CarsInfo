@@ -27,7 +27,7 @@ namespace CarsInfo.WebApi.Authorization
                 _settings.Issuer,
                 notBefore: now,
                 claims: claims,
-                expires: now.Add(TimeSpan.FromMinutes(_settings.ExpirationTime)),
+                expires: now.Add(TimeSpan.FromSeconds(_settings.ExpirationTime)),
                 signingCredentials: _credentials);
             var tokenHandler = new JwtSecurityTokenHandler();
 
