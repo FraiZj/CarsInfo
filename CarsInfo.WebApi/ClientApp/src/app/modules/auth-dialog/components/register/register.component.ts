@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { AuthService } from 'app/modules/auth/services/auth.service';
 import { Subscription } from 'rxjs';
-import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'register',
@@ -54,10 +52,9 @@ export class RegisterComponent implements OnDestroy {
       return;
     }
 
-    this.authService.register(this.registerForm.value).subscribe(
-      () => {
-        this.onLoginEvent.emit();
-      }
+    this.subscriptions.push(
+      this.authService.register(this.registerForm.value)
+        .subscribe(() => this.onLoginEvent.emit())
     );
   }
 
@@ -67,7 +64,8 @@ export class RegisterComponent implements OnDestroy {
 
   private isEmailAvailable(email: string): boolean {
     let isInUse: boolean = false;
-    this.authService.isEmailAvailable(email).toPromise()
+    this.authService.isEmailAvailable(email)
+      .toPromise()
       .then(o => isInUse = o);
 
     return isInUse;
