@@ -10,7 +10,6 @@ import { CarsService } from 'app/modules/cars/services/cars.service';
   styleUrls: ['./car-details.component.scss']
 })
 export class CarDetailsComponent implements OnInit {
-  private id!: number;
   public car$!: Observable<Car>;
 
   constructor(
@@ -19,8 +18,8 @@ export class CarDetailsComponent implements OnInit {
     private readonly router: Router) { }
 
   public ngOnInit(): void {
-    this.id = this.getIdFromRoute();
-    this.car$ = this.carsService.getCarById(this.id);
+    const id: number = this.getIdFromRoute();
+    this.car$ = this.carsService.getCarById(id);
   }
 
   private getIdFromRoute(): number {

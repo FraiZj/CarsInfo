@@ -52,7 +52,15 @@ export class CarsService {
     return this.http.get<Car>(`${this.url}/${id}`);
   }
 
+  public getCarEditorById(id: number): Observable<CarEditor> {
+    return this.http.get<CarEditor>(`${this.url}/${id}/editor`);
+  }
+
   public addCar(car: CarEditor): Observable<CarEditor> {
     return this.http.post<CarEditor>(this.url, car);
+  }
+
+  public updateCar(id: number, car: CarEditor): Observable<CarEditor> {
+    return this.http.put<CarEditor>(`${this.url}/${id}`, car);
   }
 }

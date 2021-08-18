@@ -68,6 +68,17 @@ namespace CarsInfo.DAL.Repositories
             await Context.ExecuteAsync(sql, new { id });
         }
 
+        public async Task DeleteRangeAsync(IEnumerable<int> ids)
+        {
+            var filters = new List<FilterModel>
+            {
+                new("Id", $"({string.Join(", ", ids)})", "IN")
+            };
+            var filter = ConfigureFilter(filters);
+            var sql = $"DELETE FROM [{TableName}] {filter}";
+            await Context.ExecuteAsync(sql);
+        }
+
         public async Task<T> GetAsync(IList<FilterModel> filters)
         {
             var filter = ConfigureFilter(filters);
@@ -127,7 +138,7 @@ namespace CarsInfo.DAL.Repositories
         {
             var propertyContainer = ParseProperties(entity);
             var sqlValuePairs = GetSqlPairs(propertyContainer.ValueNames);
-            var sql = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE Id=@{entity.Id}";
+            var sql = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE Id={entity.Id}";
             await Context.ExecuteAsync(sql, propertyContainer.AllPairs);
         }
 

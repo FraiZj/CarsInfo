@@ -142,7 +142,16 @@ namespace CarsInfo.BLL.Services
             {
                 ValidateCarEditorDto(entity);
                 var car = _mapper.MapToCar(entity);
+                var oldCar = await _carsRepository.GetWithAllIncludesAsync(entity.Id);
+
                 await _carsRepository.UpdateAsync(car);
+                await _carsPictureRepository.DeleteRangeAsync(oldCar.CarPictures.Select(cp => cp.Id));
+                await _carsPictureRepository.AddRangeAsync(entity.CarPicturesUrls.Select(
+                    carPicture => new CarPicture
+                    {
+                        CarId = car.Id,
+                        PictureLink = carPicture
+                    }).ToList());
             }
             catch (Exception e)
             {

@@ -1,97 +1,48 @@
 import { Observable, Subscription } from 'rxjs';
-import { Brand } from '../../../brands/interfaces/brand';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
-import { BrandsService } from 'app/modules/brands/services/brands.service';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CarsService } from 'app/modules/cars/services/cars.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
 
 @Component({
+  selector: 'car-editor',
   templateUrl: './car-editor.component.html',
   styleUrls: ['./car-editor.component.scss']
 })
 export class CarEditorComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
-  public brands$!: Observable<Brand[]>;
-  public brandEditorForm: FormGroup = this.formBuilder.group({
-    brand: ['', [Validators.required]]
-  });
-  public carEditorForm: FormGroup = this.formBuilder.group({
-    brandId: ['', [Validators.required]],
-    model: ['', [Validators.required]],
-    description: ['', [Validators.maxLength(150)]],
-    carPicturesUrls: this.formBuilder.array([]),
-
-  });
-  public canAddCarPicture!: boolean;
+  private id!: number;
+  public carEditor$!: Observable<CarEditor>;
 
   constructor(
-    private readonly formBuilder: FormBuilder,
     private readonly carsService: CarsService,
-    private readonly brandsService: BrandsService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) { }
+
+  public ngOnInit(): void {
+    this.id = this.getIdFromRoute();
+    this.carEditor$ = this.carsService.getCarEditorById(this.id);
+  }
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  public get brandId(): FormControl {
-    return this.carEditorForm.get('brandId') as FormControl;
+  public onSubmit(car: CarEditor): void {
+    this.subscriptions.push(
+      this.carsService.updateCar(this.id, car)
+        .subscribe(() => this.router.navigateByUrl(`/cars/${this.id}`))
+    );
   }
 
-  public get model(): FormControl {
-    return this.carEditorForm.get('model') as FormControl;
-  }
+  private getIdFromRoute(): number {
+    const routeId = this.route.snapshot.paramMap.get('id');
 
-  public get description(): FormControl {
-    return this.carEditorForm.get('description') as FormControl;
-  }
-
-  public get carPicturesUrls(): FormArray {
-    return this.carEditorForm.get('carPicturesUrls') as FormArray;
-  }
-
-  public get brand(): FormControl {
-    return this.brandEditorForm.get('brand') as FormControl;
-  }
-
-  public ngOnInit(): void {
-    this.brands$ = this.brandsService.getBrands();
-    this.canAddCarPicture = this.carPicturesUrls.length < 3;
-  }
-
-  public addCarPicture(): void {
-    if (this.carPicturesUrls.length >= 3) {
-      return;
+    if (routeId === null) {
+      this.router.navigateByUrl("404");
     }
 
-    this.carPicturesUrls.push(this.formBuilder.control('', [Validators.required]));
-
-    if (this.carPicturesUrls.length >= 3) {
-      this.canAddCarPicture = false;
-    }
-  }
-
-  public removeCarPicture(index: number): void {
-    if (this.carPicturesUrls.at(index) != null) {
-      this.carPicturesUrls.removeAt(index);
-    }
-
-    if (this.carPicturesUrls.length < 3) {
-      this.canAddCarPicture = true;
-    }
-  }
-
-  public addNewBrand(): void {
-    this.brandsService.addBrand(this.brand?.value)
-      .subscribe(() => this.brands$ = this.brandsService.getBrands());
-
-    this.carEditorForm.controls['brand'].setValue('');
-  }
-
-  public onSubmit(): void {
-    this.carsService.addCar(this.carEditorForm.value)
-      .subscribe(() => this.router.navigateByUrl('/cars'));
+    return parseInt(routeId as string);
   }
 }
