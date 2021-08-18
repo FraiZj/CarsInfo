@@ -15,6 +15,8 @@ namespace CarsInfo.DAL.Contracts
 
         Task DeleteAsync(int id);
 
+        Task DeleteRangeAsync(IEnumerable<int> ids);
+
         Task<T> GetAsync(int id);
 
         Task<T> GetAsync(IList<FilterModel> filters);
