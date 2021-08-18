@@ -18,6 +18,7 @@ export class NavComponent {
 
   public onLogout(): void {
     this.authService.logout();
+    location.reload();
     this.router.navigate(['/cars']);
   }
 
