@@ -40,8 +40,10 @@ export class LoginComponent implements OnDestroy {
       return;
     }
 
-    this.authService.login(this.loginForm.value)
-      .subscribe(this.onLoginEvent.emit);
+    this.subscriptions.push(
+      this.authService.login(this.loginForm.value)
+      .subscribe(() => this.onLoginEvent.emit())
+    )
   }
 
   public switchToRegister(): void {
