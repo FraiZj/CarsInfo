@@ -127,7 +127,7 @@ namespace CarsInfo.DAL.Repositories
         {
             var propertyContainer = ParseProperties(entity);
             var sqlValuePairs = GetSqlPairs(propertyContainer.ValueNames);
-            var sql = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE Id=@{entity.Id}";
+            var sql = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE Id={entity.Id}";
             await Context.ExecuteAsync(sql, propertyContainer.AllPairs);
         }
 

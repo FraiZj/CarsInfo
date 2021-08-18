@@ -49,6 +49,20 @@ namespace CarsInfo.WebApi.Controllers
             return Ok(car);
         }
 
+        [HttpGet("{id:int}/editor")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetEditor(int id)
+        {
+            var car = await _carsService.GetCarEditorDtoByIdAsync(id);
+            
+            if (car is null)
+            {
+                return NotFound($"Car with id={id} is not found");
+            }
+
+            return Ok(car);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CarEditorDto car)
         {
@@ -56,11 +70,13 @@ namespace CarsInfo.WebApi.Controllers
             return Created("", car);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] CarEditorDto car)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] CarEditorViewModel updateCar)
         {
-            await _carsService.UpdateAsync(car);
-            return Ok(car);
+            var carEditor = _mapper.MapToCarEditorDto(updateCar);
+            carEditor.Id = id;
+            await _carsService.UpdateAsync(carEditor);
+            return Ok(carEditor);
         }
 
         [HttpPatch("{id:int}")]

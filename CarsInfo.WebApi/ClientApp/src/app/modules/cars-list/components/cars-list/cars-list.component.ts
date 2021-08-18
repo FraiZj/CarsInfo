@@ -15,7 +15,6 @@ export class CarsListComponent implements OnInit, OnDestroy {
   private static readonly ItemsTakePerLoad: number = 6;
   private static readonly ItemsSkipPerLoad: number = 0;
   private readonly subscriptions: Subscription[] = [];
-  private ngUnsubscribe$: Subject<any> = new Subject;
   private filter: FilterWithPaginator = {
     skip: CarsListComponent.ItemsSkipPerLoad,
     take: CarsListComponent.ItemsTakePerLoad
