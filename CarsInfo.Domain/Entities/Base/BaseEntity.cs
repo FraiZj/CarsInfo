@@ -1,4 +1,4 @@
-﻿namespace CarsInfo.DAL.Entities
+﻿namespace CarsInfo.Domain.Entities.Base
 {
 	public class BaseEntity
 	{

@@ -4,7 +4,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
-import { Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'cars-list',
@@ -27,7 +27,6 @@ export class CarsListComponent implements OnInit, OnDestroy {
     private readonly carsService: CarsService,
     private readonly spinner: NgxSpinnerService
   ) { }
-
 
   public ngOnInit(): void {
     this.subscriptions.push(this.carsService.getCars()

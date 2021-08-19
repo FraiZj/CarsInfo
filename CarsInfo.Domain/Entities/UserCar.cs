@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using CarsInfo.Domain.Entities.Base;
 
-namespace CarsInfo.DAL.Entities
+namespace CarsInfo.Domain.Entities
 {
     [Table("UserCar")]
     public class UserCar : BaseEntity
