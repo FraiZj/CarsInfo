@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using CarsInfo.BLL.Contracts;
-using CarsInfo.WebApi.Authorization;
+using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.WebApi.Mappers;
-using CarsInfo.WebApi.ViewModels.ViewModels;
+using CarsInfo.WebApi.StartupConfiguration.Authentication.Factories;
+using CarsInfo.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarsInfo.WebApi.Controllers

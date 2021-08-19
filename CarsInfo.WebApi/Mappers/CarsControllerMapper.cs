@@ -1,5 +1,5 @@
-﻿using CarsInfo.BLL.Models.Dtos;
-using CarsInfo.WebApi.ViewModels.ViewModels;
+﻿using CarsInfo.Application.BusinessLogic.Dtos;
+using CarEditorViewModel = CarsInfo.WebApi.ViewModels.CarEditorViewModel;
 
 namespace CarsInfo.WebApi.Mappers
 {

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CarsInfo.BLL.Contracts;
-using CarsInfo.BLL.Models.Dtos;
-using CarsInfo.BLL.Models.Enums;
+using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Mappers;
-using CarsInfo.WebApi.ViewModels.ViewModels;
+using CarsInfo.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;

@@ -10,8 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarsInfo.BLL\CarsInfo.BLL.csproj" />
-    <ProjectReference Include="..\CarsInfo.WebApi.ViewModels\CarsInfo.WebApi.ViewModels.csproj" />
+    <ProjectReference Include="..\CarsInfo.Application.Persistence\CarsInfo.Application.Persistence.csproj" />
+    <ProjectReference Include="..\CarsInfo.Infrastructure.BusinessLogic\CarsInfo.Infrastructure.BusinessLogic.csproj" />
+    <ProjectReference Include="..\CarsInfo.Infrastructure.DB\CarsInfo.Infrastructure.DB.csproj" />
+    <ProjectReference Include="..\CarsInfo.Infrastructure.Persistence\CarsInfo.Infrastructure.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
