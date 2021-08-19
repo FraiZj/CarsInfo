@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CarsInfo.DAL.Assistance;
-using CarsInfo.DAL.Contracts;
-using CarsInfo.DAL.Entities;
+using CarsInfo.Application.Persistence.Contracts;
+using CarsInfo.Application.Persistence.Filters;
+using CarsInfo.Domain.Entities;
 
-namespace CarsInfo.DAL.Repositories
+namespace CarsInfo.Infrastructure.Persistence.Repositories
 {
     public class CarsRepository : GenericRepository<Car>, ICarsRepository
     {

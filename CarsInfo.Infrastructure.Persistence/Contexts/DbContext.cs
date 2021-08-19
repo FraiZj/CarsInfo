@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using CarsInfo.DAL.Contracts;
-using CarsInfo.DAL.Entities;
+using CarsInfo.Application.Persistence.Contracts;
+using CarsInfo.Domain.Entities.Base;
 using Dapper;
 using Microsoft.Extensions.Logging;
 
-namespace CarsInfo.DAL
+namespace CarsInfo.Infrastructure.Persistence.Contexts
 {
     public class DbContext : IDbContext
     {
