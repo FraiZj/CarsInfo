@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using CarsInfo.DAL.Entities;
+using CarsInfo.Domain.Entities.Base;
 
-namespace CarsInfo.DAL.Contracts
+namespace CarsInfo.Application.Persistence.Contracts
 {
     public interface IContext
 	{

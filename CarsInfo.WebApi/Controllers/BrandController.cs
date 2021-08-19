@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using CarsInfo.BLL.Contracts;
-using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarsInfo.WebApi.Controllers
