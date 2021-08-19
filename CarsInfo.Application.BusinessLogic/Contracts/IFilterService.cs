@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using CarsInfo.BLL.Models.Dtos;
-using CarsInfo.DAL.Assistance;
+using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.Persistence.Filters;
 
-namespace CarsInfo.BLL.Contracts
+namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface IFilterService
     {

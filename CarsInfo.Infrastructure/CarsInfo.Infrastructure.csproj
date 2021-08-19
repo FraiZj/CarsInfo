@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarsInfo.BLL.Models\CarsInfo.BLL.Models.csproj" />
     <ProjectReference Include="..\CarsInfo.BLL\CarsInfo.BLL.csproj" />
     <ProjectReference Include="..\CarsInfo.DAL\CarsInfo.DAL.csproj" />
     <ProjectReference Include="..\CarsInfo.WebApi.ViewModels\CarsInfo.WebApi.ViewModels.csproj" />
