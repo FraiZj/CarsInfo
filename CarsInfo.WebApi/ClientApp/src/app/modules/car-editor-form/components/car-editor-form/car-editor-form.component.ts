@@ -22,7 +22,9 @@ export class CarEditorFormComponent implements OnInit, OnDestroy {
     brandId: ['', [Validators.required]],
     model: ['', [Validators.required]],
     description: ['', [Validators.maxLength(150)]],
-    carPicturesUrls: this.formBuilder.array([]),
+    carPicturesUrls: this.formBuilder.array([
+      ['', Validators.required]
+    ], Validators.required),
 
   });
   public canAddCarPicture!: boolean;
