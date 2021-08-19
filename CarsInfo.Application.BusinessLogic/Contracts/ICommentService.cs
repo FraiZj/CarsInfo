@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.Application.BusinessLogic.Dtos;
 
-namespace CarsInfo.BLL.Contracts
+namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface ICommentService
     {

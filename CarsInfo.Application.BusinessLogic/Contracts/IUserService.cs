@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CarsInfo.BLL.Models.Dtos;
+using CarsInfo.Application.BusinessLogic.Dtos;
 
-namespace CarsInfo.BLL.Contracts
+namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface IUserService
     {

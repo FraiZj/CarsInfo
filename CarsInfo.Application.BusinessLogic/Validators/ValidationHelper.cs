@@ -1,4 +1,6 @@
-﻿namespace CarsInfo.BLL.Assistance
+﻿using CarsInfo.Application.BusinessLogic.Exceptions;
+
+namespace CarsInfo.Application.BusinessLogic.Validators
 {
     public static class ValidationHelper
     {

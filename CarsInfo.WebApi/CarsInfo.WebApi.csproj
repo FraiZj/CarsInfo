@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CarsInfo.BLL.Models\CarsInfo.BLL.Models.csproj" />
     <ProjectReference Include="..\CarsInfo.BLL\CarsInfo.BLL.csproj" />
     <ProjectReference Include="..\CarsInfo.DB\CarsInfo.DB.csproj" />
     <ProjectReference Include="..\CarsInfo.Infrastructure\CarsInfo.Infrastructure.csproj" />

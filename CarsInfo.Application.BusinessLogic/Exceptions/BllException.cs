@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CarsInfo.BLL.Assistance
+namespace CarsInfo.Application.BusinessLogic.Exceptions
 {
     public class BllException : Exception
     {
