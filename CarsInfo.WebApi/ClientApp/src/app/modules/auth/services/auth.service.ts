@@ -1,3 +1,4 @@
+import { ClaimTypes } from './../enums/claim-types';
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { JwtPayload } from "app/modules/auth/interfaces/jwt-payload";
@@ -31,9 +32,9 @@ export class AuthService {
 
     const jwtPayload = jwtDecode<JwtPayload>(this.currentUserTokenSubject.value);
     const userClaims: UserClaims = {
-      roles: jwtPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
+      roles: jwtPayload[ClaimTypes.Role],
       id: +jwtPayload.Id,
-      email: jwtPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
+      email: jwtPayload[ClaimTypes.Email],
       token: this.currentUserTokenSubject.value
     };
 
