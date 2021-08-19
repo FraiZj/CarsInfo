@@ -10,7 +10,7 @@ namespace CarsInfo.WebApi.StartupConfiguration
         {
             services.AddCors(o => o.AddPolicy(CarsInfoPolicy, builder =>
             {
-                builder.WithOrigins("http://localhost:1234/")
+                builder.WithOrigins("http://localhost:4200/")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .SetIsOriginAllowed(_ => true)
