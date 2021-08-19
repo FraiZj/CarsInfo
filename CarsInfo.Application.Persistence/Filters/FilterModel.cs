@@ -1,4 +1,4 @@
-﻿namespace CarsInfo.DAL.Assistance
+﻿namespace CarsInfo.Application.Persistence.Filters
 {
     public class FilterModel
     {

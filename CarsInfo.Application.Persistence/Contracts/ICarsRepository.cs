@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using CarsInfo.DAL.Assistance;
-using CarsInfo.DAL.Entities;
+using CarsInfo.Application.Persistence.Filters;
+using CarsInfo.Domain.Entities;
 
-namespace CarsInfo.DAL.Contracts
+namespace CarsInfo.Application.Persistence.Contracts
 {
     public interface ICarsRepository : IGenericRepository<Car>
     {
