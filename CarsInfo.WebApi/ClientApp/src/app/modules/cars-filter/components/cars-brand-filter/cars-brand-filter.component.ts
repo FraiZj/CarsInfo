@@ -63,7 +63,6 @@ export class CarsBrandFilterComponent implements OnInit, OnDestroy {
     }
 
     this.selectedBrands.push(value);
-    this.width += CarsBrandFilterComponent.WidthChangeValue;
     this.brandFormControl.reset();
     this.filterBrandEvent.emit(this.selectedBrands);
   }

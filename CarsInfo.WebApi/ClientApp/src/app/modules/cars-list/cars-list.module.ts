@@ -26,6 +26,7 @@ import { FavoriteCarsListComponent } from './components/favorite-cars-list/favor
     MatCardModule,
     RouterModule,
     CommonModule,
+    MatIconModule,
     InfiniteScrollModule,
     NgxSpinnerModule,
 

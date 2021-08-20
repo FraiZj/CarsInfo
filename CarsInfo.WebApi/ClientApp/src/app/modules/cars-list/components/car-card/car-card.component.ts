@@ -9,6 +9,9 @@ import { Car } from 'app/modules/cars/interfaces/car';
 })
 export class CarCardComponent implements OnInit {
   @Input() public car!: Car;
+  public static readonly DefaultStarImagePath: string= '../../../../../assets/images/star-default.png';
+  public static readonly SelectedStarImagePath: string = '../../../../../assets/images/star-selected.png';
+  public currentImage: string = CarCardComponent.DefaultStarImagePath;
 
   constructor(private readonly router: Router) { }
 
@@ -20,5 +23,13 @@ export class CarCardComponent implements OnInit {
 
   public navigateToDetails(id: number): void {
     this.router.navigateByUrl(`cars/${id}`);
+  }
+
+  public onStarClick(): void {
+    if (this.currentImage === CarCardComponent.DefaultStarImagePath) {
+      this.currentImage = CarCardComponent.SelectedStarImagePath;
+    } else {
+      this.currentImage = CarCardComponent.DefaultStarImagePath;
+    }
   }
 }

@@ -1,3 +1,15 @@
-#filter-section {
-  margin-left: 20px;
+.filter-section {
+  width: 260px;
+}
+
+@media (max-width: 1000px) {
+  .filter-section {
+    padding-left: 10px;
+  }
+}
+
+@media (max-width: 800px) {
+  .filter-section {
+    display: none;
+  }
 }

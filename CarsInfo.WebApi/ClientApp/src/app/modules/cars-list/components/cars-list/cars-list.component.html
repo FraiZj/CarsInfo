@@ -1,11 +1,9 @@
-<cars-filter (filterEvent)="getFilteredCars($event)"></cars-filter>
-
-<div infiniteScroll (scrolled)="onScroll()" *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
-  <car-card style="display: inline-block;" *ngFor='let car of cars; trackBy: trackCarsById' [car]="car">
-  </car-card>
-</div>
-
-<div>
+<div class="cars-list">
+  <cars-filter (filterEvent)="getFilteredCars($event)"></cars-filter>
+  <div class="cars" infiniteScroll (scrolled)="onScroll()" *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
+    <car-card *ngFor='let car of cars; trackBy: trackCarsById' [car]="car">
+    </car-card>
+  </div>
   <div>
     <ngx-spinner bdOpacity=0.9 bdColor="" size="default" color="#581f87" type="ball-pulse-sync" [fullScreen]="false">
     </ngx-spinner>
