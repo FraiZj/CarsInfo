@@ -1,10 +1,32 @@
-mat-nav-list.list-horizontal {
-  padding: 0;
+.nav {
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2;
+  background-color: white;
+  box-shadow: 0px 0px 1px black;
 
-  #logo {
-    width: 200px;
-    font-size: 22px;
+  a {
+    float: left;
+    color: black;
+    text-align: center;
+    margin: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    text-transform: uppercase;
   }
+
+  a.logo {
+    padding-left: 0;
+    font-size: 25px;
+    font-weight: bold;
+  }
+
+  .nav-right {
+    float: right;
+  }
+}
 
   .mat-list-item {
     font-size: 17px;

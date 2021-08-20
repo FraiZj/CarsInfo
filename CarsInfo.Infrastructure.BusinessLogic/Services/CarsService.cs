@@ -6,6 +6,7 @@ using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
+using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
     {
         private readonly ICarsRepository _carsRepository;
         private readonly IGenericRepository<CarPicture> _carsPictureRepository;
+        private readonly IGenericRepository<UserCar> _userCarRepository;
         private readonly ILogger<CarsService> _logger;
         private readonly CarServiceMapper _mapper;
         private readonly IFilterService _filterService;
@@ -23,12 +25,14 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         public CarsService(
             ICarsRepository carsRepository,
             IGenericRepository<CarPicture> carsPictureRepository,
+            IGenericRepository<UserCar> userCarRepository,
             ILogger<CarsService> logger,
             CarServiceMapper mapper,
             IFilterService filterService)
         {
             _carsRepository = carsRepository;
             _carsPictureRepository = carsPictureRepository;
+            _userCarRepository = userCarRepository;
             _logger = logger;
             _mapper = mapper;
             _filterService = filterService;
@@ -93,7 +97,8 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
                 var filters = _filterService.ConfigureCarFilter(filter);
                 var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filters, filter.Skip, filter.Take);
-                var carsDtos = _mapper.MapToCarsDtos(cars);
+                var currentUserFavoriteCars = await GetUserCarAsync(filter.CurrentUserId);
+                var carsDtos = _mapper.MapToCarsDtos(cars, currentUserFavoriteCars);
 
                 return carsDtos;
             }
@@ -102,6 +107,41 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 _logger.LogError(e, "An error occurred while fetching all cars");
                 return new List<CarDto>();
             }
+        }
+
+        public async Task<IEnumerable<CarDto>> GetUserCarsAsync(FilterDto filter)
+        {
+            try
+            {
+                ValidationHelper.ThrowIfNull(filter);
+                ValidationHelper.ThrowIfStringNullOrWhiteSpace(filter.CurrentUserId);
+
+                var filters = _filterService.ConfigureCarFilter(filter);
+                var cars = await _carsRepository.GetUserCarsAsync(filter.CurrentUserId, filters, filter.Skip, filter.Take);
+                var carsDtos = _mapper.MapToCarsDtos(cars).ToList();
+                carsDtos.ForEach(c => c.IsLiked = true);
+
+                return carsDtos;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching all cars");
+                return new List<CarDto>();
+            }
+        }
+
+
+        private async Task<ICollection<UserCar>> GetUserCarAsync(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return null;
+            }
+
+            return (await _userCarRepository.GetAllAsync(new List<FilterModel>
+            {
+                new("UserId", id)
+            })).ToList();
         }
 
         public async Task<CarDto> GetByIdAsync(int id)

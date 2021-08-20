@@ -31,7 +31,17 @@ namespace CarsInfo.WebApi.Controllers
         [AllowAnonymous]
         public async Task<IEnumerable<CarDto>> Get(FilterDto filter)
         {
+            filter.CurrentUserId = GetCurrentUserId();
             var cars = await _carsService.GetAllAsync(filter);
+            return cars;
+        }
+
+        [HttpGet("favorite")]
+        [AllowAnonymous]
+        public async Task<IEnumerable<CarDto>> Favorite(FilterDto filter)
+        {
+            filter.CurrentUserId = GetCurrentUserId();
+            var cars = await _carsService.GetUserCarsAsync(filter);
             return cars;
         }
 
@@ -103,6 +113,11 @@ namespace CarsInfo.WebApi.Controllers
         {
             await _carsService.DeleteByIdAsync(id);
             return Ok($"Car with id={id} has been deleted");
+        }
+
+        private string GetCurrentUserId()
+        {
+            return User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
         }
     }
 }

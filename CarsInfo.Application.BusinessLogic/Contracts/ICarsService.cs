@@ -10,6 +10,8 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 
         Task<IEnumerable<CarDto>> GetAllAsync(FilterDto filter);
 
+        Task<IEnumerable<CarDto>> GetUserCarsAsync(FilterDto filter);
+
         Task<CarDto> GetByIdAsync(int id);
 
         Task<CarEditorDto> GetCarEditorDtoByIdAsync(int id);

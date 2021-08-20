@@ -9,6 +9,8 @@ namespace CarsInfo.Application.Persistence.Contracts
     {
         Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(IList<FilterModel> filters = null, int skip = 0, int take = 6);
         
+        Task<IEnumerable<Car>> GetUserCarsAsync(string userId, IList<FilterModel> filters = null, int skip = 0, int take = 6);
+
         Task<Car> GetWithAllIncludesAsync(int id);
     }
 }

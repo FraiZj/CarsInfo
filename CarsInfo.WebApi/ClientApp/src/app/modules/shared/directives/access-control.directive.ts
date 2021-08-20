@@ -32,7 +32,7 @@ export class AccessControlDirective implements OnInit {
       return userClaims == null;
     }
 
-    if (this.authenticated && this.roles.length == 0) {
+    if (this.authenticated && (this.roles == null || this.roles.length == 0)) {
       return userClaims != null;
     }
 

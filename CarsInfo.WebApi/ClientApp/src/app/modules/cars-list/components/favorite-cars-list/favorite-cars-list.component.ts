@@ -1,18 +1,18 @@
-import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
-import { Filter } from './../../../cars-filter/interfaces/filter';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Filter } from 'app/modules/cars-filter/interfaces/filter';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 import { ItemsSkipPerLoad, ItemsTakePerLoad } from '../../consts/filter-consts';
+import { FilterWithPaginator } from '../../interfaces/filterWithPaginator';
 
 @Component({
-  selector: 'cars-list',
-  templateUrl: './cars-list.component.html',
-  styleUrls: ['./cars-list.component.scss']
+  selector: 'favorite-cars-list',
+  templateUrl: './favorite-cars-list.component.html',
+  styleUrls: ['./favorite-cars-list.component.scss']
 })
-export class CarsListComponent implements OnInit, OnDestroy {
+export class FavoriteCarsListComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   private filter: FilterWithPaginator = {
     skip: ItemsSkipPerLoad,
@@ -28,7 +28,7 @@ export class CarsListComponent implements OnInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
-    this.subscriptions.push(this.carsService.getCars()
+    this.subscriptions.push(this.carsService.getUserFavoriteCars()
       .subscribe(cars => this.cars = cars));
   }
 
@@ -45,7 +45,7 @@ export class CarsListComponent implements OnInit, OnDestroy {
     this.filter.model = filter.model;
     this.filter.skip = ItemsSkipPerLoad;
     this.filter.take = ItemsTakePerLoad;
-    this.subscriptions.push(this.carsService.getCars(this.filter)
+    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter)
       .subscribe(cars => this.cars = cars));
   }
 
@@ -60,7 +60,7 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public loadNextCars(): void {
     this.filter.skip = this.cars.length;
     this.filter.take = ItemsTakePerLoad;
-    this.subscriptions.push(this.carsService.getCars(this.filter)
+    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter)
       .subscribe(cars => {
         this.spinner.hide();
 

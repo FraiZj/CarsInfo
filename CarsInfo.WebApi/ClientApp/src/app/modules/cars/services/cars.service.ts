@@ -23,6 +23,13 @@ export class CarsService {
     });
   }
 
+  public getUserFavoriteCars(filter?: FilterWithPaginator): Observable<Car[]> {
+    const params = this.configureParams(filter);
+    return this.http.get<Car[]>(`${this.url}/favorite`, {
+      params: params
+    });
+  }
+
   private configureParams(filter?: FilterWithPaginator) {
     let params: {
       brands?: string[];

@@ -32,13 +32,19 @@ export class AuthService {
 
     const jwtPayload = jwtDecode<JwtPayload>(this.currentUserTokenSubject.value);
     const userClaims: UserClaims = {
-      roles: jwtPayload[ClaimTypes.Role],
+      roles: this.configureRoles(jwtPayload),
       id: +jwtPayload.Id,
       email: jwtPayload[ClaimTypes.Email],
       token: this.currentUserTokenSubject.value
     };
 
     return userClaims;
+  }
+
+  private configureRoles(jwtPayload: JwtPayload) {
+    return typeof jwtPayload[ClaimTypes.Role] == 'string' ?
+      [jwtPayload[ClaimTypes.Role] as string] :
+      jwtPayload[ClaimTypes.Role] as string[];
   }
 
   public register(userRegister: UserRegister): Observable<User> {
