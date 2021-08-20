@@ -32,9 +32,43 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
             };
         }
 
+        public CarDto MapToCarDto(Car car, ICollection<UserCar> userCars)
+        {
+            if (car is null)
+            {
+                return null;
+            }
+
+            if (!userCars?.Any() ?? true)
+            {
+                return MapToCarDto(car);
+            }
+
+            return new CarDto
+            {
+                Id = car.Id,
+                Brand = car.Brand?.Name,
+                CarPicturesUrls = car.CarPictures?.Select(cp => cp?.PictureLink).ToList(),
+                Description = car.Description,
+                Model = car.Model,
+                Comments = _commentServiceMapper.MapToCommentsDtos(car.Comments),
+                IsLiked = userCars!.Any(c => c.CarId == car.Id)
+            };
+        }
+
         public ICollection<CarDto> MapToCarsDtos(IEnumerable<Car> cars)
         {
             return cars?.Select(MapToCarDto).ToList();
+        }
+
+        public ICollection<CarDto> MapToCarsDtos(IEnumerable<Car> cars, ICollection<UserCar> userCars)
+        {
+            if (!userCars?.Any() ?? true)
+            {
+                return MapToCarsDtos(cars);
+            }
+
+            return cars?.Select(car => MapToCarDto(car, userCars)).ToList();
         }
 
         public CarEditorDto MapToCarEditorDto(Car car)

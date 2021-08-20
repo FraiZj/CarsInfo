@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
 
@@ -7,13 +7,19 @@ import { Car } from 'app/modules/cars/interfaces/car';
   templateUrl: './car-card.component.html',
   styleUrls: ['./car-card.component.scss']
 })
-export class CarCardComponent {
+export class CarCardComponent implements OnInit {
   @Input() public car!: Car;
   public static readonly DefaultStarImagePath: string= '../../../../../assets/images/star-default.png';
   public static readonly SelectedStarImagePath: string = '../../../../../assets/images/star-selected.png';
   public currentImage: string = CarCardComponent.DefaultStarImagePath;
 
   constructor(private readonly router: Router) { }
+
+  ngOnInit(): void {
+    this.currentImage = this.car.isLiked ?
+      CarCardComponent.SelectedStarImagePath :
+      CarCardComponent.DefaultStarImagePath;
+  }
 
   public navigateToDetails(id: number): void {
     this.router.navigateByUrl(`cars/${id}`);

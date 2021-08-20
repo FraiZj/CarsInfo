@@ -5,11 +5,11 @@
     </div>
     <div class="nav-links">
       <a nav-item [routerLink]="['/cars']">All Cars</a>
-      <a nav-item [routerLink]="['/favorite-cars']">Favorite Cars</a>
+      <a nav-item access-control [routerLink]="['/cars/favorite']">Favorite Cars</a>
       <a nav-item access-control [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
-      <a class="nav-right clickable" nav-item access-control [authenticated]="false" (click)="openDialog('Login')">Login</a>
-      <a class="nav-right clickable" nav-item access-control [authenticated]="false" (click)="openDialog('Register')">Register</a>
-      <a class="nav-right clickable" nav-item access-control (click)="onLogout()">Logout</a>
+      <a nav-item access-control [authenticated]="false" class="nav-right clickable" (click)="openDialog('Login')">Login</a>
+      <a nav-item access-control [authenticated]="false" class="nav-right clickable" (click)="openDialog('Register')">Register</a>
+      <a nav-item access-control class="nav-right clickable" (click)="onLogout()">Logout</a>
     </div>
   </div>
 </nav>

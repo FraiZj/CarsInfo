@@ -9,15 +9,16 @@ import { CarCardComponent } from "./components/car-card/car-card.component";
 import { CarsListComponent } from "./components/cars-list/cars-list.component";
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { SharedModule } from '../shared/shared.module';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MatIconModule } from '@angular/material/icon';
+import { FavoriteCarsListComponent } from './components/favorite-cars-list/favorite-cars-list.component';
 
 @NgModule({
   declarations: [
     CarsListComponent,
-    CarCardComponent
+    CarCardComponent,
+    FavoriteCarsListComponent
   ],
   imports: [
     // library modules

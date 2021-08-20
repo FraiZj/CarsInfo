@@ -9,8 +9,10 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
         public string Model { get; set; }
 
         public string Description { get; set; }
-
+        
         public string Brand { get; set; }
+
+        public bool IsLiked { get; set; }
 
         public ICollection<string> CarPicturesUrls { get; set; }
 

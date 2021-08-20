@@ -49,29 +49,44 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return GroupSet(cars);
         }
 
-        //public async Task<Car> GetAsyncWithAllIncludesAsync()
-        //{
+        public async Task<IEnumerable<Car>> GetUserCarsAsync(
+            string userId, IList<FilterModel> filters = null, int skip = 0, int take = 6)
+        {
+            var filter = filters?.Any() ?? false ? ConfigureFilter(filters) : string.Empty;
+            var sql = $@"SELECT * FROM (
+	                        SELECT Car.Id AS CarId FROM Car
+                            INNER JOIN UserCar
+                            ON Car.Id = UserCar.CarId AND UserCar.UserId = { userId }
+	                        LEFT JOIN Brand
+	                        ON Car.BrandId = Brand.Id
+                            { filter }
+	                        GROUP BY Car.Id, Brand.Name
+	                        ORDER BY Brand.Name 
+	                        OFFSET { skip } ROWS
+	                        FETCH NEXT { take } ROWS ONLY
+	                    ) as CarsIds
+                        LEFT JOIN Car
+                        ON CarsIds.CarId = Car.Id
+                        LEFT JOIN Brand
+                        ON Car.BrandId = Brand.Id
+                        LEFT JOIN CarPicture
+                        ON Car.Id = CarPicture.CarId";
 
-        //    var properties = ParseProperties(filter);
-        //    var sqlPairs = GetSqlPairs(properties.AllNames, " AND ");
-        //    var sql = @$"SELECT TOP 1 * FROM [{TableName}] c
-        //                 INNER JOIN [tbl.Brands] br 
-        //                 ON c.BrandId = br.Id
-        //                 INNER JOIN [tbl.BodyTypes] bt
-        //                 ON c.BodyTypeId = br.Id
-        //                 INNER JOIN [tbl.CarPictures] cp
-        //                 ON c.Id = cp.CarId 
-        //                 WHERE {sqlPairs}";
+            var cars = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
+                (car, brand, carPicture) =>
+                {
+                    car.Brand = brand;
 
-        //    return await Context.QueryFirstOrDefaultAsync<Car, Brand, BodyType, CarPicture>(sql,
-        //        (car, brand, bodyType, carPicture) =>
-        //        {
-        //            car.Brand = brand;
-        //            car.BodyType = bodyType;
-        //            car.CarPictures.Add(carPicture);
-        //            return car;
-        //        }, sqlPairs);
-        //}
+                    if (carPicture is not null)
+                    {
+                        car.CarPictures.Add(carPicture);
+                    }
+
+                    return car;
+                });
+
+            return GroupSet(cars);
+        }
 
         public async Task<Car> GetWithAllIncludesAsync(int id)
         {
