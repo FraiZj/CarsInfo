@@ -1,10 +1,15 @@
-<mat-nav-list class="list-horizontal nav">
-  <mat-list-item id="logo">
-    <a [routerLink]="['cars']"><strong>CARS INFO</strong></a>
-  </mat-list-item>
-  <a nav-item mat-list-item [routerLink]="['/cars']">Cars</a>
-  <a nav-item mat-list-item access-control [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
-  <a nav-item mat-list-item access-control [authenticated]="false" (click)="openDialog('Login')">Login</a>
-  <a nav-item mat-list-item access-control [authenticated]="false" (click)="openDialog('Register')">Register</a>
-  <a nav-item mat-list-item access-control (click)="onLogout()">Logout</a>
-</mat-nav-list>
+<nav class="nav">
+  <div class="wrapper">
+    <div class="logo">
+      <a class="logo" [routerLink]="['cars']"><strong>CARS INFO</strong></a>
+    </div>
+    <div class="nav-links">
+      <a nav-item [routerLink]="['/cars']">All Cars</a>
+      <a nav-item [routerLink]="['/favorite-cars']">Favorite Cars</a>
+      <a nav-item access-control [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
+      <a class="nav-right clickable" nav-item access-control [authenticated]="false" (click)="openDialog('Login')">Login</a>
+      <a class="nav-right clickable" nav-item access-control [authenticated]="false" (click)="openDialog('Register')">Register</a>
+      <a class="nav-right clickable" nav-item access-control (click)="onLogout()">Logout</a>
+    </div>
+  </div>
+</nav>

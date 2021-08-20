@@ -1,13 +1,14 @@
 <mat-card class="car-card">
-  <img class="car-card-image" *ngIf='car.carPicturesUrls.length > 0' [src]="car.carPicturesUrls[0]" />
+  <a [routerLink]="[car.id]">
+    <img class="car-card-image" *ngIf='car.carPicturesUrls.length > 0' [src]="car.carPicturesUrls[0]" />
+  </a>
   <mat-card-content class="car-card-content">
-    <mat-card-title>{{ car.brand }}</mat-card-title>
-    <mat-card-subtitle>{{ car.model }}</mat-card-subtitle>
+    <div class="car-info">
+      <mat-card-title>{{ car.brand }}</mat-card-title>
+      <mat-card-subtitle>{{ car.model }}</mat-card-subtitle>
+    </div>
+    <div class="car-card-star-block">
+      <img class="car-card--star" [src]="currentImage" alt="Default star image" (click)="onStarClick()">
+    </div>
   </mat-card-content>
-  <mat-card-actions class="car-card-actions">
-    <a [routerLink]="[car.id]">
-      <button mat-button>Details</button>
-    </a>
-    <button mat-button>Like</button>
-  </mat-card-actions>
 </mat-card>

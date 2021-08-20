@@ -8,11 +8,20 @@ body {
 }
 
 .wrapper {
-  margin-right: auto; /* 1 */
-  margin-left: auto; /* 1 */
-  max-width:1160px; /* 2 */
-  padding-right: 10px; /* 3 */
-  padding-left: 10px; /* 3 */
+  width: 70%;
+  margin: auto;
+}
+
+@media (max-width: 1570px) {
+  .wrapper {
+    width: 85%;
+  }
+}
+
+@media (max-width: 1000px) {
+  .wrapper {
+    width: 100%;
+  }
 }
 
 a {

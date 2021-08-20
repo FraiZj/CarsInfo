@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { SharedModule } from '../shared/shared.module';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     MatCardModule,
     RouterModule,
     CommonModule,
+    MatIconModule,
     InfiniteScrollModule,
     NgxSpinnerModule,
 

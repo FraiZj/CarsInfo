@@ -19,10 +19,10 @@ export class NavItemDirective implements OnInit {
   }
 
   private addUnderline(): void {
-    this.renderer.setStyle(this.el.nativeElement, 'border-bottom', '1px solid black');
+    this.renderer.setStyle(this.el.nativeElement, 'font-weight', '600');
   }
 
   private removeUnderline(): void {
-    this.renderer.setStyle(this.el.nativeElement, 'border-bottom', '1px solid transparent');
+    this.renderer.setStyle(this.el.nativeElement, 'font-weight', 'normal');
   }
 }
