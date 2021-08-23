@@ -1,12 +1,89 @@
+$input-color: #cdd9e5;
+$placeholder-color: #76828b;
+$validation-color: #f44336;
+
 .car-editor {
-  margin-left: 30px;
+  padding-top: 150px;
+  width: 550px;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .car-editor {
+    padding-top: 50px;
+    width: calc(100% - 20px);
+  }
 }
 
 .car-editor-input {
-  width: 250px;
+  width: 100%;
+
+  &--picture {
+    margin-top: 5px;
+    width: calc(100% - 25px);
+  }
 }
 
 .invalid-button {
-  border: 1px solid red;
-  color: red;
+  border: 1px solid $validation-color;
+  color: $validation-color;
+}
+
+.brand-input {
+  display: inline-block;
+  padding-bottom: 10px;
+  margin: 0 0 0 16px;
+  width: calc(100% - 70px);
+}
+
+.brand-input--add {
+  display: inline-block;
+}
+
+.car-editor-textarea {
+  max-height: 200px;
+  min-height: 30px;
+}
+
+.car-picture-form-field {
+  padding: 5px;
+}
+
+.submit-block {
+  padding-top: 10px;
+}
+
+@media (max-width: 800px) {
+  .car-editor-input {
+    margin: 10px;
+    width: calc(100% - 20px);
+  }
+
+  .car-picture-form-field {
+    padding: 15px;
+  }
+}
+
+::placeholder {
+  color: $placeholder-color;
+}
+
+::ng-deep .mat-form-field {
+  color: $input-color;
+}
+
+::ng-deep .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep .mat-focused .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-underline {
+  background-color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-ripple {
+  background-color: $input-color !important;
 }

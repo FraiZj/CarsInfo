@@ -1,3 +1,6 @@
+$input-color: #cdd9e5;
+$placeholder-color: #76828b;
+
 .brand-chips-field {
   width: 250px;
   height: 200px;
@@ -8,4 +11,32 @@
   padding-top: 0;
   margin-top: 18.8125px;
   width: 250px;
+}
+
+::placeholder {
+  color: $placeholder-color;
+}
+
+::ng-deep .mat-select-valuext {
+  color: $input-color !important;
+}
+
+::ng-deep .mat-form-field {
+  color: $input-color !important;
+}
+
+::ng-deep .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep .mat-focused .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-underline {
+  background-color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-ripple {
+  background-color: $input-color !important;
 }
