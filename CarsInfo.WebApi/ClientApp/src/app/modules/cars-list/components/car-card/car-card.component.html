@@ -1,11 +1,11 @@
 <mat-card class="car-card">
-  <a [routerLink]="[car.id]">
+  <a [routerLink]="['/cars', car.id]">
     <img class="car-card-image" *ngIf='car.carPicturesUrls.length > 0' [src]="car.carPicturesUrls[0]" />
   </a>
   <mat-card-content class="car-card-content">
     <div class="car-info">
       <mat-card-title>
-      <a [routerLink]="[car.id]">{{ car.brand }}</a>
+      <a [routerLink]="['/cars', car.id]">{{ car.brand }}</a>
       </mat-card-title>
       <mat-card-subtitle>{{ car.model }}</mat-card-subtitle>
     </div>
