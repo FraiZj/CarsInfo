@@ -1,18 +1,23 @@
-import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Output, OnDestroy, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'cars-model-filter',
   templateUrl: './cars-model-filter.component.html',
   styleUrls: ['./cars-model-filter.component.scss']
 })
-export class CarsModelFilterComponent implements OnDestroy {
+export class CarsModelFilterComponent implements OnInit, OnDestroy {
+  @Input() public model: string | undefined = '';
   @Output() public filterModelEvent = new EventEmitter<string>();
   private readonly filterDebounceTime = 400;
   private readonly subscriptions: Subscription[] = [];
-  public modelFormControl = new FormControl();
+  public modelFormControl!: FormControl;
+
+  public ngOnInit(): void {
+    this.modelFormControl = new FormControl(this.model ?? '');
+  }
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());

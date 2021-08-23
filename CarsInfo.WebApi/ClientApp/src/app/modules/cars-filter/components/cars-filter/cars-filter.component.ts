@@ -1,5 +1,5 @@
-import { Filter } from './../../interfaces/filter';
-import { Component, Output } from '@angular/core';
+import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWithPaginator';
+import { Component, Input, Output, OnInit } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
 @Component({
@@ -8,24 +8,21 @@ import { EventEmitter } from '@angular/core';
   styleUrls: ['./cars-filter.component.scss']
 })
 export class CarsFilterComponent {
-  private brands: string[] = [];
-  private model: string = '';
-  @Output() public filterEvent = new EventEmitter<Filter>();
+  @Input() public filter!: FilterWithPaginator;
+  @Output() public filterEvent = new EventEmitter<FilterWithPaginator>();
 
   public onBrandFilter(brands: string[]): void {
-    this.brands = brands;
-    this.emitFilterEvent();
+    this.filter.brands = brands;
+    this.filterEvent.emit(this.filter);
   }
 
   public onModelFilter(model: string): void {
-    this.model = model;
-    this.emitFilterEvent();
+    this.filter.model = model;
+    this.filterEvent.emit(this.filter);
   }
 
-  private emitFilterEvent() {
-    this.filterEvent.emit({
-      brands: this.brands,
-      model: this.model,
-    });
+  public clearFilter():void {
+    this.filter = FilterWithPaginator.CreateDefault();
+    this.filterEvent.emit(this.filter);
   }
 }

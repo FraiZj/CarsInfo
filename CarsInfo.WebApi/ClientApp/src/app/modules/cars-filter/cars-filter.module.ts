@@ -13,6 +13,7 @@ import { CarsModelFilterComponent } from './components/cars-model-filter/cars-mo
 import { MatSelectModule } from "@angular/material/select";
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MatInputModule } from '@angular/material/input';
     MatAutocompleteModule,
     MatSelectModule,
     MatIconModule,
+    MatButtonModule,
     MatPaginatorModule,
     ReactiveFormsModule,
     CommonModule,
