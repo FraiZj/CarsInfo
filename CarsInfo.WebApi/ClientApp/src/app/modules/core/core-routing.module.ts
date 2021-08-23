@@ -4,7 +4,7 @@ import { RouterModule, Routes } from "@angular/router";
 
 const routes: Routes = [
   {
-    path: '404',
+    path: '',
     component: NotFoundComponent,
   }
 ];
