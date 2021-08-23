@@ -1,3 +1,4 @@
+import { NotFoundComponent } from './modules/core/components/not-found/not-found.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Roles } from '@auth/enums/roles';
@@ -9,11 +10,6 @@ const routes: Routes = [
     redirectTo: '/cars',
     pathMatch: 'full'
   },
-  {
-    path: '404',
-    loadChildren: () => import('./modules/core/core.module').then(m => m.CoreModule)
-  },
-
   {
     path: 'cars',
     loadChildren: () => import('./modules/cars-list/cars-list.module').then(m => m.CarsListModule)
@@ -38,6 +34,10 @@ const routes: Routes = [
       roles: [Roles.Admin]
     }
   },
+  {
+    path: '**',
+    component: NotFoundComponent
+  }
 ];
 
 @NgModule({
