@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.Exceptions;
 using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
@@ -38,7 +39,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             _filterService = filterService;
         }
 
-        public async Task AddAsync(CarEditorDto entity)
+        public async Task<bool> AddAsync(CarEditorDto entity)
         {
             try
             {
@@ -52,14 +53,17 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                         CarId = carId,
                         PictureLink = carPicture
                     }).ToList());
+
+                return true;
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while creating car");
+                return false;
             }
         }
 
-        public async Task AddToFavorite(int userId, int carId)
+        public async Task AddToFavoriteAsync(int userId, int carId)
         {
             try
             {
@@ -173,7 +177,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-
         private async Task<ICollection<UserCar>> GetUserCarAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -246,6 +249,11 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             ValidationHelper.ThrowIfNull(car);
             ValidationHelper.ThrowIfStringNullOrWhiteSpace(car.Model);
+
+            if (!car.CarPicturesUrls?.Any() ?? true)
+            {
+                throw new BllException("Car should have at least one picture");
+            }
         }
     }
 }

@@ -6,7 +6,7 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface ICarsService
     {
-        Task AddToFavorite(int userId, int carId);
+        Task AddToFavoriteAsync(int userId, int carId);
 
         Task<IEnumerable<CarDto>> GetAllAsync();
 
@@ -18,7 +18,7 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 
         Task<CarEditorDto> GetCarEditorDtoByIdAsync(int id);
 
-        Task AddAsync(CarEditorDto entity);
+        Task<bool> AddAsync(CarEditorDto entity);
 
         Task UpdateAsync(CarEditorDto entity);
 
