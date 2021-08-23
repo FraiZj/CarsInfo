@@ -6,8 +6,14 @@ import { AuthGuard } from '@core/auth/auth-guard';
 const routes: Routes = [
   {
     path: '',
+    redirectTo: '/cars',
+    pathMatch: 'full'
+  },
+  {
+    path: '404',
     loadChildren: () => import('./modules/core/core.module').then(m => m.CoreModule)
   },
+
   {
     path: 'cars',
     loadChildren: () => import('./modules/cars-list/cars-list.module').then(m => m.CarsListModule)
