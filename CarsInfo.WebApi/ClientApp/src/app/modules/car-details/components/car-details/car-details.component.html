@@ -1,13 +1,13 @@
-<mat-card class="car-card" *ngIf="car$ | async as car">
-  <mat-card-header>
-    <mat-card-title>{{ car.brand }}</mat-card-title>
-    <mat-card-subtitle>{{ car.model }}</mat-card-subtitle>
-  </mat-card-header>
-  <img class="car-card-image" *ngIf='car.carPicturesUrls.length > 0' [src]="car.carPicturesUrls[0]" />
-  <mat-card-content>
-    <p>{{ car.description }}</p>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-button>Like</button>
-  </mat-card-actions>
-</mat-card>
+<div *ngIf="car$ | async as car" class="car-details">
+  <ngb-carousel class="car-details-carousel">
+    <ng-template ngbSlide *ngFor="let pictureUrl of car.carPicturesUrls">
+      <div class="picsum-img-wrapper">
+        <img [src]="pictureUrl" alt="Car picture" class="car-details-carousel-picture">
+      </div>
+    </ng-template>
+  </ngb-carousel>
+  <div class="car-details-content">
+    <h2 class="car-details-title">{{ car.brand }} {{ car.model }}</h2>
+    <p class="car-details-description">{{ car.description }}</p>
+  </div>
+</div>

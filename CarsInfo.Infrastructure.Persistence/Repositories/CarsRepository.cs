@@ -90,18 +90,15 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public async Task<Car> GetWithAllIncludesAsync(int id)
         {
-            var sql = @$"SELECT * FROM {TableName} car
+            var sql = @$"SELECT * FROM Car
                          LEFT JOIN Brand
-                         ON car.BrandId = Brand.Id
+                         ON Car.BrandId = Brand.Id
                          LEFT JOIN CarPicture
-                         ON car.Id = CarPicture.CarId
-                         LEFT JOIN Comment
-                         ON car.Id = Comment.CarId
+                         ON Car.Id = CarPicture.CarId
                          WHERE car.Id=@id";
 
-            
-            return await Context.QueryFirstOrDefaultAsync<Car, Brand, CarPicture, Comment>(sql,
-                (car, brand, carPicture, comment) =>
+            var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
+                (car, brand, carPicture) =>
                 {
                     car.Brand = brand;
 
@@ -109,14 +106,11 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                     {
                         car.CarPictures.Add(carPicture);
                     }
-
-                    if (comment is not null)
-                    {
-                        car.Comments.Add(comment);
-                    }
                     
                     return car;
                 }, new { id });
+
+            return GroupSet(cars).FirstOrDefault();
         }
 
         private IEnumerable<Car> GroupSet(IEnumerable<Car> cars)
