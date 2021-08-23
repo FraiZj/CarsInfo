@@ -1,3 +1,7 @@
+$content-color: #cdd9e5;
+$input-color: #cdd9e5;
+$placeholder-color: #76828b;
+
 mat-form-field {
   width: 250px;
 }
@@ -8,6 +12,31 @@ mat-form-field {
   float: right;
 
   p {
+    color: $content-color;
     margin: 0;
   }
+}
+
+::placeholder {
+  color: $placeholder-color;
+}
+
+::ng-deep .mat-form-field {
+  color: $input-color;
+}
+
+::ng-deep .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep .mat-focused .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-underline {
+  background-color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-ripple {
+  background-color: $input-color !important;
 }

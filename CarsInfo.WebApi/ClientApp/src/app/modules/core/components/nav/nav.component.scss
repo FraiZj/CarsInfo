@@ -4,17 +4,21 @@
   top: 0;
   width: 100%;
   z-index: 2;
-  background-color: white;
+  background-color: #22272e;
   box-shadow: 0px 0px 1px black;
 
   a {
     float: left;
-    color: black;
+    color: #cdd9e5;
     text-align: center;
     margin: 14px 16px;
     text-decoration: none;
     font-size: 17px;
     text-transform: uppercase;
+  }
+
+  a:hover {
+    color: #76828b;
   }
 
   a.logo {

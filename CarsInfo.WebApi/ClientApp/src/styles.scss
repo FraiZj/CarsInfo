@@ -4,6 +4,7 @@
 html, body { height: 100%; }
 body {
   margin: 0;
+  background-color: #2d333b;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
@@ -25,7 +26,7 @@ body {
 }
 
 a {
-  color: black;
+  color: #cdd9e5;
   text-decoration: none;
 }
 
@@ -47,7 +48,7 @@ a {
 }
 
 .validation-alert {
-  width: 240px;
+  width: 100%;
   margin-bottom: 10px;
 }
 

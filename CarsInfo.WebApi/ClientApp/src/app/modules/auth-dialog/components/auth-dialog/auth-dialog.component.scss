@@ -1,0 +1,19 @@
+$content-color: #cdd9e5;
+
+::ng-deep .mat-dialog-container {
+  background-color: #2d333b;
+}
+
+.mat-dialog-title {
+  color: $content-color;
+}
+
+.mat-dialog-actions {
+  float: right;
+  margin: 0;
+  padding: 0;
+}
+
+.mat-dialog-content {
+  width: 260px;
+}
