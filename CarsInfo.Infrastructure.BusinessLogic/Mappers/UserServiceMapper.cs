@@ -50,7 +50,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(user.Password)
+                Password = user.Password
             };
         }
     }

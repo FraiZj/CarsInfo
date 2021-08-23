@@ -43,6 +43,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             {
                 ValidateUserDto(entity);
                 var user = _mapper.MapToUser(entity);
+                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 var userId = await _usersRepository.AddAsync(user);
                 var roleId = await GetRoleIdAsync(Roles.User);
                 await _userRoleRepository.AddAsync(new UserRole
