@@ -59,6 +59,49 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
+        public async Task AddToFavorite(int userId, int carId)
+        {
+            try
+            {
+                var car = await _carsRepository.GetAsync(carId);
+                ValidationHelper.ThrowIfNull(car);
+
+                var userCar = await _userCarRepository.GetAsync(new List<FilterModel>
+                {
+                    new("CarId", car.Id, separator: "AND"),
+                    new("UserId", userId)
+                });
+
+                if (userCar is not null)
+                {
+                    await DeleteFromFavoriteAsync(userCar.Id);
+                    return;
+                }
+
+                await _userCarRepository.AddAsync(new UserCar
+                {
+                    CarId = carId,
+                    UserId = userId
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while adding car with to favorite");
+            }
+        }
+
+        private async Task DeleteFromFavoriteAsync(int userCarId)
+        {
+            try
+            {
+                await _userCarRepository.DeleteAsync(userCarId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while deleting car from favorite");
+            }
+        }
+
         public async Task DeleteByIdAsync(int id)
         {
             try

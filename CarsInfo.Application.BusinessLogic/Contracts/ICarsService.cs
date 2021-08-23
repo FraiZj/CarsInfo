@@ -6,6 +6,8 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface ICarsService
     {
+        Task AddToFavorite(int userId, int carId);
+
         Task<IEnumerable<CarDto>> GetAllAsync();
 
         Task<IEnumerable<CarDto>> GetAllAsync(FilterDto filter);

@@ -4,11 +4,13 @@
   </a>
   <mat-card-content class="car-card-content">
     <div class="car-info">
-      <mat-card-title>{{ car.brand }}</mat-card-title>
+      <mat-card-title>
+      <a [routerLink]="[car.id]">{{ car.brand }}</a>
+      </mat-card-title>
       <mat-card-subtitle>{{ car.model }}</mat-card-subtitle>
     </div>
-    <div class="car-card-star-block">
-      <img class="car-card--star" [src]="currentImage" alt="Default star image" (click)="onStarClick()">
+    <div access-control class="car-card-star-block">
+      <img class="car-card--star clickable" [src]="currentImage" alt="Default star image" (click)="onStarClick()">
     </div>
   </mat-card-content>
 </mat-card>

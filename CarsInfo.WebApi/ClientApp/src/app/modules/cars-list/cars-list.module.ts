@@ -1,3 +1,4 @@
+import { SharedModule } from './../shared/shared.module';
 import { CarsModule } from './../cars/cars.module';
 import { CoreModule } from './../core/core.module';
 import { NgModule } from "@angular/core";
@@ -34,7 +35,8 @@ import { FavoriteCarsListComponent } from './components/favorite-cars-list/favor
     CoreModule,
     CarsFilterModule,
     CarsListRoutingModule,
-    CarsModule
+    CarsModule,
+    SharedModule
   ],
   exports: [
     CarsListRoutingModule
