@@ -70,4 +70,8 @@ export class CarsService {
   public updateCar(id: number, car: CarEditor): Observable<CarEditor> {
     return this.http.put<CarEditor>(`${this.url}/${id}`, car);
   }
+
+  public addToFavorite(carId: number) : Observable<number> {
+    return this.http.put<number>(`${this.url}/${carId}/favorite`, { });
+  }
 }

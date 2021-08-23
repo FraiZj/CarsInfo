@@ -26,12 +26,13 @@ namespace CarsInfo.WebApi.Controllers
             _carsService = carsService;
             _mapper = mapper;
         }
-
+        
         [HttpGet]
         [AllowAnonymous]
         public async Task<IEnumerable<CarDto>> Get(FilterDto filter)
         {
-            filter.CurrentUserId = GetCurrentUserId();
+            var userId = GetCurrentUserId();
+            filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
             var cars = await _carsService.GetAllAsync(filter);
             return cars;
         }
@@ -40,7 +41,8 @@ namespace CarsInfo.WebApi.Controllers
         [AllowAnonymous]
         public async Task<IEnumerable<CarDto>> Favorite(FilterDto filter)
         {
-            filter.CurrentUserId = GetCurrentUserId();
+            var userId = GetCurrentUserId();
+            filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
             var cars = await _carsService.GetUserCarsAsync(filter);
             return cars;
         }
@@ -80,6 +82,21 @@ namespace CarsInfo.WebApi.Controllers
             return Created("", car);
         }
 
+        [HttpPut("{carId:int}/favorite")]
+        [Authorize(Roles = Roles.User)]
+        public async Task<IActionResult> AddToFavorite(int carId)
+        {
+            var userId = GetCurrentUserId();
+
+            if (!userId.HasValue)
+            {
+                return BadRequest("Cannot get user id");
+            }
+
+            await _carsService.AddToFavorite(userId.Value, carId);
+            return Ok(carId);
+        }
+
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] CarEditorViewModel updateCar)
         {
@@ -115,9 +132,11 @@ namespace CarsInfo.WebApi.Controllers
             return Ok($"Car with id={id} has been deleted");
         }
 
-        private string GetCurrentUserId()
+        private int? GetCurrentUserId()
         {
-            return User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+            return int.TryParse(User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value, out var id) ?
+                id :
+                null;
         }
     }
 }
