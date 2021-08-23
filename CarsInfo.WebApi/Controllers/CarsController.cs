@@ -9,6 +9,7 @@ using CarsInfo.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CarsInfo.WebApi.Controllers
 {
@@ -76,10 +77,19 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CarEditorDto car)
+        public async Task<IActionResult> Create([FromBody] CarEditorViewModel car)
         {
-            await _carsService.AddAsync(car);
-            return Created("", car);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var carEditor = _mapper.MapToCarEditorDto(car);
+            var created = await _carsService.AddAsync(carEditor);
+
+            return created ? 
+                Created("", car) : 
+                BadRequest("Car was not created.");
         }
 
         [HttpPut("{carId:int}/favorite")]
@@ -93,13 +103,18 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest("Cannot get user id");
             }
 
-            await _carsService.AddToFavorite(userId.Value, carId);
+            await _carsService.AddToFavoriteAsync(userId.Value, carId);
             return Ok(carId);
         }
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] CarEditorViewModel updateCar)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var carEditor = _mapper.MapToCarEditorDto(updateCar);
             carEditor.Id = id;
             await _carsService.UpdateAsync(carEditor);
@@ -109,6 +124,11 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<CarEditorViewModel> patchCar)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var car = await _carsService.GetCarEditorDtoByIdAsync(id);
             var carViewModel = _mapper.MapToCarEditorViewModel(car);
 
