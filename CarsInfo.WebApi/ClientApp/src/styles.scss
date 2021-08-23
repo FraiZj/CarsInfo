@@ -1,7 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import "~bootstrap/scss/bootstrap";
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   background-color: #2d333b;
@@ -30,6 +35,11 @@ a {
   text-decoration: none;
 }
 
+a:hover {
+  color: #76828b;
+  text-decoration: none;
+}
+
 .clickable {
   cursor: pointer;
 }
@@ -52,3 +62,4 @@ a {
   margin-bottom: 10px;
 }
 
+/* Importing Bootstrap SCSS file. */

@@ -3,7 +3,7 @@
   margin: 10px;
   background-color: #373e47;
   border-radius: 2%;
-  box-shadow: 0 0 3px rgba(0,0,0,0.3);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 
   .car-card-content {
     display: grid;
@@ -34,6 +34,10 @@
     object-fit: cover;
   }
 
+  .car-card-image:hover {
+    border: 1px solid #cdd9e5;
+  }
+
   .car-card-star-block {
     display: flex;
     justify-content: flex-end;
@@ -54,7 +58,6 @@
 
 @media (max-width: 800px) {
   .car-card-image {
-
     height: 230px;
   }
 }

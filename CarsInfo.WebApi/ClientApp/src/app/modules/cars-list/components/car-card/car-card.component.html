@@ -1,5 +1,5 @@
 <mat-card class="car-card">
-  <a [routerLink]="['/cars', car.id]">
+  <a [routerLink]="['/cars', car.id]" class="car-card-image-wrapper">
     <img class="car-card-image" *ngIf='car.carPicturesUrls.length > 0' [src]="car.carPicturesUrls[0]" />
   </a>
   <mat-card-content class="car-card-content">

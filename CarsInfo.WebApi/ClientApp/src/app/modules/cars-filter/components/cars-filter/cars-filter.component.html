@@ -3,7 +3,7 @@
     <div class="clear-filters">
       <span class="clickable" (click)="clearFilter()">Clear filters</span>
     </div>
-    <cars-brand-filter (filterBrandEvent)="onBrandFilter($event)" [selectedBrands]="filter?.brands ?? []"></cars-brand-filter>
+    <cars-brand-filter (filterBrandEvent)="onBrandFilter($event)" [selectedBrands]="filter?.brands ?? []" #carsBrandFilter></cars-brand-filter>
     <cars-model-filter (filterModelEvent)="onModelFilter($event)" [model]="filter?.model"></cars-model-filter>
   </form>
 </div>

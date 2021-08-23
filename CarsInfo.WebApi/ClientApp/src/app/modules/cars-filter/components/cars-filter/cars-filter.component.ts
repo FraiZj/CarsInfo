@@ -1,5 +1,5 @@
 import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWithPaginator';
-import { Component, Input, Output, OnInit } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
 
 @Component({
@@ -21,8 +21,9 @@ export class CarsFilterComponent {
     this.filterEvent.emit(this.filter);
   }
 
-  public clearFilter():void {
-    this.filter = FilterWithPaginator.CreateDefault();
+  public clearFilter(): void {
+    this.filter.brands = [];
+    this.filter.model = '';
     this.filterEvent.emit(this.filter);
   }
 }
