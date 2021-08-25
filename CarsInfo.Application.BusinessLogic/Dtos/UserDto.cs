@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CarsInfo.Application.BusinessLogic.Dtos
 {
@@ -13,6 +14,10 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
         public string Email { get; set; }
         
         public string Password { get; set; }
+
+        public string RefreshToken { get; set; }
+
+        public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
 
         public ICollection<CarDto> FavoriteCars { get; set; }
 

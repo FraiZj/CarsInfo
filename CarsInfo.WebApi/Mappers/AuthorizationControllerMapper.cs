@@ -3,7 +3,7 @@ using CarsInfo.WebApi.ViewModels;
 
 namespace CarsInfo.WebApi.Mappers
 {
-    public class AccountControllerMapper
+    public class AuthorizationControllerMapper
     {
         public UserDto MapToUserDto(LoginViewModel model)
         {

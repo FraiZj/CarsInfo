@@ -7,7 +7,7 @@ namespace CarsInfo.WebApi.StartupConfiguration
     {
         public static void AddViewModelMapper(this IServiceCollection services)
         {
-            services.AddSingleton<AccountControllerMapper>();
+            services.AddSingleton<AuthorizationControllerMapper>();
             services.AddSingleton<CarsControllerMapper>();
         }
     }

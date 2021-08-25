@@ -1,7 +1,6 @@
+using CarsInfo.Application.BusinessLogic.AuthModels;
 using CarsInfo.Infrastructure.DependencyInjection;
 using CarsInfo.WebApi.StartupConfiguration;
-using CarsInfo.WebApi.StartupConfiguration.Authentication;
-using CarsInfo.WebApi.StartupConfiguration.Authentication.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

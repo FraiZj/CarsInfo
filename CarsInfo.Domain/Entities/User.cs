@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using CarsInfo.Domain.Entities.Base;
 
@@ -14,6 +15,10 @@ namespace CarsInfo.Domain.Entities
         public string Email { get; set; }
         
         public string Password { get; set; }
+
+        public string RefreshToken { get; set; }
+
+        public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
 
         public ICollection<Car> Cars { get; set; } = new List<Car>();
 
