@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.Enums;
 
 namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface ICarsService
     {
-        Task AddToFavoriteAsync(int userId, int carId);
+        Task<ToggleFavoriteStatus> ToggleFavoriteAsync(int userId, int carId);
 
         Task<IEnumerable<CarDto>> GetAllAsync();
 

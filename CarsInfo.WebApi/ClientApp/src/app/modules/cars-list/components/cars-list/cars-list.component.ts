@@ -1,6 +1,5 @@
 import { FilterService } from './../../../cars/services/filter.service';
 import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
-import { Filter } from './../../../cars-filter/interfaces/filter';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Car } from 'app/modules/cars/interfaces/car';

@@ -94,7 +94,7 @@ namespace CarsInfo.WebApi.Controllers
 
         [HttpPut("{carId:int}/favorite")]
         [Authorize(Roles = Roles.User)]
-        public async Task<IActionResult> AddToFavorite(int carId)
+        public async Task<IActionResult> ToggleFavorite(int carId)
         {
             var userId = GetCurrentUserId();
 
@@ -103,8 +103,14 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest("Cannot get user id");
             }
 
-            await _carsService.AddToFavoriteAsync(userId.Value, carId);
-            return Ok(carId);
+            var status = await _carsService.ToggleFavoriteAsync(userId.Value, carId);
+
+            if (status == ToggleFavoriteStatus.Error)
+            {
+                return BadRequest("Cannot toggle favorite car with for user");
+            }
+
+            return Ok(status);
         }
 
         [HttpPut("{id:int}")]
