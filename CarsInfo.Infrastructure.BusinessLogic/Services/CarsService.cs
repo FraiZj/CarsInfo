@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.Application.BusinessLogic.Exceptions;
 using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
@@ -63,7 +64,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public async Task AddToFavoriteAsync(int userId, int carId)
+        public async Task<ToggleFavoriteStatus> ToggleFavoriteAsync(int userId, int carId)
         {
             try
             {
@@ -79,7 +80,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 if (userCar is not null)
                 {
                     await DeleteFromFavoriteAsync(userCar.Id);
-                    return;
+                    return ToggleFavoriteStatus.DeleteFromFavorite;
                 }
 
                 await _userCarRepository.AddAsync(new UserCar
@@ -87,10 +88,13 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                     CarId = carId,
                     UserId = userId
                 });
+
+                return ToggleFavoriteStatus.AddedToFavorite;
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while adding car with to favorite");
+                return ToggleFavoriteStatus.Error;
             }
         }
 

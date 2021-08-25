@@ -1,3 +1,4 @@
+import { ToggleFavoriteStatus } from './../enums/toggle-favorite-status';
 import { CarsModule } from './../cars.module';
 import { CarEditor } from '../interfaces/car-editor';
 import { HttpClient } from "@angular/common/http";
@@ -71,7 +72,7 @@ export class CarsService {
     return this.http.put<CarEditor>(`${this.url}/${id}`, car);
   }
 
-  public addToFavorite(carId: number) : Observable<number> {
-    return this.http.put<number>(`${this.url}/${carId}/favorite`, { });
+  public toggleFavorite(carId: number) : Observable<ToggleFavoriteStatus> {
+    return this.http.put<ToggleFavoriteStatus>(`${this.url}/${carId}/favorite`, { });
   }
 }
