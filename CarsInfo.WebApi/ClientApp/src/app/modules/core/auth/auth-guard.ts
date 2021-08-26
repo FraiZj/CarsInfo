@@ -14,9 +14,10 @@ export class AuthGuard implements CanActivate {
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const currentUser: UserClaims | null = this.authService.getCurrentUserClaims();
+    let currentUserClaims: UserClaims | null = null;
+    this.authService.userClaims.subscribe(claims => currentUserClaims = claims);
 
-    if (currentUser && this.isInRoles(currentUser, route.data.roles)) {
+    if (currentUserClaims && this.isInRoles(currentUserClaims, route.data.roles)) {
       return true;
     }
 
