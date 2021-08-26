@@ -1,5 +1,7 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'app/modules/auth/services/auth.service';
 import { Subscription } from 'rxjs';
 
@@ -22,7 +24,9 @@ export class RegisterComponent implements OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private readonly _snackBar: MatSnackBar
+  ) { }
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
@@ -54,8 +58,20 @@ export class RegisterComponent implements OnDestroy {
 
     this.subscriptions.push(
       this.authService.register(this.registerForm.value)
-        .subscribe(() => this.onLoginEvent.emit())
+        .subscribe({
+          next: () => this.onLoginEvent.emit(),
+          error: (error: HttpErrorResponse) => this.openSnackBar(error.error)
+        })
     );
+  }
+
+  private openSnackBar(message: string): void {
+    this._snackBar.open(message, 'X', {
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      duration: 5000,
+      panelClass: ['custom-snackbar']
+    });
   }
 
   public switchToLogin(): void {
@@ -63,11 +79,11 @@ export class RegisterComponent implements OnDestroy {
   }
 
   private isEmailAvailable(email: string): boolean {
-    let isInUse: boolean = false;
+    let isAvailable: boolean = true;
     this.authService.isEmailAvailable(email)
       .toPromise()
-      .then(o => isInUse = o);
+      .then(o => isAvailable = o);
 
-    return isInUse;
+    return isAvailable;
   }
 }
