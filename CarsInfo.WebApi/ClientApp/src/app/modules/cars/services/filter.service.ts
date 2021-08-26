@@ -6,16 +6,16 @@ import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWith
   providedIn: CarsModule
 })
 export class FilterService {
-  public getFilter(): FilterWithPaginator {
-    const filter = sessionStorage.getItem('filter');
+  public getFilter(filterName: string): FilterWithPaginator {
+    const filter = sessionStorage.getItem(filterName);
     return filter != null ? JSON.parse(filter) : null;
   }
 
-  public saveFilter(filter: FilterWithPaginator): void {
-    sessionStorage.setItem('filter', JSON.stringify(filter));
+  public saveFilter(filterName: string, filter: FilterWithPaginator): void {
+    sessionStorage.setItem(filterName, JSON.stringify(filter));
   }
 
-  public clearFilter(): void {
-    sessionStorage.removeItem('filter');
+  public clearFilter(filterName: string): void {
+    sessionStorage.removeItem(filterName);
   }
 }

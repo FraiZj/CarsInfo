@@ -3,6 +3,7 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { CarsListComponent } from "./components/cars-list/cars-list.component";
 import { AuthGuard } from '@core/auth/auth-guard';
+import { Roles } from '@auth/enums/roles';
 
 const routes: Routes = [
   {
@@ -12,7 +13,10 @@ const routes: Routes = [
   {
     path: 'favorite',
     component: FavoriteCarsListComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {
+      roles: [Roles.User, Roles.Admin]
+    }
   }
 ];
 
