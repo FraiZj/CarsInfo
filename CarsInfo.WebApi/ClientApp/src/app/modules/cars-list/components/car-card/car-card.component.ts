@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 import { ToggleFavoriteStatus } from './../../../cars/enums/toggle-favorite-status';
 import { CarsService } from './../../../cars/services/cars.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
 
@@ -10,7 +10,7 @@ import { Car } from 'app/modules/cars/interfaces/car';
   templateUrl: './car-card.component.html',
   styleUrls: ['./car-card.component.scss']
 })
-export class CarCardComponent implements OnInit {
+export class CarCardComponent implements OnInit, OnDestroy {
   @Input() public car!: Car;
   private readonly subscriptions: Subscription[] = [];
   public static readonly DefaultStarImagePath: string = '../../../../../assets/images/star-default.png';
@@ -25,6 +25,10 @@ export class CarCardComponent implements OnInit {
     this.currentImage = this.car.isLiked ?
       CarCardComponent.SelectedStarImagePath :
       CarCardComponent.DefaultStarImagePath;
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   public navigateToDetails(id: number): void {

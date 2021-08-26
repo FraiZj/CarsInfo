@@ -1,4 +1,4 @@
-﻿namespace CarsInfo.WebApi.StartupConfiguration.Authentication.Models
+﻿namespace CarsInfo.Application.BusinessLogic.AuthModels
 {
     public class ApiAuthSetting
     {

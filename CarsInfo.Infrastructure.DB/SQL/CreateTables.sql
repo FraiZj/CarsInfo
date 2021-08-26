@@ -12,7 +12,9 @@ CREATE TABLE [User] (
 	FirstName nvarchar(50) NOT NULL,
 	LastName nvarchar(50) NOT NULL,
 	Email nvarchar(50) NOT NULL UNIQUE,
-	[Password] nvarchar(500) NOT NULL
+	[Password] nvarchar(500) NOT NULL,
+	RefreshToken nvarchar(max),
+	RefreshTokenExpiryTime DATETIMEOFFSET
 )
 
 CREATE TABLE Car (

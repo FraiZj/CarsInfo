@@ -2,6 +2,7 @@ import { FavoriteCarsListComponent } from './components/favorite-cars-list/favor
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 import { CarsListComponent } from "./components/cars-list/cars-list.component";
+import { AuthGuard } from '@core/auth/auth-guard';
 
 const routes: Routes = [
   {
@@ -10,7 +11,8 @@ const routes: Routes = [
   },
   {
     path: 'favorite',
-    component: FavoriteCarsListComponent
+    component: FavoriteCarsListComponent,
+    canActivate: [AuthGuard]
   }
 ];
 

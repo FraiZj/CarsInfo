@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
@@ -15,9 +16,14 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 
         Task UpdateAsync(UserDto entity);
 
+        Task UpdateRefreshTokenByEmailAsync(
+            string email,
+            string refreshToken,
+            DateTimeOffset? refreshTokenExpiryTime = null);
+
         Task DeleteByIdAsync(int id);
         
-        Task<ICollection<Claim>> AuthorizeAsync(UserDto entity);
+        Task<ICollection<Claim>> GetUserClaimsAsync(UserDto entity);
 
         Task<bool?> ContainsUserWithEmailAsync(string email);
     }

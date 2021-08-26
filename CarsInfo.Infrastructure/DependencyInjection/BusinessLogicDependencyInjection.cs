@@ -15,6 +15,7 @@ namespace CarsInfo.Infrastructure.DependencyInjection
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<IFilterService, FilterService>();
+            services.AddTransient<ITokenService, TokenService>();
 
             // Mappers
             services.AddSingleton<CarServiceMapper>();

@@ -1,14 +1,16 @@
-import { UserClaims } from 'app/modules/auth/interfaces/user-claims';
+import { Subscription, Observable } from 'rxjs';
 import { AuthService } from 'app/modules/auth/services/auth.service';
-import { Directive, ElementRef, Input, OnInit } from "@angular/core";
+import { Directive, ElementRef, Input, OnDestroy, OnInit } from "@angular/core";
+import { map } from 'rxjs/operators';
 
 @Directive({
   selector: '[access-control]'
 })
-export class AccessControlDirective implements OnInit {
+export class AccessControlDirective implements OnInit, OnDestroy {
   @Input() public roles: string[] = [];
   @Input() public authenticated: boolean = true;
   private defaultDisplay!: string;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private elementRef: ElementRef,
@@ -21,21 +23,36 @@ export class AccessControlDirective implements OnInit {
     this.changeElementAppearance();
   }
 
-  private changeElementAppearance(): void {
-    this.elementRef.nativeElement.style.display = this.hasAccess() ? this.defaultDisplay : 'none';
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  private hasAccess(): boolean {
-    const userClaims: UserClaims | null = this.authService.getCurrentUserClaims();
+  private changeElementAppearance(): void {
+    this.subscriptions.push(
+      this.hasAccess()
+      .subscribe(hasAccess => {
+        this.elementRef.nativeElement.style.display = hasAccess ? this.defaultDisplay : 'none';
+      })
+    );
+  }
 
-    if (!this.authenticated) {
-      return userClaims == null;
-    }
+  private hasAccess(): Observable<boolean> {
+    return this.authService.userClaims.pipe(map(
+      claims => {
+        if (!this.authenticated) {
+          return claims == null;
+        }
 
-    if (this.authenticated && (this.roles == null || this.roles.length == 0)) {
-      return userClaims != null;
-    }
+        if (this.authenticated && (this.roles == null || this.roles.length == 0)) {
+          return claims != null;
+        }
 
-    return userClaims?.roles.some(r => this.roles.includes(r)) ?? false;
+        if (claims == null) {
+          return false;
+        }
+
+        return claims.roles.some(r => this.roles.includes(r));
+      }
+    ));
   }
 }

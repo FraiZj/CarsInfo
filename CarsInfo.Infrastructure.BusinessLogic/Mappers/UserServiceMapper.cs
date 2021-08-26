@@ -27,6 +27,8 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                RefreshToken = user.RefreshToken,
+                RefreshTokenExpiryTime = user.RefreshTokenExpiryTime,
                 FavoriteCars = _carServiceMapper.MapToCarsDtos(user.Cars),
                 Roles = user.Roles.Select(r => r.Name).ToList()
             };
@@ -50,7 +52,9 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Password = user.Password
+                Password = user.Password,
+                RefreshToken = user.RefreshToken,
+                RefreshTokenExpiryTime = user.RefreshTokenExpiryTime
             };
         }
     }
