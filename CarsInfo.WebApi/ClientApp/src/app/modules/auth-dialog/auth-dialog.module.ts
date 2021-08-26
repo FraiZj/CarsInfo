@@ -10,8 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
-
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -28,6 +27,7 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     MatInputModule,
     MatIconModule,
     ReactiveFormsModule,
+    MatSnackBarModule,
 
     // app modules
     AuthModule

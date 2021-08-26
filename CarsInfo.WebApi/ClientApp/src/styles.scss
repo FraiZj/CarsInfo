@@ -62,4 +62,11 @@ a:hover {
   margin-bottom: 10px;
 }
 
-/* Importing Bootstrap SCSS file. */
+.custom-snackbar {
+  background-color: #fff;
+  color: #2d333b;
+
+  .mat-button {
+    color: red;
+  }
+}

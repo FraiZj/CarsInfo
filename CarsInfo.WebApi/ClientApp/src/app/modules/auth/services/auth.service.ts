@@ -1,12 +1,12 @@
 import { ClaimTypes } from './../enums/claim-types';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { JwtPayload } from "app/modules/auth/interfaces/jwt-payload";
 import { UserClaims } from "app/modules/auth/interfaces/user-claims";
 import { UserLogin } from "app/modules/auth/interfaces/user-login";
 import { UserRegister } from "app/modules/auth/interfaces/user-register";
 import jwtDecode from "jwt-decode";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, throwError } from "rxjs";
 import { map, tap } from "rxjs/operators";
 import { AuthModule } from "../auth.module";
 import { AuthTokens } from '@auth/interfaces/auth-tokens';
@@ -15,7 +15,7 @@ import { AuthTokens } from '@auth/interfaces/auth-tokens';
   providedIn: AuthModule
 })
 export class AuthService {
-  private static readonly JwtToken: string = 'jwt-token';
+  private static readonly TokensName: string = 'tokens';
   private refreshTokenTimeout!: NodeJS.Timeout;
   private currentUserTokenSubject!: BehaviorSubject<AuthTokens | null>;
 
@@ -40,7 +40,7 @@ export class AuthService {
   constructor(
     @Inject("BASE_API_URL") private url: string,
     private readonly http: HttpClient) {
-    const tokensString: string | null = localStorage.getItem(AuthService.JwtToken);
+    const tokensString: string | null = localStorage.getItem(AuthService.TokensName);
     if (tokensString != null) {
       const tokens: AuthTokens = JSON.parse(tokensString);
       this.currentUserTokenSubject = new BehaviorSubject<AuthTokens | null>(tokens);
@@ -73,34 +73,41 @@ export class AuthService {
 
   public register(userRegister: UserRegister): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(`${this.url}/register`, userRegister)
-      .pipe(tap((tokens) => {
-        localStorage.setItem(AuthService.JwtToken, JSON.stringify(tokens));
-        this.currentUserTokenSubject.next(tokens);
-        this.startRefreshTokenTimer();
+      .pipe(tap({
+        next: this.authenticationSuccededHandler,
+        error: this.authenticationErrorHandler
       }));
   }
 
   public login(userLogin: UserLogin): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(`${this.url}/login`, userLogin)
-      .pipe(tap((tokens) => {
-        localStorage.setItem(AuthService.JwtToken, JSON.stringify(tokens));
-        this.currentUserTokenSubject.next(tokens);
-        this.startRefreshTokenTimer();
+      .pipe(tap({
+        next: this.authenticationSuccededHandler,
+        error: this.authenticationErrorHandler
+      }));
+  }
+  public refreshToken(): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(`${this.url}/refresh-token`, this.currentUserTokenSubject.value)
+      .pipe(tap({
+        next: this.authenticationSuccededHandler,
+        error: this.authenticationErrorHandler
       }));
   }
 
-  public refreshToken(): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(`${this.url}/refresh-token`, this.currentUserTokenSubject.value)
-      .pipe(tap(tokens => {
-        localStorage.setItem(AuthService.JwtToken, JSON.stringify(tokens));
-        this.currentUserTokenSubject.next(tokens);
-        this.startRefreshTokenTimer();
-      }));
+  private authenticationSuccededHandler = (tokens: AuthTokens) => {
+    localStorage.setItem(AuthService.TokensName, JSON.stringify(tokens));
+    this.currentUserTokenSubject.next(tokens);
+    this.startRefreshTokenTimer();
+  }
+
+  private authenticationErrorHandler = (response: HttpErrorResponse) => {
+    console.log(response);
+    return throwError(response.error as string);
   }
 
   public logout(): Observable<void> {
     const logoutHandler = () => {
-      localStorage.removeItem(AuthService.JwtToken);
+      localStorage.removeItem(AuthService.TokensName);
       this.currentUserTokenSubject.next(null);
       this.stopRefreshTokenTimer();
     }

@@ -1,7 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'login',
@@ -20,7 +22,8 @@ export class LoginComponent implements OnDestroy {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly _snackBar: MatSnackBar
   ) { }
 
   public ngOnDestroy(): void {
@@ -42,11 +45,23 @@ export class LoginComponent implements OnDestroy {
 
     this.subscriptions.push(
       this.authService.login(this.loginForm.value)
-        .subscribe(() => this.onLoginEvent.emit())
+        .subscribe({
+          next: () => this.onLoginEvent.emit(),
+          error: (error: HttpErrorResponse) => this.openSnackBar(error.error)
+        })
     )
   }
 
   public switchToRegister(): void {
     this.switchToRegisterEvent.emit();
+  }
+
+  public openSnackBar(message: string) {
+    this._snackBar.open(message, 'X', {
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      duration: 5000,
+      panelClass: ['custom-snackbar']
+    });
   }
 }
