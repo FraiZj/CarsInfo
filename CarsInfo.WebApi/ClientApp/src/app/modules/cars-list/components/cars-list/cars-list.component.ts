@@ -27,7 +27,14 @@ export class CarsListComponent implements OnInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
-    this.filter = this.filterService.getFilter(this.filterName) ?? FilterWithPaginator.CreateDefault();
+    const savedFilter = this.filterService.getFilter(this.filterName);
+    this.filter = FilterWithPaginator.CreateDefault();
+
+    if (savedFilter != null) {
+      this.filter.brands = savedFilter.brands;
+      this.filter.model = savedFilter.model;
+    }
+
     this.subscriptions.push(this.carsService.getCars(this.filter)
       .subscribe(cars => this.cars = cars));
   }

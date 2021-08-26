@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
 import { CarsModule } from "../cars.module";
-import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWithPaginator';
+import { Filter } from "app/modules/cars-filter/interfaces/filter";
 
 @Injectable({
   providedIn: CarsModule
 })
 export class FilterService {
-  public getFilter(filterName: string): FilterWithPaginator {
+  public getFilter(filterName: string): Filter {
     const filter = sessionStorage.getItem(filterName);
     return filter != null ? JSON.parse(filter) : null;
   }
 
-  public saveFilter(filterName: string, filter: FilterWithPaginator): void {
+  public saveFilter(filterName: string, filter: Filter): void {
     sessionStorage.setItem(filterName, JSON.stringify(filter));
   }
 
