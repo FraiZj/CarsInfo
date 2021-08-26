@@ -57,6 +57,7 @@ export class CarsBrandFilterComponent implements OnInit, OnDestroy {
 
     if (this.selectedBrands.includes(value) ||
       this.selectedBrands.length >= CarsBrandFilterComponent.BrandsInFilterMaxValue) {
+      this.brandFormControl.reset();
       return;
     }
 

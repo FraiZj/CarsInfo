@@ -1,14 +1,17 @@
-<div *ngIf="selectedBrands.length > 0 ?? false" class="brand-chips-field">
-  <mat-chip *ngFor="let brand of selectedBrands" [selectable]="selectable" [removable]="removable"
+<div class="brand-chips-field" *ngIf="selectedBrands.length > 0 ?? false">
+  <mat-chip-list>
+    <mat-chip *ngFor="let brand of selectedBrands" [selectable]="selectable" [removable]="removable"
       (removed)="onBrandRemove(brand)">
       {{ brand }}
       <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
     </mat-chip>
+  </mat-chip-list>
 </div>
 
 <mat-form-field class="brand-filter-input" appearance="fill">
   <mat-label>Brand</mat-label>
-  <input matInput placeholder="Input brand" [formControl]="brandFormControl" (input)="onBrandInput()" [matAutocomplete]="auto">
+  <input matInput placeholder="Input brand" [formControl]="brandFormControl" [matAutocomplete]="auto"
+    (input)="onBrandInput()" (change)="onBrandInput()">
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onBrandSelect($event)">
     <mat-option *ngFor="let brand of filteredBrands$ | async" [value]="brand">
       {{ brand.name }}
