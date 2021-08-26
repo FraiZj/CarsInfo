@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
@@ -100,6 +101,12 @@ namespace CarsInfo.WebApi.Controllers
         private async Task<IActionResult> AuthorizeAsync(UserDto user)
         {
             var claims = await _userService.GetUserClaimsAsync(user);
+
+            if (!claims.Any())
+            {
+                return BadRequest("Cannot authorize user");
+            }
+
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 

@@ -63,11 +63,11 @@ export class RegisterComponent implements OnDestroy {
   }
 
   private isEmailAvailable(email: string): boolean {
-    let isInUse: boolean = false;
+    let isAvailable: boolean = true;
     this.authService.isEmailAvailable(email)
       .toPromise()
-      .then(o => isInUse = o);
+      .then(o => isAvailable = o);
 
-    return isInUse;
+    return isAvailable;
   }
 }
