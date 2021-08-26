@@ -42,7 +42,7 @@ export class LoginComponent implements OnDestroy {
 
     this.subscriptions.push(
       this.authService.login(this.loginForm.value)
-      .subscribe(() => this.onLoginEvent.emit())
+        .subscribe(() => this.onLoginEvent.emit())
     )
   }
 

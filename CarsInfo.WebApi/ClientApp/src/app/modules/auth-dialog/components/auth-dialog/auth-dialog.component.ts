@@ -34,6 +34,7 @@ export class AuthDialogComponent implements OnInit {
 
   public onLogin(): void {
     this.closeDialog();
+    location.reload();
     this.router.navigateByUrl(this.returnUrl);
   }
 

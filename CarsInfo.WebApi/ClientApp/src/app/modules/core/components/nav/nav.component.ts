@@ -26,6 +26,7 @@ export class NavComponent implements OnDestroy {
   public onLogout(): void {
     this.subscriptions.push(
       this.authService.logout().subscribe(() => {
+        location.reload();
         this.router.navigate(['/cars']);
       }));
   }
