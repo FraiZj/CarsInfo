@@ -16,6 +16,7 @@ import { AuthTokens } from '@auth/interfaces/auth-tokens';
 })
 export class AuthService {
   private static readonly JwtToken: string = 'jwt-token';
+  private refreshTokenTimeout!: NodeJS.Timeout;
   private currentUserTokenSubject!: BehaviorSubject<AuthTokens | null>;
 
   public get userClaims(): Observable<UserClaims | null> {
@@ -26,7 +27,7 @@ export class AuthService {
 
       const jwtPayload = jwtDecode<JwtPayload>(value.accessToken);
       const userClaims: UserClaims = {
-        roles: this.configureRoles(jwtPayload),
+        roles: this.getRoles(jwtPayload),
         id: +jwtPayload.Id,
         email: jwtPayload[ClaimTypes.Email],
         token: value.accessToken
@@ -55,7 +56,7 @@ export class AuthService {
 
     const jwtPayload = jwtDecode<JwtPayload>(this.currentUserTokenSubject.value.accessToken);
     const userClaims: UserClaims = {
-      roles: this.configureRoles(jwtPayload),
+      roles: this.getRoles(jwtPayload),
       id: +jwtPayload.Id,
       email: jwtPayload[ClaimTypes.Email],
       token: this.currentUserTokenSubject.value.accessToken
@@ -64,34 +65,65 @@ export class AuthService {
     return userClaims;
   }
 
-  private configureRoles(jwtPayload: JwtPayload) {
+  private getRoles(jwtPayload: JwtPayload) {
     return typeof jwtPayload[ClaimTypes.Role] == 'string' ?
       [jwtPayload[ClaimTypes.Role] as string] :
       jwtPayload[ClaimTypes.Role] as string[];
   }
 
   public register(userRegister: UserRegister): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(`${this.url}/register`, userRegister).pipe(
-      tap((tokens) => {
+    return this.http.post<AuthTokens>(`${this.url}/register`, userRegister)
+      .pipe(tap((tokens) => {
         localStorage.setItem(AuthService.JwtToken, JSON.stringify(tokens));
         this.currentUserTokenSubject.next(tokens);
+        this.startRefreshTokenTimer();
       }));
   }
 
   public login(userLogin: UserLogin): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(`${this.url}/login`, userLogin).pipe(
-      tap((tokens) => {
+    return this.http.post<AuthTokens>(`${this.url}/login`, userLogin)
+      .pipe(tap((tokens) => {
         localStorage.setItem(AuthService.JwtToken, JSON.stringify(tokens));
         this.currentUserTokenSubject.next(tokens);
+        this.startRefreshTokenTimer();
       }));
   }
 
-  public logout(): void {
-    localStorage.removeItem(AuthService.JwtToken);
-    this.currentUserTokenSubject.next(null);
+  public refreshToken(): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(`${this.url}/refresh-token`, this.currentUserTokenSubject.value)
+      .pipe(tap(tokens => {
+        localStorage.setItem(AuthService.JwtToken, JSON.stringify(tokens));
+        this.currentUserTokenSubject.next(tokens);
+        this.startRefreshTokenTimer();
+      }));
+  }
+
+  public logout(): Observable<void> {
+    const logoutHandler = () => {
+      localStorage.removeItem(AuthService.JwtToken);
+      this.currentUserTokenSubject.next(null);
+      this.stopRefreshTokenTimer();
+    }
+
+    return this.http.post<void>(`${this.url}/revoke-token`, {})
+      .pipe(tap({
+        next: logoutHandler,
+        error: logoutHandler
+      }));
   }
 
   public isEmailAvailable(email: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.url}/emailAvailable/${email}`);
+  }
+
+  private startRefreshTokenTimer() {
+    const jwtToken = JSON.parse(atob(this.currentUserTokenSubject.value!.accessToken.split('.')[1]));
+    const expires = new Date(jwtToken.exp * 1000);
+    const timeout = expires.getTime() - Date.now() - (60 * 1000);
+    this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
+  }
+
+  private stopRefreshTokenTimer() {
+    clearTimeout(this.refreshTokenTimeout);
   }
 }

@@ -54,7 +54,7 @@ namespace CarsInfo.WebApi.Controllers
             return Ok(!contains);
         }
 
-        [HttpPost("refresh")]
+        [HttpPost("refresh-token")]
         public async Task<IActionResult> Refresh([FromBody] AuthViewModel authViewModel)
         {
             if (authViewModel is null)
@@ -80,7 +80,7 @@ namespace CarsInfo.WebApi.Controllers
             return Ok(new AuthViewModel(newAccessToken, newRefreshToken));
         }
 
-        [Authorize, HttpPost("revoke")]
+        [Authorize, HttpPost("revoke-token")]
         public async Task<IActionResult> Revoke()
         {
             var userEmail = User.GetEmail();
