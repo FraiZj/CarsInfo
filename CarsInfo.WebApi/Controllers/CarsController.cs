@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +33,7 @@ namespace CarsInfo.WebApi.Controllers
         [AllowAnonymous]
         public async Task<IEnumerable<CarDto>> Get(FilterDto filter)
         {
-            var userId = GetCurrentUserId();
+            var userId = User.GetUserId();
             filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
             var cars = await _carsService.GetAllAsync(filter);
             return cars;
@@ -42,7 +43,7 @@ namespace CarsInfo.WebApi.Controllers
         [AllowAnonymous]
         public async Task<IEnumerable<CarDto>> Favorite(FilterDto filter)
         {
-            var userId = GetCurrentUserId();
+            var userId = User.GetUserId();
             filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
             var cars = await _carsService.GetUserCarsAsync(filter);
             return cars;
@@ -97,7 +98,7 @@ namespace CarsInfo.WebApi.Controllers
         [Authorize(Roles = Roles.User)]
         public async Task<IActionResult> ToggleFavorite(int carId)
         {
-            var userId = GetCurrentUserId();
+            var userId = User.GetUserId();
 
             if (!userId.HasValue)
             {
@@ -160,13 +161,6 @@ namespace CarsInfo.WebApi.Controllers
         {
             await _carsService.DeleteByIdAsync(id);
             return Ok($"Car with id={id} has been deleted");
-        }
-
-        private int? GetCurrentUserId()
-        {
-            return int.TryParse(User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value, out var id) ?
-                id :
-                null;
         }
     }
 }
