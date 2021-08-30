@@ -101,7 +101,6 @@ export class AuthService {
   }
 
   private authenticationErrorHandler = (response: HttpErrorResponse) => {
-    console.log(response);
     return throwError(response.error as string);
   }
 

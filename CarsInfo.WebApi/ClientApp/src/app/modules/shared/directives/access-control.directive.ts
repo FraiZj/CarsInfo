@@ -30,9 +30,9 @@ export class AccessControlDirective implements OnInit, OnDestroy {
   private changeElementAppearance(): void {
     this.subscriptions.push(
       this.hasAccess()
-      .subscribe(hasAccess => {
-        this.elementRef.nativeElement.style.display = hasAccess ? this.defaultDisplay : 'none';
-      })
+        .subscribe(hasAccess => {
+          this.elementRef.nativeElement.style.display = hasAccess ? this.defaultDisplay : 'none';
+        })
     );
   }
 
