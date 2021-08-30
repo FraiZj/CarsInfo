@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("cars")]
-    [Authorize(Roles = Roles.Admin)]
+    
     public class CarsController : ControllerBase
     {
         private readonly ICarsService _carsService;
@@ -77,6 +77,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] CarEditorViewModel car)
         {
             if (!ModelState.IsValid)
@@ -114,6 +115,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Update(int id, [FromBody] CarEditorViewModel updateCar)
         {
             if (!ModelState.IsValid)
@@ -128,6 +130,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPatch("{id:int}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<CarEditorViewModel> patchCar)
         {
             if (!ModelState.IsValid)
@@ -152,6 +155,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
             await _carsService.DeleteByIdAsync(id);
