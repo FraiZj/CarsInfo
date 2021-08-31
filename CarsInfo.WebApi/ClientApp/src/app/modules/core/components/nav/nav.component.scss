@@ -7,6 +7,10 @@
   background-color: #22272e;
   box-shadow: 0px 0px 1px black;
 
+  .nav-menu-button {
+    display: none;
+  }
+
   a {
     float: left;
     color: #cdd9e5;
@@ -30,10 +34,32 @@
   .nav-right {
     float: right;
   }
+
+  .nav-links-vertical {
+    width: 180px;
+  }
+}
+
+.nav-links-vertical .nav-right {
+  float: left;
 }
 
 @media (max-width: 800px) {
-  .nav-links {
-    display: none;
+  .nav {
+    .nav-links {
+      display: none;
+    }
+
+    .nav-menu-button {
+      display: unset;
+    }
+  }
+}
+
+@media (min-width: 800px) {
+  .nav {
+    .nav-links-vertical {
+      display: none;
+    }
   }
 }

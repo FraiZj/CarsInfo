@@ -13,6 +13,7 @@ import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dia
 })
 export class NavComponent implements OnDestroy {
   private readonly subscriptions: Subscription[] = [];
+  public mobileMenuOpened: boolean = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -21,6 +22,10 @@ export class NavComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
+  public toggleMobileMenu(): void {
+    this.mobileMenuOpened = !this.mobileMenuOpened;
   }
 
   public onLogout(): void {
