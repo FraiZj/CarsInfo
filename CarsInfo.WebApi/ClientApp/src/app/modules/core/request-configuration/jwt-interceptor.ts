@@ -3,6 +3,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/c
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from 'app/modules/auth/services/auth.service';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: CoreModule
@@ -10,18 +11,18 @@ import { AuthService } from 'app/modules/auth/services/auth.service';
 export class JwtInterceptor implements HttpInterceptor {
   constructor(private readonly authService: AuthService) { }
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    let currentUser = this.authService.getCurrentUserClaims();
+  public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    return this.authService.userClaims.pipe(switchMap(claims => {
+      if (claims && claims.token) {
+        req = req.clone({
+          setHeaders: {
+            Authorization: `Bearer ` + claims.token
+          }
+        });
+      }
 
-    if (currentUser && currentUser.token) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ` + currentUser.token
-        }
-      });
-    }
-
-    return next.handle(req);
+      return next.handle(req);
+    }))
   }
 }
 
