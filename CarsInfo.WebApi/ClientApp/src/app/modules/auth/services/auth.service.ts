@@ -90,7 +90,11 @@ export class AuthService {
     return this.http.post<AuthTokens>(`${this.url}/refresh-token`, this.currentUserTokenSubject.value)
       .pipe(tap({
         next: this.authenticationSuccededHandler,
-        error: this.authenticationErrorHandler
+        error: () => {
+          localStorage.removeItem(AuthService.TokensName);
+          this.currentUserTokenSubject.next(null);
+          this.stopRefreshTokenTimer();
+        }
       }));
   }
 
@@ -126,7 +130,10 @@ export class AuthService {
     const jwtToken = JSON.parse(atob(this.currentUserTokenSubject.value!.accessToken.split('.')[1]));
     const expires = new Date(jwtToken.exp * 1000);
     const timeout = expires.getTime() - Date.now() - (60 * 1000);
-    this.refreshTokenTimeout = setTimeout(() => this.refreshToken().subscribe(), timeout);
+    this.refreshTokenTimeout = setTimeout(() => {
+      alert('refresh-token')
+      this.refreshToken().subscribe();
+    }, timeout);
   }
 
   private stopRefreshTokenTimer() {
