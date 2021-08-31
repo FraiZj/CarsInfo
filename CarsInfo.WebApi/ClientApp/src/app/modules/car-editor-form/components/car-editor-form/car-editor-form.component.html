@@ -1,81 +1,87 @@
-<form [formGroup]="carEditorForm" class="car-editor">
-  <div>
-    <mat-form-field class="car-editor-input" appearance="fill">
-      <mat-label>Choose car brand</mat-label>
-      <mat-select formControlName="brandId">
-        <mat-option *ngFor="let brand of brands$ | async" [value]="brand.id" class="car-brand-option">
-          {{ brand.name }}
-        </mat-option>
-        <div>
-          <div [formGroup]="brandEditorForm" class="brand-input">
-            <input matInput formControlName="brand" type="text" id="" placeholder="Add new brand" name="brandName">
+<div class="car-editor-block">
+
+  <h2 class="white-text"></h2>
+
+  <form [formGroup]="carEditorForm" class="car-editor">
+    <div>
+      <mat-form-field class="car-editor-input" appearance="fill">
+        <mat-label>Choose car brand</mat-label>
+        <mat-select formControlName="brandId">
+          <mat-option *ngFor="let brand of brands$ | async" [value]="brand.id" class="car-brand-option">
+            {{ brand.name }}
+          </mat-option>
+          <div>
+            <div [formGroup]="brandEditorForm" class="brand-input">
+              <input matInput formControlName="brand" type="text" id="" placeholder="Add new brand" name="brandName">
+            </div>
+            <div class="brand-input--add">
+              <mat-icon class="clickable" aria-hidden="false" aria-label="Add new brand" (click)="addNewBrand()">add
+              </mat-icon>
+            </div>
           </div>
-          <div class="brand-input--add">
-            <mat-icon class="clickable" aria-hidden="false" aria-label="Add new brand" (click)="addNewBrand()">add
-            </mat-icon>
-          </div>
-        </div>
-      </mat-select>
-    </mat-form-field>
-
-    <div *ngIf="brandId.invalid && (brandId.dirty || brandId.touched)" class="alert-danger">
-      <div *ngIf="brandId.errors?.required">
-        Brand is required.
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <mat-form-field class="car-editor-input" appearance="fill">
-      <mat-label for="model">Model</mat-label>
-      <input matInput id="model" type="text" formControlName="model">
-    </mat-form-field>
-
-    <div *ngIf="model.invalid && (model.dirty || model.touched)" class="alert-danger">
-      <div *ngIf="model.errors?.required">
-        Model is required.
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <mat-form-field class="car-editor-input" appearance="fill">
-      <mat-label for="description">Description</mat-label>
-      <textarea class="car-editor-textarea" maxlength="150" matInput id="description" type="text"
-        formControlName="description"></textarea>
-    </mat-form-field>
-
-    <div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert-danger">
-      <div *ngIf="description.errors?.required">
-        Description max length is 150.
-      </div>
-    </div>
-  </div>
-
-  <div formArrayName="carPicturesUrls">
-    <button class="car-editor-input" [disabled]="!canAddCarPicture" mat-stroked-button color="primary"
-      (click)="addCarPicture()"
-      [ngClass]="{ 'invalid-button': carPicturesUrls.invalid && (carPicturesUrls.dirty || carPicturesUrls.touched) || carPicturesUrls.length <= 0 }">
-      + Add car picture
-    </button>
-    <div class="car-picture-form-field" *ngFor="let carPicture of carPicturesUrls.controls; let i=index">
-      <mat-form-field class="car-editor-input--picture">
-        <mat-label>Car picture url</mat-label>
-        <input matInput id="carPicture-{{ i }}" type="url" [formControlName]="i">
+        </mat-select>
       </mat-form-field>
-      <mat-icon class="clickable" (click)="removeCarPicture(i)" aria-hidden="false"
-        aria-label="Remove car picture field">close</mat-icon>
 
-      <div *ngIf="carPicture.invalid && (carPicture.dirty || carPicture.touched)" class="alert-danger">
-        <div *ngIf="carPicture.errors?.required">
-          Car picture is required.
+      <div *ngIf="brandId.invalid && (brandId.dirty || brandId.touched)" class="alert-danger">
+        <div *ngIf="brandId.errors?.required">
+          Brand is required.
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="submit-block">
-    <button class="car-editor-input" mat-raised-button color="primary" type="submit" [disabled]="!carEditorForm.valid"
-      (click)="onSubmit()">Create</button>
-  </div>
-</form>
+    <div>
+      <mat-form-field class="car-editor-input" appearance="fill">
+        <mat-label for="model">Model</mat-label>
+        <input matInput id="model" type="text" formControlName="model">
+      </mat-form-field>
+
+      <div *ngIf="model.invalid && (model.dirty || model.touched)" class="alert-danger">
+        <div *ngIf="model.errors?.required">
+          Model is required.
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <mat-form-field class="car-editor-input" appearance="fill">
+        <mat-label for="description">Description</mat-label>
+        <textarea class="car-editor-textarea" maxlength="150" matInput id="description" type="text"
+          formControlName="description"></textarea>
+      </mat-form-field>
+
+      <div *ngIf="description.invalid && (description.dirty || description.touched)" class="alert-danger">
+        <div *ngIf="description.errors?.required">
+          Description max length is 150.
+        </div>
+      </div>
+    </div>
+
+    <div formArrayName="carPicturesUrls">
+      <button class="car-editor-input white-text" [disabled]="!canAddCarPicture" mat-stroked-button
+        (click)="addCarPicture()"
+        [ngClass]="{ 'invalid-button': carPicturesUrls.invalid && (carPicturesUrls.dirty || carPicturesUrls.touched) || carPicturesUrls.length <= 0 }">
+        + Add car picture
+      </button>
+      <div class="car-picture-form-field" *ngFor="let carPicture of carPicturesUrls.controls; let i=index">
+        <mat-form-field class="car-editor-input--picture">
+          <mat-label>Car picture url</mat-label>
+          <input matInput id="carPicture-{{ i }}" type="url" [formControlName]="i">
+        </mat-form-field>
+        <mat-icon class="clickable" (click)="removeCarPicture(i)" aria-hidden="false"
+          aria-label="Remove car picture field">close</mat-icon>
+
+        <div *ngIf="carPicture.invalid && (carPicture.dirty || carPicture.touched)" class="alert-danger">
+          <div *ngIf="carPicture.errors?.required">
+            Car picture is required.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-block">
+      <button class="car-editor-input" mat-raised-button color="primary" type="submit" [disabled]="!carEditorForm.valid"
+        (click)="onSubmit()">Create</button>
+    </div>
+  </form>
+
+</div>
