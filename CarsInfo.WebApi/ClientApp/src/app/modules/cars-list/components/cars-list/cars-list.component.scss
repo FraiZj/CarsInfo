@@ -3,6 +3,35 @@
   grid-template-columns: 1fr 5fr;
 }
 
+.mobile-filter-menu {
+  display: none;
+  width: 100%;
+}
+
+.mobile-filter-button {
+  float: left;
+  padding: 10px;
+  width: 50%;
+
+  button {
+    width: 100%;
+    color: #adbac7;
+    background-color: #373e47;
+  }
+}
+
+.mobile-sorting-select {
+  float: left;
+  padding: 10px;
+  width: 50%;
+
+  button {
+    width: 100%;
+    color: #adbac7;
+    background-color: #373e47;
+  }
+}
+
 .cars {
   display: grid;
   grid-template-columns: repeat(2, minmax(350px, 1fr));
@@ -15,18 +44,32 @@
   }
 }
 
-@media (max-width: 1200px) {
-  .cars {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 800px) {
+@media (max-width: 1300px) {
   .cars {
     grid-template-columns: repeat(1, minmax(350px, 1fr));
   }
+}
+
+@media (max-width: 1100px) {
+  .cars {
+    grid-template-columns: repeat(2, minmax(350px, 1fr));
+  }
 
   .cars-list {
+    grid-template-columns: repeat(1, minmax(350px, 1fr));
+  }
+
+  .default-filter {
+    display: none;
+  }
+
+  .mobile-filter-menu {
+    display: block;
+  }
+}
+
+@media (max-width: 1000px) {
+  .cars {
     grid-template-columns: repeat(1, minmax(350px, 1fr));
   }
 }

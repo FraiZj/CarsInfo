@@ -31,22 +31,28 @@ namespace CarsInfo.WebApi.Controllers
         
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IEnumerable<CarDto>> Get(FilterDto filter)
+        public async Task<IActionResult> Get(FilterDto filter)
         {
             var userId = User.GetUserId();
             filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
             var cars = await _carsService.GetAllAsync(filter);
-            return cars;
+            return Ok(cars);
         }
 
         [HttpGet("favorite")]
         [AllowAnonymous]
-        public async Task<IEnumerable<CarDto>> Favorite(FilterDto filter)
+        public async Task<IActionResult> Favorite(FilterDto filter)
         {
             var userId = User.GetUserId();
-            filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
+
+            if (!userId.HasValue)
+            {
+                return BadRequest("User is not authorized");
+            }
+
+            filter.CurrentUserId = userId.ToString();
             var cars = await _carsService.GetUserCarsAsync(filter);
-            return cars;
+            return Ok(cars);
         }
 
         [HttpGet("{id:int}")]

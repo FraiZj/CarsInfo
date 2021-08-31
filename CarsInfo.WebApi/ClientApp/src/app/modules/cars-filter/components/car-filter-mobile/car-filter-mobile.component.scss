@@ -1,0 +1,31 @@
+.car-filter-mobile-bg {
+  width: 100%;
+  position: fixed;
+  z-index: 2;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.car-filter-mobile {
+  height: 100%;
+  width: fit-content;
+  display: none;
+  padding: 30px 15px;
+  background-color: #2d333b;
+}
+
+.filter {
+  float: left;
+}
+
+.close-filter {
+  float: left;
+  color: #cdd9e5;
+}
+
+@media (max-width: 1100px) {
+  .car-filter-mobile {
+    display: block;
+  }
+}

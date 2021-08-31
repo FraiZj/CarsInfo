@@ -5,7 +5,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { Subscription } from 'rxjs';
-import { ItemsSkipPerLoad, ItemsTakePerLoad } from '../../consts/filter-consts';
+import { ItemsTakePerLoad } from '../../consts/filter-consts';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'cars-list',
@@ -19,6 +20,7 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public notEmptyPost = true;
   public notscrolly = true;
   public cars!: Car[];
+  public mobileFilterOpened: boolean = false;
 
   constructor(
     private readonly carsService: CarsService,
@@ -49,12 +51,22 @@ export class CarsListComponent implements OnInit, OnDestroy {
 
   public getFilteredCars(filter: FilterWithPaginator): void {
     this.filter = filter;
+    this.filter.skip = 0;
     this.filterService.saveFilter(this.filterName, {
       brands: this.filter.brands,
       model: this.filter.model
     });
+    this.notEmptyPost = true;
     this.subscriptions.push(this.carsService.getCars(this.filter)
       .subscribe(cars => this.cars = cars));
+  }
+
+  public openMobileFilter() {
+    this.mobileFilterOpened = true;
+  }
+
+  public closeMobileFilter() {
+    this.mobileFilterOpened = false;
   }
 
   public onScroll(): void {

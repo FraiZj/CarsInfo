@@ -1,11 +1,20 @@
+<car-filter-mobile *ngIf="mobileFilterOpened" (filterEvent)="getFilteredCars($event)" [filter]="filter" (closeFilterEvent)="closeMobileFilter()"></car-filter-mobile>
+
 <div class="cars-list">
-  <cars-filter (filterEvent)="getFilteredCars($event)" [filter]="filter"></cars-filter>
-  <div class="cars" infiniteScroll (scrolled)="onScroll()" *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
+  <cars-filter class="default-filter" (filterEvent)="getFilteredCars($event)" [filter]="filter"></cars-filter>
+  <div class="mobile-filter-menu">
+    <div class="mobile-filter-button">
+      <button mat-raised-button (click)="openMobileFilter()">Filter</button>
+    </div>
+    <div class="mobile-sorting-select">
+    </div>
+  </div>
+  <div class="cars" infiniteScroll [alwaysCallback]="true" (scrolled)="onScroll()" *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
     <car-card *ngFor='let car of cars; trackBy: trackCarsById' [car]="car">
     </car-card>
   </div>
   <div>
-    <ngx-spinner bdOpacity=0.9 bdColor="" size="default" color="#581f87" type="ball-pulse-sync" [fullScreen]="false">
+    <ngx-spinner bdOpacity="0.9" bdColor="" size="default" color="#581f87" type="ball-pulse-sync" [fullScreen]="false">
     </ngx-spinner>
   </div>
 </div>
