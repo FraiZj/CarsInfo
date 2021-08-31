@@ -2,21 +2,13 @@
   width: 260px;
 }
 
+.reset-filters {
+  text-transform: uppercase;
+}
+
 .clear-filters {
   padding: 10px;
   padding-bottom: 0;
   font-size: 17px;
-  color: darkorchid;
-}
-
-@media (max-width: 1000px) {
-  .filter-section {
-    padding-left: 10px;
-  }
-}
-
-@media (max-width: 800px) {
-  .filter-section {
-    display: none;
-  }
+  color: #539bf5;
 }

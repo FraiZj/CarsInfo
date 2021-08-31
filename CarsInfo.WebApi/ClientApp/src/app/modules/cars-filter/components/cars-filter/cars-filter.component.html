@@ -1,7 +1,7 @@
 <div class="filter-section">
   <form class="filter-form">
     <div class="clear-filters">
-      <span class="clickable" (click)="clearFilter()">Clear filters</span>
+      <span class="clickable reset-filters" (click)="clearFilter()">Reset filters</span>
     </div>
     <cars-brand-filter (filterBrandEvent)="onBrandFilter($event)" [selectedBrands]="filter?.brands ?? []" #carsBrandFilter></cars-brand-filter>
     <cars-model-filter (filterModelEvent)="onModelFilter($event)" [model]="filter?.model"></cars-model-filter>

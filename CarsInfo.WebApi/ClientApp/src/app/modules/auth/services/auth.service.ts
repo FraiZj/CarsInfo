@@ -7,7 +7,7 @@ import { UserLogin } from "app/modules/auth/interfaces/user-login";
 import { UserRegister } from "app/modules/auth/interfaces/user-register";
 import jwtDecode from "jwt-decode";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { map, take, tap } from "rxjs/operators";
 import { AuthModule } from "../auth.module";
 import { AuthTokens } from '@auth/interfaces/auth-tokens';
 
@@ -40,13 +40,28 @@ export class AuthService {
   constructor(
     @Inject("BASE_API_URL") private url: string,
     private readonly http: HttpClient) {
+    this.configureCurrentUserTokens();
+  }
+
+  private configureCurrentUserTokens(): void {
     const tokensString: string | null = localStorage.getItem(AuthService.TokensName);
-    if (tokensString != null) {
-      const tokens: AuthTokens = JSON.parse(tokensString);
-      this.currentUserTokenSubject = new BehaviorSubject<AuthTokens | null>(tokens);
-    } else {
+
+    if (tokensString == null) {
       this.currentUserTokenSubject = new BehaviorSubject<AuthTokens | null>(null);
+      return;
     }
+
+    const tokens: AuthTokens = JSON.parse(tokensString);
+    this.currentUserTokenSubject = new BehaviorSubject<AuthTokens | null>(tokens);
+    const jwtToken = JSON.parse(atob(this.currentUserTokenSubject.value!.accessToken.split('.')[1]));
+    const expires = new Date(jwtToken.exp * 1000);
+
+    if (Date.now() > expires.getTime()) {
+      this.refreshToken().pipe(take(1)).subscribe();
+      return;
+    }
+
+    this.currentUserTokenSubject = new BehaviorSubject<AuthTokens | null>(tokens);
   }
 
   public getCurrentUserClaims(): UserClaims | null {
@@ -131,7 +146,6 @@ export class AuthService {
     const expires = new Date(jwtToken.exp * 1000);
     const timeout = expires.getTime() - Date.now() - (60 * 1000);
     this.refreshTokenTimeout = setTimeout(() => {
-      alert('refresh-token')
       this.refreshToken().subscribe();
     }, timeout);
   }

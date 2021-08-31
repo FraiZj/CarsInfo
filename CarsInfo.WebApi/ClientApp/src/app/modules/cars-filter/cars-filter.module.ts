@@ -1,3 +1,4 @@
+import { CarsModule } from './../cars/cars.module';
 import { BrandsModule } from './../brands/brands.module';
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
@@ -14,12 +15,15 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { CarFilterMobileComponent } from './components/car-filter-mobile/car-filter-mobile.component';
+import { CarsFilterRoutingModule } from './cars-filter-routing.module';
 
 @NgModule({
   declarations: [
     CarsFilterComponent,
     CarsBrandFilterComponent,
-    CarsModelFilterComponent
+    CarsModelFilterComponent,
+    CarFilterMobileComponent
   ],
   imports: [
     // library modules
@@ -36,11 +40,15 @@ import { MatButtonModule } from '@angular/material/button';
     FormsModule,
 
     // app modules
+    CarsModule,
     SharedModule,
-    BrandsModule
+    BrandsModule,
+    CarsFilterRoutingModule
   ],
   exports: [
-    CarsFilterComponent
+    CarsFilterComponent,
+    CarsFilterRoutingModule,
+    CarFilterMobileComponent
   ]
 })
 export class CarsFilterModule { }

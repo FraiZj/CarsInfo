@@ -1,3 +1,5 @@
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { SharedModule } from './../shared/shared.module';
 import { CarsModule } from './../cars/cars.module';
 import { CoreModule } from './../core/core.module';
@@ -30,6 +32,8 @@ import { FavoriteCarsListComponent } from './components/favorite-cars-list/favor
     MatIconModule,
     InfiniteScrollModule,
     NgxSpinnerModule,
+    MatFormFieldModule,
+    MatSelectModule,
 
     // app modules
     CoreModule,

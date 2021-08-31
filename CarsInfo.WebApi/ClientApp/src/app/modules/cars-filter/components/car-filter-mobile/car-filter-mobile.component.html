@@ -1,0 +1,9 @@
+<div class="car-filter-mobile-bg" (click)="onClick($event)">
+  <div class="car-filter-mobile">
+    <cars-filter class="filter" (filterEvent)="onFilter($event)" [filter]="filter"></cars-filter>
+    <div class="close-filter">
+      <mat-icon class="clickable" (click)="onClose()">close</mat-icon>
+    </div>
+  </div>
+</div>
+

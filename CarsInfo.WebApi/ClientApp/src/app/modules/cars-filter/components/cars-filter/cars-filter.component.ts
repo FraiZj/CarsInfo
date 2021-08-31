@@ -1,3 +1,4 @@
+import { ItemsSkipPerLoad, ItemsTakePerLoad } from './../../../cars-list/consts/filter-consts';
 import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWithPaginator';
 import { Component, Input, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
@@ -24,6 +25,8 @@ export class CarsFilterComponent {
   public clearFilter(): void {
     this.filter.brands = [];
     this.filter.model = '';
+    this.filter.skip = ItemsSkipPerLoad;
+    this.filter.take = ItemsTakePerLoad;
     this.filterEvent.emit(this.filter);
   }
 }
