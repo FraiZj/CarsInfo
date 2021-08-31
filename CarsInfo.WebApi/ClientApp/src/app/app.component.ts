@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Cars Info';
+  public title: string = 'Cars Info';
+  public footerText: string = `${new Date().getUTCFullYear()} Cars Info`;
 }

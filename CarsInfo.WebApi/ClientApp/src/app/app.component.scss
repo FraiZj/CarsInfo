@@ -1,3 +1,15 @@
 .content {
   padding-top: 60px;
+  min-height: calc(100vh - 140px);
+}
+
+.footer {
+  clear: both;
+  margin-top: 50px;
+  width: 100%;
+  padding: 30px 0 20px 0;
+  text-align: center;
+  text-transform: capitalize;
+  color: #768390;
+  border-top: 1px solid #373e47;
 }
