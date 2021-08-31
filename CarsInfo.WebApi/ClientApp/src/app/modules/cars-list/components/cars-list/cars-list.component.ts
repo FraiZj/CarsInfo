@@ -49,7 +49,10 @@ export class CarsListComponent implements OnInit, OnDestroy {
 
   public getFilteredCars(filter: FilterWithPaginator): void {
     this.filter = filter;
-    this.filterService.saveFilter(this.filterName, this.filter);
+    this.filterService.saveFilter(this.filterName, {
+      brands: this.filter.brands,
+      model: this.filter.model
+    });
     this.subscriptions.push(this.carsService.getCars(this.filter)
       .subscribe(cars => this.cars = cars));
   }

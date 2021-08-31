@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Filter } from 'app/modules/cars-filter/interfaces/filter';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { FilterService } from 'app/modules/cars/services/filter.service';
@@ -50,7 +49,10 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
 
   public getFilteredCars(filter: FilterWithPaginator): void {
     this.filter = filter;
-    this.filterService.saveFilter(this.filterName, this.filter);
+    this.filterService.saveFilter(this.filterName, {
+      brands: this.filter.brands,
+      model: this.filter.model
+    });
     this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter)
       .subscribe(cars => this.cars = cars));
   }
