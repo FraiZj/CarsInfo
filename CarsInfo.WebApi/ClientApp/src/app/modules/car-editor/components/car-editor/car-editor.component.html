@@ -1,1 +1,4 @@
-<car-editor-form *ngIf="carEditor$ | async as car" [carEditor]="car" (carEditorSubmit)="onSubmit($event)"></car-editor-form>
+<div class="car-editor-block">
+  <h2 class="title white-text">Update car</h2>
+  <car-editor-form *ngIf="carEditor$ | async as car" [carEditor]="car" (carEditorSubmit)="onSubmit($event)"></car-editor-form>
+</div>
