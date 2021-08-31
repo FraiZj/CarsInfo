@@ -15,7 +15,8 @@ body {
 
 .wrapper {
   width: 70%;
-  margin: auto;
+  height: 100%;
+  margin: 0 auto;
 }
 
 @media (max-width: 1570px) {
@@ -69,4 +70,8 @@ a:hover {
   .mat-button {
     color: red;
   }
+}
+
+.white-text {
+  color: #cdd9e5;
 }
