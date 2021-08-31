@@ -9,8 +9,8 @@ import { FilterWithPaginator } from '../../interfaces/filterWithPaginator';
 
 @Component({
   selector: 'favorite-cars-list',
-  templateUrl: './favorite-cars-list.component.html',
-  styleUrls: ['./favorite-cars-list.component.scss']
+  templateUrl: '../cars-list/cars-list.component.html',
+  styleUrls: ['../cars-list/cars-list.component.scss']
 })
 export class FavoriteCarsListComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
@@ -19,6 +19,7 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
   public notEmptyPost = true;
   public notscrolly = true;
   public cars!: Car[];
+  public mobileFilterOpened: boolean = false;
 
   constructor(
     private readonly carsService: CarsService,
@@ -55,6 +56,14 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter)
       .subscribe(cars => this.cars = cars));
+  }
+
+  public openMobileFilter() {
+    this.mobileFilterOpened = true;
+  }
+
+  public closeMobileFilter() {
+    this.mobileFilterOpened = false;
   }
 
   public onScroll(): void {
