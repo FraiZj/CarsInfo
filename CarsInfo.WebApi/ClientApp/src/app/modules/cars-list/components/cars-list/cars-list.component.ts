@@ -1,3 +1,4 @@
+import { ItemsSkipPerLoad } from './../../consts/filter-consts';
 import { OrderBy } from './../../../cars/enums/order-by';
 import { FilterService } from './../../../cars/services/filter.service';
 import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
@@ -54,7 +55,7 @@ export class CarsListComponent implements OnInit, OnDestroy {
 
   public getFilteredCars(filter: FilterWithPaginator): void {
     this.filter = filter;
-    this.filter.skip = 0;
+    this.filter.skip = ItemsSkipPerLoad;
     this.filterService.saveFilter(this.filterName, {
       brands: this.filter.brands,
       model: this.filter.model
@@ -67,6 +68,8 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public orderByChange(orderBy: OrderBy) {
     this.notEmptyPost = true;
     this.orderBy = orderBy;
+    this.filter.skip = ItemsSkipPerLoad;
+    this.filter.take = ItemsTakePerLoad;
     this.subscriptions.push(this.carsService.getCars(this.filter, this.orderBy)
       .subscribe(cars => this.cars = cars));
   }
