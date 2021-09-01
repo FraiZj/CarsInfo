@@ -19,12 +19,12 @@ namespace CarsInfo.Application.Persistence.Contracts
 
         Task<T> GetAsync(int id);
 
-        Task<T> GetAsync(IList<FilterModel> filters);
+        Task<T> GetAsync(IList<FiltrationField> filters);
 
         Task<IEnumerable<T>> GetAllAsync();
 
-        Task<IEnumerable<T>> GetAllAsync(IList<FilterModel> filters);
+        Task<IEnumerable<T>> GetAllAsync(IList<FiltrationField> filters);
 
-        Task<bool?> ContainsAsync(IList<FilterModel> filters);
+        Task<bool?> ContainsAsync(IList<FiltrationField> filters);
     }
 }

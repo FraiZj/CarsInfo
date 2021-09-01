@@ -13,18 +13,19 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             : base(context)
         { }
 
-        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(IList<FilterModel> filters = null, int skip = 0, int take = 6)
+        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(FilterModel filter)
         {
-            var filter = filters?.Any() ?? false ? ConfigureFilter(filters) : string.Empty;
+            filter ??= new FilterModel();
+            var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
             var sql = $@"SELECT * FROM (
 	                        SELECT Car.Id AS CarId FROM Car
 	                        LEFT JOIN Brand
 	                        ON Car.BrandId = Brand.Id
-                            { filter }
+                            { filters }
 	                        GROUP BY Car.Id, Brand.Name
 	                        ORDER BY Brand.Name 
-	                        OFFSET {skip} ROWS
-	                        FETCH NEXT {take} ROWS ONLY
+	                        OFFSET { filter.Skip } ROWS
+	                        FETCH NEXT { filter.Take } ROWS ONLY
 	                    ) as CarsIds
                         LEFT JOIN Car
                         ON CarsIds.CarId = Car.Id
@@ -50,20 +51,21 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         }
 
         public async Task<IEnumerable<Car>> GetUserCarsAsync(
-            string userId, IList<FilterModel> filters = null, int skip = 0, int take = 6)
+            string userId, FilterModel filter)
         {
-            var filter = filters?.Any() ?? false ? ConfigureFilter(filters) : string.Empty;
+            filter ??= new FilterModel();
+            var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
             var sql = $@"SELECT * FROM (
 	                        SELECT Car.Id AS CarId FROM Car
                             INNER JOIN UserCar
                             ON Car.Id = UserCar.CarId AND UserCar.UserId = { userId }
 	                        LEFT JOIN Brand
 	                        ON Car.BrandId = Brand.Id
-                            { filter }
+                            { filters }
 	                        GROUP BY Car.Id, Brand.Name
 	                        ORDER BY Brand.Name 
-	                        OFFSET { skip } ROWS
-	                        FETCH NEXT { take } ROWS ONLY
+	                        OFFSET { filter.Skip } ROWS
+	                        FETCH NEXT { filter.Take } ROWS ONLY
 	                    ) as CarsIds
                         LEFT JOIN Car
                         ON CarsIds.CarId = Car.Id
@@ -88,14 +90,19 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return GroupSet(cars);
         }
 
-        public async Task<Car> GetWithAllIncludesAsync(int id)
+        public async Task<Car> GetWithAllIncludesAsync(int id, bool includeDeleted = false)
         {
             var sql = @$"SELECT * FROM Car
                          LEFT JOIN Brand
                          ON Car.BrandId = Brand.Id
                          LEFT JOIN CarPicture
                          ON Car.Id = CarPicture.CarId
-                         WHERE car.Id=@id";
+                         WHERE Car.Id=@id";
+
+            if (!includeDeleted)
+            {
+                sql += " Car.IsDeleted = 0";
+            }
 
             var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
                 (car, brand, carPicture) =>
