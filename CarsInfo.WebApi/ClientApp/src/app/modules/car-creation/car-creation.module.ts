@@ -3,7 +3,7 @@ import { CarsModule } from './../cars/cars.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CarCreationRoutingModule } from './car-creation-routing.module';
-import { CarCreationComponent } from './components/car-creation.component';
+import { CarCreationComponent } from './components/car-creation/car-creation.component';
 
 
 @NgModule({
