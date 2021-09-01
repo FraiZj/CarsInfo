@@ -6,6 +6,6 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface IFilterService
     {
-        IList<FilterModel> ConfigureCarFilter(FilterDto filter);
+        FilterModel ConfigureCarFilter(FilterDto filter);
     }
 }

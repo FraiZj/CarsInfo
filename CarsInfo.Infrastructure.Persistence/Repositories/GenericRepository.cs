@@ -64,22 +64,22 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public virtual async Task DeleteAsync(int id)
         {
-            var sql = $"DELETE FROM [{TableName}] WHERE Id=@id";
+            var sql = $"UPDATE [{TableName}] SET IsDeleted = 1 WHERE Id=@id";
             await Context.ExecuteAsync(sql, new { id });
         }
 
         public async Task DeleteRangeAsync(IEnumerable<int> ids)
         {
-            var filters = new List<FilterModel>
+            var filters = new List<FiltrationField>
             {
                 new("Id", $"({string.Join(", ", ids)})", "IN")
             };
             var filter = ConfigureFilter(filters);
-            var sql = $"DELETE FROM [{TableName}] {filter}";
+            var sql = $"UPDATE [{TableName}] SET IsDeleted = 1 WHERE {filter}";
             await Context.ExecuteAsync(sql);
         }
 
-        public async Task<T> GetAsync(IList<FilterModel> filters)
+        public async Task<T> GetAsync(IList<FiltrationField> filters)
         {
             var filter = ConfigureFilter(filters);
             var sql = $"SELECT TOP 1 * FROM [{TableName}] {filter}";
@@ -93,7 +93,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return await Context.QueryAsync<T>(sql);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(IList<FilterModel> filters)
+        public async Task<IEnumerable<T>> GetAllAsync(IList<FiltrationField> filters)
         {
             var sql = $"SELECT * FROM [{TableName}]";
 
@@ -106,7 +106,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return await Context.QueryAsync<T>(sql);
         }
 
-        public async Task<bool?> ContainsAsync(IList<FilterModel> filters)
+        public async Task<bool?> ContainsAsync(IList<FiltrationField> filters)
         {
             if (filters is not null && filters.Any())
             {
@@ -148,9 +148,24 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return tableAttribute?.Name;
         }
 
-        protected string ConfigureFilter(IList<FilterModel> filters)
+        protected string ConfigureFilter(IList<FiltrationField> filters, bool includeDeleted = false)
         {
+            if (includeDeleted && !filters.Any())
+            {
+                return string.Empty;
+            }
+
             var result = new StringBuilder("WHERE ");
+
+            if (!includeDeleted)
+            {
+                result.Append($"{TableName}.IsDeleted = 0 ");
+
+                if (filters.Any())
+                {
+                    result.Append("AND ");
+                }
+            }
 
             for (var i = 0; i < filters.Count; i++)
             {
@@ -166,6 +181,8 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                     result.Append($"{filter.Separator} ");
                 }
             }
+
+            
 
             return result.ToString();
         }

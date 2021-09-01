@@ -62,7 +62,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             ValidationHelper.ThrowIfStringNullOrWhiteSpace(roleName);
 
-            var role = await _roleRepository.GetAsync(new List<FilterModel>
+            var role = await _roleRepository.GetAsync(new List<FiltrationField>
             {
                 new("Name", Roles.User)
             });

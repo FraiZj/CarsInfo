@@ -1,37 +1,14 @@
-﻿namespace CarsInfo.Application.Persistence.Filters
+﻿using System.Collections.Generic;
+
+namespace CarsInfo.Application.Persistence.Filters
 {
     public class FilterModel
     {
-        public FilterModel(
-            string field,
-            int value,
-            string @operator = "=",
-            string separator = "")
-        {
-            Field = field;
-            Value = value;
-            Operator = @operator;
-            Separator = separator;
-        }
+        public bool IncludeDeleted { get; set; } = false;
 
-        public FilterModel(
-            string field,
-            object value,
-            string @operator = "=",
-            string separator = "")
-        {
-            Field = field;
-            Value = value;
-            Operator = @operator;
-            Separator = separator;
-        }
+        public IList<FiltrationField> Filters { get; set; } = new List<FiltrationField>();
 
-        public string Field { get; set; }
-
-        public object Value { get; set; }
-
-        public string Operator { get; set; }
-
-        public string Separator { get; set; }
+        public int Skip { get; set; } = 0;
+        public int Take { get; set; } = 6;
     }
 }

@@ -48,10 +48,10 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
         public async Task<IEnumerable<BrandDto>> GetAllAsync(string name)
         {
-            var filters = new List<FilterModel>();
+            var filters = new List<FiltrationField>();
             if (!string.IsNullOrWhiteSpace(name))
             {
-                filters = new List<FilterModel>
+                filters = new List<FiltrationField>
                 {
                     new("Name", $"{name}%", "LIKE")
                 };

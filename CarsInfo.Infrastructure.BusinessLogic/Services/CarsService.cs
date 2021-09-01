@@ -71,7 +71,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 var car = await _carsRepository.GetAsync(carId);
                 ValidationHelper.ThrowIfNull(car);
 
-                var userCar = await _userCarRepository.GetAsync(new List<FilterModel>
+                var userCar = await _userCarRepository.GetAsync(new List<FiltrationField>
                 {
                     new("CarId", car.Id, separator: "AND"),
                     new("UserId", userId)
@@ -137,18 +137,18 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public async Task<IEnumerable<CarDto>> GetAllAsync(FilterDto filter)
+        public async Task<IEnumerable<CarDto>> GetAllAsync(FilterDto filterDto)
         {
             try
             {
-                if (filter is null)
+                if (filterDto is null)
                 {
                     return await GetAllAsync();
                 }
 
-                var filters = _filterService.ConfigureCarFilter(filter);
-                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filters, filter.Skip, filter.Take);
-                var currentUserFavoriteCars = await GetUserCarAsync(filter.CurrentUserId);
+                var filter = _filterService.ConfigureCarFilter(filterDto);
+                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filter);
+                var currentUserFavoriteCars = await GetUserCarAsync(filterDto.CurrentUserId);
                 var carsDtos = _mapper.MapToCarsDtos(cars, currentUserFavoriteCars);
 
                 return carsDtos;
@@ -167,8 +167,8 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 ValidationHelper.ThrowIfNull(filter);
                 ValidationHelper.ThrowIfStringNullOrWhiteSpace(filter.CurrentUserId);
 
-                var filters = _filterService.ConfigureCarFilter(filter);
-                var cars = await _carsRepository.GetUserCarsAsync(filter.CurrentUserId, filters, filter.Skip, filter.Take);
+                var filterModel = _filterService.ConfigureCarFilter(filter);
+                var cars = await _carsRepository.GetUserCarsAsync(filter.CurrentUserId, filterModel);
                 var carsDtos = _mapper.MapToCarsDtos(cars).ToList();
                 carsDtos.ForEach(c => c.IsLiked = true);
 
@@ -188,7 +188,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 return null;
             }
 
-            return (await _userCarRepository.GetAllAsync(new List<FilterModel>
+            return (await _userCarRepository.GetAllAsync(new List<FiltrationField>
             {
                 new("UserId", id)
             })).ToList();
