@@ -1,3 +1,4 @@
+import { OrderBy } from './../enums/order-by';
 import { ToggleFavoriteStatus } from './../enums/toggle-favorite-status';
 import { CarsModule } from './../cars.module';
 import { CarEditor } from '../interfaces/car-editor';
@@ -17,29 +18,31 @@ export class CarsService {
       this.url += "/cars";
     }
 
-  public getCars(filter?: FilterWithPaginator): Observable<Car[]> {
-    const params = this.configureParams(filter);
+  public getCars(filter?: FilterWithPaginator, orderBy?: OrderBy): Observable<Car[]> {
+    const params = this.configureParams(filter, orderBy);
     return this.http.get<Car[]>(this.url, {
       params: params
     });
   }
 
-  public getUserFavoriteCars(filter?: FilterWithPaginator): Observable<Car[]> {
-    const params = this.configureParams(filter);
+  public getUserFavoriteCars(filter?: FilterWithPaginator, orderBy?: OrderBy): Observable<Car[]> {
+    const params = this.configureParams(filter, orderBy);
     return this.http.get<Car[]>(`${this.url}/favorite`, {
       params: params
     });
   }
 
-  private configureParams(filter?: FilterWithPaginator) {
+  private configureParams(filter?: FilterWithPaginator, orderBy?: OrderBy) {
     let params: {
       brands?: string[];
       model?: string;
       skip: number;
       take: number;
+      orderBy: OrderBy;
     } = {
       skip: 0,
-      take: 6
+      take: 6,
+      orderBy: OrderBy.BrandNameAsc
     };
 
     if (filter?.brands !== undefined) {
@@ -52,6 +55,10 @@ export class CarsService {
 
     params.skip = filter?.skip ?? 0;
     params.take = filter?.take ?? 6;
+
+    if (orderBy != null) {
+      params.orderBy = orderBy;
+    }
 
     return params;
   }

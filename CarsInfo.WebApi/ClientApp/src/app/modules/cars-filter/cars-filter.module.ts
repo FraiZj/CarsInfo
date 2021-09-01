@@ -17,13 +17,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CarFilterMobileComponent } from './components/car-filter-mobile/car-filter-mobile.component';
 import { CarsFilterRoutingModule } from './cars-filter-routing.module';
+import { CarsSortingSelectComponent } from './components/cars-sorting-select/cars-sorting-select.component';
 
 @NgModule({
   declarations: [
     CarsFilterComponent,
     CarsBrandFilterComponent,
     CarsModelFilterComponent,
-    CarFilterMobileComponent
+    CarFilterMobileComponent,
+    CarsSortingSelectComponent
   ],
   imports: [
     // library modules
@@ -48,7 +50,8 @@ import { CarsFilterRoutingModule } from './cars-filter-routing.module';
   exports: [
     CarsFilterComponent,
     CarsFilterRoutingModule,
-    CarFilterMobileComponent
+    CarFilterMobileComponent,
+    CarsSortingSelectComponent
   ]
 })
 export class CarsFilterModule { }
