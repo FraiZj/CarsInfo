@@ -131,8 +131,8 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
                 return new List<T>();
             }
         }
-
-        public async Task<int> ExecuteAsync(string sql, object parameters = null)
+        
+        public async Task<int> AddAsync(string sql, object parameters = null)
         {
             try
             {
@@ -143,6 +143,18 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
             {
                 _logger.LogError(e, "An error occurred while executing command");
                 return 0;
+            }
+        }
+
+        public async Task ExecuteAsync(string sql, object parameters = null)
+        {
+            try
+            {
+                await _connection.QueryFirstOrDefaultAsync($"{sql}", parameters);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while executing command");
             }
         }
 
