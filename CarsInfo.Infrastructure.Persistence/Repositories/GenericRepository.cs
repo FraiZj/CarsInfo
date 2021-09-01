@@ -29,7 +29,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             var propertyContainer = ParseProperties(entity);
             var sql = $@"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) 
                          VALUES(@{string.Join(", @", propertyContainer.ValueNames)})";
-            return await Context.ExecuteAsync(sql, propertyContainer.ValuePairs);
+            return await Context.AddAsync(sql, propertyContainer.ValuePairs);
         }
 
         public async Task AddRangeAsync(IList<T> entities)
@@ -139,7 +139,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             var propertyContainer = ParseProperties(entity);
             var sqlValuePairs = GetSqlPairs(propertyContainer.ValueNames);
             var sql = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE Id={entity.Id}";
-            await Context.ExecuteAsync(sql, propertyContainer.AllPairs);
+            await Context.ExecuteAsync(sql, propertyContainer.AllPairs.ToList());
         }
 
         protected static string GetTableName(MemberInfo memberInfo)
