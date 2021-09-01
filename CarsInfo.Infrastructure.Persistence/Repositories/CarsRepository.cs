@@ -101,7 +101,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
             if (!includeDeleted)
             {
-                sql += " Car.IsDeleted = 0";
+                sql += " AND Car.IsDeleted = 0";
             }
 
             var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
