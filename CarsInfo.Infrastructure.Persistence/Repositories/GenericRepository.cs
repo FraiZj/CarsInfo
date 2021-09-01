@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using CarsInfo.Application.Persistence.Contracts;
+using CarsInfo.Application.Persistence.Enums;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities.Base;
 
@@ -146,6 +147,17 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         {
             var tableAttribute = Attribute.GetCustomAttribute(memberInfo, typeof(TableAttribute)) as TableAttribute;
             return tableAttribute?.Name;
+        }
+
+        protected string ConfigureOrderBy(SortingField sortingField)
+        {
+            if (sortingField is null || string.IsNullOrWhiteSpace(sortingField.Field))
+            {
+                return string.Empty;
+            }
+
+            var order = sortingField.Order == Order.Ascending ? "ASC" : "DESC";
+            return $"ORDER BY {sortingField.Field} {order}";
         }
 
         protected string ConfigureFilter(IList<FiltrationField> filters, bool includeDeleted = false)
