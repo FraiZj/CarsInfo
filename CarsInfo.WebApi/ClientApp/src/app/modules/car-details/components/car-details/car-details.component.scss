@@ -18,7 +18,29 @@
 }
 
 .car-details-title {
-  font-size: 37px;
+  font-size: 34px;
+}
+
+.car-details-actions {
+  margin-bottom: 20px;
+
+  .button {
+    width: 100px;
+    color: black;
+  }
+}
+
+.edit-car-button {
+  background-color: #347d39;
+  margin-right: 10px;
+}
+
+.edit-car-button:hover {
+  color: black;
+}
+
+.delete-car-button {
+  color: black;
 }
 
 @media (max-width: 800px) {
