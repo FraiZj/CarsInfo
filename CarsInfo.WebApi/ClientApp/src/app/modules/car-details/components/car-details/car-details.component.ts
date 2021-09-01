@@ -1,3 +1,4 @@
+import { CarDeletionModalComponent } from './../../../car-deletion-modal/components/car-deletion-modal/car-deletion-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { Observable } from 'rxjs';
@@ -6,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'card-details',
@@ -20,7 +21,7 @@ export class CarDetailsComponent implements OnInit {
     private readonly carsService: CarsService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly snackBar: MatSnackBar) { }
+    private readonly modalService: NgbModal) { }
 
   public ngOnInit(): void {
     this.car$ = this.getIdFromRoute()
@@ -38,42 +39,8 @@ export class CarDetailsComponent implements OnInit {
   }
 
   public onDelete() {
-    this.car$.pipe(
-      switchMap(car => this.carsService.deleteCar(car.id)),
-      catchError(err => {
-        if (err instanceof HttpErrorResponse) return throwError(err.error);
-        if (err instanceof Error) return throwError(err.message);
-        return throwError('An error occurred');
-      }),
-      tap({
-        error: (err: string) => {
-          this.snackBar.open(err, 'X', {
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-            duration: 5000,
-            panelClass: ['custom-snackbar']
-          });
-        }
-      }))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Car successfully deleted', 'X', {
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-            duration: 5000,
-            panelClass: ['custom-snackbar']
-          });
-          this.router.navigateByUrl('/cars');
-        },
-        error: () => {
-          this.snackBar.open('An error occured while deleting car', 'X', {
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-            duration: 5000,
-            panelClass: ['custom-snackbar']
-          });
-        }
-      })
+    const modalRef = this.modalService.open(CarDeletionModalComponent);
+    modalRef.componentInstance.car$ = this.car$;
   }
 
   private getIdFromRoute(): Observable<number | null> {
