@@ -8,6 +8,10 @@
   </ngb-carousel>
   <div class="car-details-content">
     <h2 class="car-details-title">{{ car.brand }} {{ car.model }}</h2>
+    <div access-control [roles]="['Admin']" class="car-details-actions">
+      <a mat-raised-button [routerLink]="['/cars', car.id, 'edit']" class="button edit-car-button">Edit</a>
+      <button mat-raised-button color="warn" class="button delete-car-button" (click)="onDelete()">Delete</button>
+    </div>
     <p class="car-details-description">{{ car.description }}</p>
   </div>
 </div>

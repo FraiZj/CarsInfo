@@ -1,3 +1,4 @@
+import { SharedModule } from './../shared/shared.module';
 import { CarsModule } from './../cars/cars.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -20,7 +21,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
     // app modules
     CarsDetailsRoutingModule,
-    CarsModule
+    CarsModule,
+    SharedModule
   ],
   exports: [
     CarsDetailsRoutingModule
