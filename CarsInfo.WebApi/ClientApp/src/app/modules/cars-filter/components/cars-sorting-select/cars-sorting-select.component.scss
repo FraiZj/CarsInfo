@@ -1,0 +1,24 @@
+.order-by-select-block {
+  width: 100%;
+  border-radius: 3%;
+  border: 0px;
+}
+
+.order-by-select {
+  width: 100%;
+  color: #adbac7;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 7px 0;
+  text-align-last:center;
+  border: 1px solid #373e47;
+  border-radius: 4px;
+  background: #373e47;
+  box-shadow: 2px 2px 3px -2px black;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  outline: none;
+  transition: all 150ms ease;
+}

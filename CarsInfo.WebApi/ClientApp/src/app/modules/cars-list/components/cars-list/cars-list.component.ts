@@ -1,3 +1,4 @@
+import { OrderBy } from './../../../cars/enums/order-by';
 import { FilterService } from './../../../cars/services/filter.service';
 import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
 import { Component, OnDestroy, OnInit } from '@angular/core';
@@ -6,7 +7,6 @@ import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { Subscription } from 'rxjs';
 import { ItemsTakePerLoad } from '../../consts/filter-consts';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'cars-list',
@@ -17,6 +17,7 @@ export class CarsListComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   private readonly filterName: string = 'cars-list-filter';
   public filter!: FilterWithPaginator;
+  public orderBy: OrderBy = OrderBy.BrandNameAsc;
   public notEmptyPost = true;
   public notscrolly = true;
   public cars!: Car[];
@@ -37,7 +38,9 @@ export class CarsListComponent implements OnInit, OnDestroy {
       this.filter.model = savedFilter.model;
     }
 
-    this.subscriptions.push(this.carsService.getCars(this.filter)
+    this.orderBy = this.filterService.getOrderBy(this.filterName) ?? OrderBy.BrandNameAsc;
+
+    this.subscriptions.push(this.carsService.getCars(this.filter, this.orderBy)
       .subscribe(cars => this.cars = cars));
   }
 
@@ -57,7 +60,14 @@ export class CarsListComponent implements OnInit, OnDestroy {
       model: this.filter.model
     });
     this.notEmptyPost = true;
-    this.subscriptions.push(this.carsService.getCars(this.filter)
+    this.subscriptions.push(this.carsService.getCars(this.filter, this.orderBy)
+      .subscribe(cars => this.cars = cars));
+  }
+
+  public orderByChange(orderBy: OrderBy) {
+    this.notEmptyPost = true;
+    this.orderBy = orderBy;
+    this.subscriptions.push(this.carsService.getCars(this.filter, this.orderBy)
       .subscribe(cars => this.cars = cars));
   }
 
@@ -79,7 +89,7 @@ export class CarsListComponent implements OnInit, OnDestroy {
 
   public loadNextCars(): void {
     this.filter.skip = this.cars.length;
-    this.subscriptions.push(this.carsService.getCars(this.filter)
+    this.subscriptions.push(this.carsService.getCars(this.filter, this.orderBy)
       .subscribe(cars => {
         this.spinner.hide();
 

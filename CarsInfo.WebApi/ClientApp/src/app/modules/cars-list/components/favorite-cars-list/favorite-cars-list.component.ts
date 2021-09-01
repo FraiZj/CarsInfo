@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { OrderBy } from 'app/modules/cars/enums/order-by';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { FilterService } from 'app/modules/cars/services/filter.service';
@@ -16,6 +17,7 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   private readonly filterName: string = 'favorite-cars-filter';
   public filter!: FilterWithPaginator;
+  public orderBy: OrderBy = OrderBy.BrandNameAsc;
   public notEmptyPost = true;
   public notscrolly = true;
   public cars!: Car[];
@@ -36,7 +38,9 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
       this.filter.model = savedFilter.model;
     }
 
-    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter)
+    this.orderBy = this.filterService.getOrderBy(this.filterName) ?? OrderBy.BrandNameAsc;
+
+    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter, this.orderBy)
       .subscribe(cars => this.cars = cars));
   }
 
@@ -54,7 +58,14 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
       brands: this.filter.brands,
       model: this.filter.model
     });
-    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter)
+    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter, this.orderBy)
+      .subscribe(cars => this.cars = cars));
+  }
+
+  public orderByChange(orderBy: OrderBy) {
+    this.notEmptyPost = true;
+    this.orderBy = orderBy;
+    this.subscriptions.push(this.carsService.getCars(this.filter, this.orderBy)
       .subscribe(cars => this.cars = cars));
   }
 
@@ -76,7 +87,7 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
 
   public loadNextCars(): void {
     this.filter.skip = this.cars.length;
-    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter)
+    this.subscriptions.push(this.carsService.getUserFavoriteCars(this.filter, this.orderBy)
       .subscribe(cars => {
         this.spinner.hide();
 

@@ -1,0 +1,7 @@
+<div class="order-by-select-block">
+  <select (change)="onSelect($event.target)" class="order-by-select">
+    <option class="option" *ngFor="let option of sortingOptions" [value]="option.value" [selected]="option.value == orderBy">
+      {{ option.text }}
+    </option>
+  </select>
+</div>
