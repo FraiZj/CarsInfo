@@ -2,6 +2,7 @@
 using System.Linq;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.Application.Persistence.Filters;
 
 namespace CarsInfo.Infrastructure.BusinessLogic.Services
@@ -10,7 +11,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
     {
         public FilterModel ConfigureCarFilter(FilterDto filter)
         {
-            var filterModel = new FilterModel()
+            var filterModel = new FilterModel
             {
                 Skip = filter.Skip,
                 Take = filter.Take
@@ -27,7 +28,10 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 filterModel.Filters.Add(new FiltrationField("LOWER(Car.Model)", $"%{filter.Model.ToLower()}%", "LIKE"));
             }
 
-
+            if (!string.IsNullOrWhiteSpace(filter.OrderBy))
+            {
+                filterModel.OrderBy = OrderBy.ConvertToSortingField(filter.OrderBy);
+            }
 
             return filterModel;
         }

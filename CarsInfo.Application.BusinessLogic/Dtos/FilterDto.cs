@@ -13,5 +13,7 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
         public int Take { get; set; } = 3;
 
         public string CurrentUserId { get; set; } = null;
+
+        public string OrderBy { get; set; } = Enums.OrderBy.BrandNameAsc;
     }
 }

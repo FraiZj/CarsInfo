@@ -148,7 +148,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             var tableAttribute = Attribute.GetCustomAttribute(memberInfo, typeof(TableAttribute)) as TableAttribute;
             return tableAttribute?.Name;
         }
-
+        
         protected string ConfigureOrderBy(SortingField sortingField)
         {
             if (sortingField is null || string.IsNullOrWhiteSpace(sortingField.Field))
@@ -157,7 +157,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             }
 
             var order = sortingField.Order == Order.Ascending ? "ASC" : "DESC";
-            return $"ORDER BY {sortingField.Field} {order}";
+            return $"ORDER BY {string.Join(", ", sortingField.Field)} {order}";
         }
 
         protected string ConfigureFilter(IList<FiltrationField> filters, bool includeDeleted = false)
