@@ -18,7 +18,6 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             filter ??= new FilterModel();
             
             var orderBy = filter.OrderBy is null ? string.Empty : ConfigureOrderBy(filter.OrderBy);
-            var thenBy = filter.ThenOrderBy is null ? string.Empty : ConfigureOrderBy(filter.ThenOrderBy);
             var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
             var sql = $@"SELECT * FROM (
 	                        SELECT Car.Id AS CarId FROM Car
@@ -27,7 +26,6 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                             { filters }
 	                        GROUP BY Car.Id, Brand.Name
 	                        { orderBy }
-                            { thenBy }
 	                        OFFSET { filter.Skip } ROWS
 	                        FETCH NEXT { filter.Take } ROWS ONLY
 	                    ) as CarsIds
@@ -59,7 +57,6 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         {
             filter ??= new FilterModel();
             var orderBy = filter.OrderBy is null ? string.Empty : ConfigureOrderBy(filter.OrderBy);
-            var thenBy = filter.ThenOrderBy is null ? string.Empty : ConfigureOrderBy(filter.ThenOrderBy);
             var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
             var sql = $@"SELECT * FROM (
 	                        SELECT Car.Id AS CarId FROM Car
@@ -70,7 +67,6 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                             { filters }
 	                        GROUP BY Car.Id, Brand.Name
 	                        { orderBy }
-                            { thenBy }
 	                        OFFSET { filter.Skip } ROWS
 	                        FETCH NEXT { filter.Take } ROWS ONLY
 	                    ) as CarsIds

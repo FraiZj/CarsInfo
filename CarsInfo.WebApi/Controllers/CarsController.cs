@@ -29,7 +29,7 @@ namespace CarsInfo.WebApi.Controllers
         
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Get(FilterDto filter)
+        public async Task<IActionResult> Get([FromQuery] FilterDto filter)
         {
             var userId = User.GetUserId();
             filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
