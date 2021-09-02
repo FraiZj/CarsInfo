@@ -16,12 +16,14 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MatIconModule } from '@angular/material/icon';
 import { FavoriteCarsListComponent } from './components/favorite-cars-list/favorite-cars-list.component';
+import { CarsMainListComponent } from './components/cars-main-list/cars-main-list.component';
 
 @NgModule({
   declarations: [
     CarsListComponent,
     CarCardComponent,
-    FavoriteCarsListComponent
+    FavoriteCarsListComponent,
+    CarsMainListComponent
   ],
   imports: [
     // library modules
