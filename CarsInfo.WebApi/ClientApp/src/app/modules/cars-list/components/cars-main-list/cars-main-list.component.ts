@@ -1,21 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { OrderBy } from 'app/modules/cars/enums/order-by';
-import { Car } from 'app/modules/cars/interfaces/car';
-import { CarsService } from 'app/modules/cars/services/cars.service';
 import { Observable } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Car } from 'app/modules/cars/interfaces/car';
+import { OrderBy } from 'app/modules/cars/enums/order-by';
 import { FilterWithPaginator } from '../../interfaces/filterWithPaginator';
+import { CarsService } from 'app/modules/cars/services/cars.service';
 
 @Component({
-  selector: 'favorite-cars-list',
+  selector: 'cars-main-list',
   template: `<cars-list [filterName]="filterName" [getCars]="getCars"></cars-list>`
 })
-export class FavoriteCarsListComponent implements OnInit {
-  public readonly filterName: string = 'favorite-cars-filter';
+export class CarsMainListComponent implements OnInit {
+  public readonly filterName: string = 'cars-list-filter';
   public getCars!: (filter?: FilterWithPaginator, orderBy?: OrderBy) => Observable<Car[]>
 
   constructor(private readonly carsService: CarsService) { }
 
   ngOnInit(): void {
-    this.getCars = this.carsService.getUserFavoriteCars.bind(this.carsService);
+    this.getCars = this.carsService.getCars.bind(this.carsService);
   }
 }
