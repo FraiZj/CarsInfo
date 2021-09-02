@@ -80,9 +80,9 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             await Context.ExecuteAsync(sql);
         }
 
-        public async Task<T> GetAsync(IList<FiltrationField> filters)
+        public async Task<T> GetAsync(IList<FiltrationField> filters, bool includeDeleted = false)
         {
-            var filter = ConfigureFilter(filters);
+            var filter = ConfigureFilter(filters, includeDeleted);
             var sql = $"SELECT TOP 1 * FROM [{TableName}] {filter}";
             return await Context.QueryFirstOrDefaultAsync<T>(sql);
         }

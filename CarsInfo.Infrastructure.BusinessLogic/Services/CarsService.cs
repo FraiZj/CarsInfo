@@ -75,21 +75,14 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 {
                     new("CarId", car.Id, separator: "AND"),
                     new("UserId", userId)
-                });
+                }, true);
 
-                if (userCar is not null)
+                if (userCar is null || userCar.IsDeleted)
                 {
-                    await DeleteFromFavoriteAsync(userCar.Id);
-                    return ToggleFavoriteStatus.DeleteFromFavorite;
+                    return await AddToFavoriteAsync(userCar, carId, userId);
                 }
 
-                await _userCarRepository.AddAsync(new UserCar
-                {
-                    CarId = carId,
-                    UserId = userId
-                });
-
-                return ToggleFavoriteStatus.AddedToFavorite;
+                return await DeleteFromFavoriteAsync(userCar.Id);
             }
             catch (Exception e)
             {
@@ -98,16 +91,27 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        private async Task DeleteFromFavoriteAsync(int userCarId)
+        private async Task<ToggleFavoriteStatus> AddToFavoriteAsync(UserCar userCar, int carId, int userId)
         {
-            try
+            if (userCar is null)
             {
-                await _userCarRepository.DeleteAsync(userCarId);
+                await _userCarRepository.AddAsync(new UserCar
+                {
+                    CarId = carId,
+                    UserId = userId
+                });
+                return ToggleFavoriteStatus.AddedToFavorite;
             }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while deleting car from favorite");
-            }
+
+            userCar.IsDeleted = false;
+            await _userCarRepository.UpdateAsync(userCar);
+            return ToggleFavoriteStatus.AddedToFavorite;
+        }
+
+        private async Task<ToggleFavoriteStatus> DeleteFromFavoriteAsync(int userCarId)
+        {
+            await _userCarRepository.DeleteAsync(userCarId);
+            return ToggleFavoriteStatus.DeleteFromFavorite;
         }
 
         public async Task DeleteByIdAsync(int id)
@@ -168,6 +172,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 ValidationHelper.ThrowIfStringNullOrWhiteSpace(filter.CurrentUserId);
 
                 var filterModel = _filterService.ConfigureCarFilter(filter);
+                filterModel.Filters.Add(new FiltrationField("UserCar.IsDeleted", 0));
                 var cars = await _carsRepository.GetUserCarsAsync(filter.CurrentUserId, filterModel);
                 var carsDtos = _mapper.MapToCarsDtos(cars).ToList();
                 carsDtos.ForEach(c => c.IsLiked = true);
@@ -180,7 +185,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 return new List<CarDto>();
             }
         }
-
+        
         private async Task<ICollection<UserCar>> GetUserCarAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -190,7 +195,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
             return (await _userCarRepository.GetAllAsync(new List<FiltrationField>
             {
-                new("UserId", id)
+                new("UserId", int.Parse(id))
             })).ToList();
         }
 
