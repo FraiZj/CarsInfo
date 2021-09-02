@@ -29,3 +29,14 @@
     width: calc(100% - 10px);
   }
 }
+
+.sorting-select {
+  width: calc(100% - 30px);
+  margin-left: 15px;
+  padding: 0;
+}
+
+
+::ng-deep .mat-select-min-line {
+  color: #cdd9e5 !important;
+}

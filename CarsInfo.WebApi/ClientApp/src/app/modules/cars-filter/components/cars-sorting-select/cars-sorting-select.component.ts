@@ -18,4 +18,9 @@ export class CarsSortingSelectComponent {
     this.orderBy = (target as HTMLInputElement).value as OrderBy;
     this.orderByChange.emit(this.orderBy);
   }
+
+  public onClick(orderBy: OrderBy): void {
+    this.orderBy = orderBy;
+    this.orderByChange.emit(this.orderBy);
+  }
 }

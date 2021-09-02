@@ -1,4 +1,6 @@
-<car-filter-mobile *ngIf="mobileFilterOpened" (filterEvent)="getFilteredCars($event)" [filter]="filter" (closeFilterEvent)="closeMobileFilter()"></car-filter-mobile>
+<car-filter-mobile *ngIf="mobileFilterOpened" (filterEvent)="getFilteredCars($event)" [filter]="filter"
+  (closeFilterEvent)="closeMobileFilter()" (orderByChange)="orderByChange($event)" [orderBy]="orderBy">
+</car-filter-mobile>
 
 <div class="cars-list">
   <div class="default-filter">
@@ -6,14 +8,13 @@
     <cars-sorting-select [orderBy]="orderBy" (orderByChange)="orderByChange($event)"></cars-sorting-select>
   </div>
   <div class="mobile-filter-menu">
-    <div class="mobile-filter-button">
-      <button mat-raised-button (click)="openMobileFilter()">Filter</button>
-    </div>
-    <div class="mobile-sorting-select">
-      <cars-sorting-select [orderBy]="orderBy" (orderByChange)="orderByChange($event)"></cars-sorting-select>
+    <div class="mobile-filter-button clickable white-text" (click)="openMobileFilter()">
+      <mat-icon>filter_list</mat-icon>
+      <span class="filter-span">Filter</span>
     </div>
   </div>
-  <div class="cars" infiniteScroll [alwaysCallback]="true" (scrolled)="onScroll()" *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
+  <div class="cars" infiniteScroll [alwaysCallback]="true" (scrolled)="onScroll()"
+    *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
     <car-card *ngFor='let car of cars; trackBy: trackCarsById' [car]="car">
     </car-card>
   </div>
@@ -24,5 +25,5 @@
 </div>
 
 <ng-template #carsNotFoundBlock>
-  <p class="white-text">Cars not found</p>
+  <p class="white-text cars-not-found">Cars not found</p>
 </ng-template>

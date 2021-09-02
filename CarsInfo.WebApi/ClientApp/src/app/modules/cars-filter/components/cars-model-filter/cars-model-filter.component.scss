@@ -2,7 +2,8 @@ $input-color: #cdd9e5;
 $placeholder-color: #76828b;
 
 .filter-input {
-  width: 250px;
+  width: calc(100% - 30px);
+  margin-left: 15px;
   padding: 0;
 }
 

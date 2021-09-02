@@ -3,9 +3,19 @@
   grid-template-columns: 1fr 5fr;
 }
 
+.default-filter {
+  background-color: #373e47;
+  height: fit-content;
+  border-radius: 3%;
+  margin-top: 10px;
+  padding-bottom: 10px;
+}
+
 .mobile-filter-menu {
   display: none;
   width: 100%;
+  padding-left: 10px;
+  font-size: 16px;
 }
 
 .mobile-filter-button {
@@ -66,4 +76,17 @@
   .cars {
     grid-template-columns: repeat(1, minmax(350px, 1fr));
   }
+}
+
+.cars-not-found {
+  padding: 10px;
+}
+
+.filter-span {
+  display: inline-block;
+  vertical-align: top;
+  line-height: normal;
+  padding-top: 4px;
+  padding-left: 5px;
+  text-transform: uppercase;
 }
