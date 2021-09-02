@@ -1,0 +1,9 @@
+<div class="dialog">
+  <div class="mat-dialog-actions" mat-dialog-actions>
+    <mat-icon class="clickable" (click)="closeDialog()" aria-hidden="false">close</mat-icon>
+  </div>
+  <h1 mat-dialog-title>{{ title }}</h1>
+  <div mat-dialog-content class="mat-dialog-content">
+    <ng-content></ng-content>
+  </div>
+</div>
