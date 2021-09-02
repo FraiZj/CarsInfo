@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CarsDetailsRoutingModule } from './car-details-routing.module';
 import { MatButtonModule } from '@angular/material/button';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CarDeleteConfirmDialogModule } from '../car-delete-confirm-dialog/car-delete-confirm-dialog.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
     // app modules
     CarsDetailsRoutingModule,
+    CarDeleteConfirmDialogModule,
     CarsModule,
     SharedModule
   ],
