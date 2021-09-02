@@ -1,4 +1,4 @@
-import { CarDeletionModalComponent } from './../../../car-deletion-modal/components/car-deletion-modal/car-deletion-modal.component';
+import { CarDeleteConfirmDialogComponent } from './../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { Observable } from 'rxjs';
@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'card-details',
@@ -21,7 +21,7 @@ export class CarDetailsComponent implements OnInit {
     private readonly carsService: CarsService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly modalService: NgbModal) { }
+    public readonly dialog: MatDialog) { }
 
   public ngOnInit(): void {
     this.car$ = this.getIdFromRoute()
@@ -39,8 +39,11 @@ export class CarDetailsComponent implements OnInit {
   }
 
   public onDelete() {
-    const modalRef = this.modalService.open(CarDeletionModalComponent);
-    modalRef.componentInstance.car$ = this.car$;
+    this.dialog.open(CarDeleteConfirmDialogComponent, {
+      data: {
+        car$: this.car$
+      }
+    });
   }
 
   private getIdFromRoute(): Observable<number | null> {
