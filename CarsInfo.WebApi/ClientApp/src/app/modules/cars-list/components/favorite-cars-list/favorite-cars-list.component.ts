@@ -1,3 +1,4 @@
+import { ItemsSkipPerLoad } from './../../consts/filter-consts';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { OrderBy } from 'app/modules/cars/enums/order-by';
 import { Car } from 'app/modules/cars/interfaces/car';
@@ -65,6 +66,8 @@ export class FavoriteCarsListComponent implements OnInit, OnDestroy {
   public orderByChange(orderBy: OrderBy) {
     this.notEmptyPost = true;
     this.orderBy = orderBy;
+    this.filter.skip = ItemsSkipPerLoad;
+    this.filter.take = ItemsTakePerLoad;
     this.subscriptions.push(this.carsService.getCars(this.filter, this.orderBy)
       .subscribe(cars => this.cars = cars));
   }

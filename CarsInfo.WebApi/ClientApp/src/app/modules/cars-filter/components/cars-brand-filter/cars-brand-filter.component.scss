@@ -2,18 +2,21 @@ $input-color: #cdd9e5;
 $placeholder-color: #76828b;
 
 .brand-chips-field {
-  width: 250px;
+  width: calc(100% - 20px);
+  margin-left: 10px;
   height: 200px;
   padding: 10px;
   margin-top: 10px;
   background-color: #373e47;
+  border: 1px solid rgba(205, 217, 229, 0.1);
   border-radius: 3%;
 }
 
 .brand-filter-input {
   padding-top: 0;
   margin-top: 18.8125px;
-  width: 250px;
+  width: calc(100% - 30px);
+  margin-left: 15px;
 }
 
 ::placeholder {

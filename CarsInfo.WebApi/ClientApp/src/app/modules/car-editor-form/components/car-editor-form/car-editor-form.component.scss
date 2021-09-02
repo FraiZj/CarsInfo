@@ -85,3 +85,7 @@ $validation-color: #f44336;
 ::ng-deep.mat-form-field-ripple {
   background-color: $input-color !important;
 }
+
+::ng-deep .mat-select-min-line {
+  color: #cdd9e5 !important;
+}

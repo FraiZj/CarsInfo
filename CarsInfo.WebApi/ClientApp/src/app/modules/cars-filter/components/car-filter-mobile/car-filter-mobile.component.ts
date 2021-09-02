@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWithPaginator';
+import { OrderBy } from 'app/modules/cars/enums/order-by';
 
 @Component({
   selector: 'car-filter-mobile',
@@ -8,6 +9,8 @@ import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWith
 })
 export class CarFilterMobileComponent {
   @Input() public filter!: FilterWithPaginator;
+  @Input() public orderBy: OrderBy = OrderBy.BrandNameAsc;
+  @Output() public orderByChange: EventEmitter<OrderBy> = new EventEmitter<OrderBy>();
   @Output() public filterEvent = new EventEmitter<FilterWithPaginator>();
   @Output() public closeFilterEvent = new EventEmitter();
 
@@ -20,6 +23,11 @@ export class CarFilterMobileComponent {
     if ((event.target as HTMLElement)?.classList.contains('car-filter-mobile-bg')) {
       this.onClose();
     }
+  }
+
+  public onOrderByChange(orderBy: OrderBy): void {
+    this.orderBy = orderBy;
+    this.orderByChange.emit(this.orderBy);
   }
 
   public onClose() {

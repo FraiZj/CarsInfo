@@ -1,7 +1,16 @@
-<div class="order-by-select-block">
+<!-- <div class="order-by-select-block">
   <select (change)="onSelect($event.target)" class="order-by-select">
     <option class="option" *ngFor="let option of sortingOptions" [value]="option.value" [selected]="option.value == orderBy">
       {{ option.text }}
     </option>
   </select>
-</div>
+</div> -->
+
+<mat-form-field appearance="fill" class="sorting-select">
+  <mat-label>Order by</mat-label>
+  <mat-select>
+    <mat-option *ngFor="let option of sortingOptions" [value]="option.value" (click)="onClick(option.value)">
+      {{ option.text }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
