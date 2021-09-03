@@ -1,3 +1,4 @@
+import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { Component, OnDestroy } from '@angular/core';
@@ -5,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'app/modules/auth/services/auth.service';
 import { AuthenticationOption } from 'app/modules/auth-dialog/types/authentication-option';
 import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
+import { logout } from '@auth/store/actions/auth.actions';
 
 @Component({
   selector: 'carsInfo-nav',
@@ -18,7 +20,8 @@ export class NavComponent implements OnDestroy {
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    public readonly store: Store) { }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
@@ -29,11 +32,7 @@ export class NavComponent implements OnDestroy {
   }
 
   public onLogout(): void {
-    this.subscriptions.push(
-      this.authService.logout().subscribe(() => {
-        location.reload();
-        this.router.navigate(['/cars']);
-      }));
+    this.store.dispatch(logout());
   }
 
   public openDialog(form: AuthenticationOption): void {

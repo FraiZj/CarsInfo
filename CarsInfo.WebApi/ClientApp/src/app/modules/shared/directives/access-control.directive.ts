@@ -1,7 +1,8 @@
 import { Subscription, Observable } from 'rxjs';
-import { AuthService } from 'app/modules/auth/services/auth.service';
+import * as fromAuth from 'app/modules/auth/store/selectors/auth.selectors';
 import { Directive, ElementRef, Input, OnDestroy, OnInit } from "@angular/core";
 import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 @Directive({
   selector: '[access-control]'
@@ -14,7 +15,7 @@ export class AccessControlDirective implements OnInit, OnDestroy {
 
   constructor(
     private elementRef: ElementRef,
-    private readonly authService: AuthService
+    private readonly store: Store
   ) { }
 
   public ngOnInit(): void {
@@ -37,8 +38,8 @@ export class AccessControlDirective implements OnInit, OnDestroy {
   }
 
   private hasAccess(): Observable<boolean> {
-    return this.authService.userClaims.pipe(map(
-      claims => {
+    return this.store.select(fromAuth.selectUserClaims).pipe(
+      map(claims => {
         if (!this.authenticated) {
           return claims == null;
         }
@@ -52,7 +53,7 @@ export class AccessControlDirective implements OnInit, OnDestroy {
         }
 
         return claims.roles.some(r => this.roles.includes(r));
-      }
-    ));
+      })
+    )
   }
 }

@@ -1,3 +1,4 @@
+import { EffectsModule } from '@ngrx/effects';
 import { environment } from './../environments/environment.prod';
 import { CoreModule } from './modules/core/core.module';
 import { NgModule } from '@angular/core';
@@ -10,6 +11,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { JwtInterceptor } from '@core/request-configuration/jwt-interceptor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { StoreModule } from '@ngrx/store';
+import { AuthEffects } from '@auth/store/effects/auth.effects';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     HttpClientModule,
     CommonModule,
     NgbModule,
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([AuthEffects]),
 
     // app modules
     CoreModule
