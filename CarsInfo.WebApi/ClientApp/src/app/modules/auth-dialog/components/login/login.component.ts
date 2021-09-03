@@ -1,3 +1,6 @@
+import { UserLogin } from './../../../auth/interfaces/user-login';
+import * as fromAuth from './../../../auth/store/actions/auth.actions';
+import { Store } from '@ngrx/store';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../../auth/services/auth.service';
 import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
@@ -23,7 +26,8 @@ export class LoginComponent implements OnDestroy {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly authService: AuthService,
-    private readonly _snackBar: MatSnackBar
+    private readonly _snackBar: MatSnackBar,
+    private readonly store: Store
   ) { }
 
   public ngOnDestroy(): void {
@@ -43,13 +47,17 @@ export class LoginComponent implements OnDestroy {
       return;
     }
 
-    this.subscriptions.push(
-      this.authService.login(this.loginForm.value)
-        .subscribe({
-          next: () => this.onLoginEvent.emit(),
-          error: (error: HttpErrorResponse) => this.openSnackBar(error.error)
-        })
-    )
+    const userLogin = this.loginForm.value as UserLogin;
+    this.store.dispatch(fromAuth.login({ userLogin }));
+    this.onLoginEvent.emit()
+
+    // this.subscriptions.push(
+    //   this.authService.login(this.loginForm.value)
+    //     .subscribe({
+    //       next: () => this.onLoginEvent.emit(),
+    //       error: (error: HttpErrorResponse) => this.openSnackBar(error.error)
+    //     })
+    // )
   }
 
   public switchToRegister(): void {

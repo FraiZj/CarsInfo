@@ -1,7 +1,10 @@
+import { UserRegister } from './../../../auth/interfaces/user-register';
+import { register } from './../../../auth/store/actions/auth.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Store } from '@ngrx/store';
 import { AuthService } from 'app/modules/auth/services/auth.service';
 import { Subscription } from 'rxjs';
 
@@ -24,7 +27,8 @@ export class RegisterComponent implements OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
+    private readonly authService: AuthService,
+    private readonly store: Store,
     private readonly _snackBar: MatSnackBar
   ) { }
 
@@ -56,13 +60,9 @@ export class RegisterComponent implements OnDestroy {
       return;
     }
 
-    this.subscriptions.push(
-      this.authService.register(this.registerForm.value)
-        .subscribe({
-          next: () => this.onLoginEvent.emit(),
-          error: (error: HttpErrorResponse) => this.openSnackBar(error.error)
-        })
-    );
+    const userRegister = this.registerForm.value as UserRegister;
+    this.store.dispatch(register({ userRegister }));
+    this.onLoginEvent.emit();
   }
 
   private openSnackBar(message: string): void {

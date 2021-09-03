@@ -101,6 +101,7 @@ export class AuthService {
         error: this.authenticationErrorHandler
       }));
   }
+
   public refreshToken(): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(`${this.url}/refresh-token`, this.currentUserTokenSubject.value)
       .pipe(tap({
