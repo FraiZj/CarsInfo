@@ -4,6 +4,13 @@ import { UserLogin } from 'app/modules/auth/interfaces/user-login';
 import { createAction, props } from '@ngrx/store';
 import { AuthTokens } from '@auth/interfaces/auth-tokens';
 
+export const init = createAction('[Auth] Init');
+
+export const initLogin = createAction(
+  '[Auth] Init Login',
+  props<{ userLogin: UserLogin }>()
+);
+
 export const register = createAction(
   '[Auth] Register',
   props<{ userRegister: UserRegister }>()
@@ -33,4 +40,4 @@ export const logout = createAction('[Auth] Logout');
 
 export const logoutSuccess = createAction('[Auth] Logout Success');
 
-
+export const clearLoginError = createAction('[Auth] Reset login error');

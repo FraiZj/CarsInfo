@@ -1,10 +1,9 @@
-import { UserLogin } from './../../../auth/interfaces/user-login';
-import * as fromAuth from './../../../auth/store/actions/auth.actions';
+import { UserLogin } from '@auth/interfaces/user-login';
+import * as AuthActions from '@auth/store/actions/auth.actions';
+import * as AuthSelectors from '@auth/store/selectors/auth.selectors';
 import { Store } from '@ngrx/store';
-import { HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../../../auth/services/auth.service';
-import { Component, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { FormBuilder, Validators, FormControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { Component, Output, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -13,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss', './../../auth-dialog.module.scss']
 })
-export class LoginComponent implements OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
   @Output() public switchToRegisterEvent = new EventEmitter();
   @Output() public onLoginEvent = new EventEmitter();
   private readonly subscriptions: Subscription[] = [];
@@ -22,13 +21,23 @@ export class LoginComponent implements OnDestroy {
     password: ['', [Validators.required]],
   });
   public validationErrors: string[] = [];
+  public error$ = this.store.select(AuthSelectors.selectAuthError);
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly authService: AuthService,
     private readonly _snackBar: MatSnackBar,
     private readonly store: Store
   ) { }
+
+  public ngOnInit(): void {
+    this.subscriptions.push(
+      this.error$.subscribe((error) => {
+        if (error != null) {
+          this.openSnackBar(error);
+        }
+      })
+    );
+  }
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
@@ -48,8 +57,12 @@ export class LoginComponent implements OnDestroy {
     }
 
     const userLogin = this.loginForm.value as UserLogin;
-    this.store.dispatch(fromAuth.login({ userLogin }));
-    this.onLoginEvent.emit()
+    this.store.dispatch(AuthActions.login({ userLogin }));
+    this.store.select(AuthSelectors.selectLoggedIn).subscribe(loggedIn => {
+      if (loggedIn) {
+        this.onLoginEvent.emit();
+      }
+    })
 
     // this.subscriptions.push(
     //   this.authService.login(this.loginForm.value)

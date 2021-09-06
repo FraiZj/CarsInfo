@@ -86,6 +86,19 @@ export class AuthService {
       jwtPayload[ClaimTypes.Role] as string[];
   }
 
+  public getTokensFromLocalStorage(): AuthTokens | null {
+    const tokensString: string | null = localStorage.getItem(AuthService.TokensName);
+
+    if (tokensString == null) {
+      this.currentUserTokenSubject = new BehaviorSubject<AuthTokens | null>(null);
+      return null;
+    }
+
+    const tokens: AuthTokens = JSON.parse(tokensString);
+
+    return tokens;
+  }
+
   public register(userRegister: UserRegister): Observable<AuthTokens> {
     return this.http.post<AuthTokens>(`${this.url}/register`, userRegister)
       .pipe(tap({
@@ -103,7 +116,8 @@ export class AuthService {
   }
 
   public refreshToken(): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(`${this.url}/refresh-token`, this.currentUserTokenSubject.value)
+    const tokens = this.getTokensFromLocalStorage() ?? this.currentUserTokenSubject.value;
+    return this.http.post<AuthTokens>(`${this.url}/refresh-token`, tokens)
       .pipe(tap({
         next: this.authenticationSuccededHandler,
         error: () => {

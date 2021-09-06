@@ -1,3 +1,6 @@
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
+import { AuthModule } from './../auth/auth.module';
 import { CommonModule } from '@angular/common';
 import { NavItemDirective } from './components/nav/directives/nav-item.directive';
 import { AuthDialogModule } from './../auth-dialog/auth-dialog.module';

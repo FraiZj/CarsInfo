@@ -1,21 +1,39 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { AuthService } from "@auth/services/auth.service";
-import { Actions, createEffect, ofType } from "@ngrx/effects";
+import { Actions, createEffect, ofType, OnInitEffects } from "@ngrx/effects";
 import { of } from "rxjs";
 import { map, exhaustMap, catchError, tap } from "rxjs/operators";
 import * as AuthActions from '../actions/auth.actions';
 import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
+import { Action } from '@ngrx/store';
 
 @Injectable()
-export class AuthEffects {
+export class AuthEffects implements OnInitEffects {
   constructor(
     private readonly actions$: Actions,
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly dialog: MatDialog
   ) { }
+
+  ngrxOnInitEffects(): Action {
+    return AuthActions.init();
+  }
+
+  initLogin$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.init),
+      exhaustMap(() =>
+        this.authService.refreshToken().pipe(
+          map(tokens => AuthActions.loginSuccess({ tokens })),
+          catchError(error => of(AuthActions.loginFailure({ error: (error as HttpErrorResponse).error })))
+        )
+      )
+    )
+  );
 
   register$ = createEffect(() =>
     this.actions$.pipe(
@@ -24,7 +42,7 @@ export class AuthEffects {
       exhaustMap(userRegister =>
         this.authService.register(userRegister).pipe(
           map(tokens => AuthActions.loginSuccess({ tokens })),
-          catchError(error => of(AuthActions.loginFailure({ error })))
+          catchError(error => of(AuthActions.loginFailure({ error: (error as HttpErrorResponse).error })))
         )
       )
     )
@@ -37,7 +55,7 @@ export class AuthEffects {
       exhaustMap(userLogin =>
         this.authService.login(userLogin).pipe(
           map(tokens => AuthActions.loginSuccess({ tokens })),
-          catchError(error => of(AuthActions.loginFailure({ error })))
+          catchError(error => of(AuthActions.loginFailure({ error: (error as HttpErrorResponse).error })))
         )
       )
     )

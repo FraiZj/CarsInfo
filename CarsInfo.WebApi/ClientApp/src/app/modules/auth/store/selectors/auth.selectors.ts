@@ -4,17 +4,19 @@ import { JwtPayload } from "@auth/interfaces/jwt-payload";
 import { UserClaims } from "@auth/interfaces/user-claims";
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import jwtDecode from "jwt-decode";
-import * as fromAuth from './../reducers/auth.reducer';
+import * as fromAuth from './../states/auth.state';
+import { AuthState } from './../states/auth.state';
 
-export interface AuthState {
-  [fromAuth.authStatusFeatureKey]: fromAuth.State;
-}
-
-export const selectAuthStatusState = createFeatureSelector<fromAuth.State>(fromAuth.authStatusFeatureKey);
+export const selectAuthState = createFeatureSelector<AuthState>(fromAuth.authFeatureKey);
 
 export const selectAuthTokens = createSelector(
-  selectAuthStatusState,
+  selectAuthState,
   (state) => state.tokens
+);
+
+export const selectAuthError = createSelector(
+  selectAuthState,
+  (state) => state.error
 );
 
 export const selectUserClaims = createSelector(
