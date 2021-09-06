@@ -29,7 +29,7 @@ export class AuthEffects implements OnInitEffects {
       exhaustMap(() =>
         this.authService.refreshToken().pipe(
           map(tokens => AuthActions.loginSuccess({ tokens })),
-          catchError(error => of(AuthActions.loginFailure({ error: (error as HttpErrorResponse).error })))
+          catchError(error => this.handleCatchError(error))
         )
       )
     )
@@ -42,7 +42,7 @@ export class AuthEffects implements OnInitEffects {
       exhaustMap(userRegister =>
         this.authService.register(userRegister).pipe(
           map(tokens => AuthActions.loginSuccess({ tokens })),
-          catchError(error => of(AuthActions.loginFailure({ error: (error as HttpErrorResponse).error })))
+          catchError(error => this.handleCatchError(error))
         )
       )
     )
@@ -55,7 +55,7 @@ export class AuthEffects implements OnInitEffects {
       exhaustMap(userLogin =>
         this.authService.login(userLogin).pipe(
           map(tokens => AuthActions.loginSuccess({ tokens })),
-          catchError(error => of(AuthActions.loginFailure({ error: (error as HttpErrorResponse).error })))
+          catchError(error => this.handleCatchError(error))
         )
       )
     )
@@ -91,4 +91,10 @@ export class AuthEffects implements OnInitEffects {
         map(() => AuthActions.logoutSuccess()))
       ))
   );
+
+  private handleCatchError(error: any) {
+    if (error instanceof HttpErrorResponse) return of(AuthActions.loginFailure({ error: error.error }));
+    if (error instanceof Error) return of(AuthActions.loginFailure({ error: error.message }));
+    return of(AuthActions.loginFailure({ error: 'An error occurred' }));
+  }
 }
