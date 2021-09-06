@@ -2,7 +2,7 @@
   (closeFilterEvent)="closeMobileFilter()" (orderByChange)="orderByChange($event)" [orderBy]="orderBy">
 </car-filter-mobile>
 
-<div class="cars-list">
+<div *ngIf="cars$ | async as cars" class="cars-list">
   <div class="default-filter">
     <cars-filter (filterEvent)="getFilteredCars($event)" [filter]="filter"></cars-filter>
     <cars-sorting-select [orderBy]="orderBy" (orderByChange)="orderByChange($event)"></cars-sorting-select>
@@ -15,7 +15,7 @@
   </div>
   <div class="cars" infiniteScroll [alwaysCallback]="true" (scrolled)="onScroll()"
     *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
-    <car-card *ngFor='let car of cars; trackBy: trackCarsById' [car]="car">
+    <car-card *ngFor='let car of cars; trackBy: trackCarsById;' [car]="car">
     </car-card>
   </div>
   <div>

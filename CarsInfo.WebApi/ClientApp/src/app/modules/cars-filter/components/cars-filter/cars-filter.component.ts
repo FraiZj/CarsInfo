@@ -13,20 +13,17 @@ export class CarsFilterComponent {
   @Output() public filterEvent = new EventEmitter<FilterWithPaginator>();
 
   public onBrandFilter(brands: string[]): void {
-    this.filter.brands = brands;
+    this.filter = { ...this.filter, brands};
     this.filterEvent.emit(this.filter);
   }
 
   public onModelFilter(model: string): void {
-    this.filter.model = model;
+    this.filter = { ...this.filter, model};
     this.filterEvent.emit(this.filter);
   }
 
   public clearFilter(): void {
-    this.filter.brands = [];
-    this.filter.model = '';
-    this.filter.skip = ItemsSkipPerLoad;
-    this.filter.take = ItemsTakePerLoad;
+    this.filter = FilterWithPaginator.CreateDefault();
     this.filterEvent.emit(this.filter);
   }
 }
