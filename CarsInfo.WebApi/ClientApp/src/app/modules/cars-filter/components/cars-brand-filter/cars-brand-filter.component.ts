@@ -48,7 +48,7 @@ export class CarsBrandFilterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.selectedBrands.splice(index, 1);
+    this.selectedBrands = this.selectedBrands.filter(b => b != brand);
     this.filterBrandEvent.emit(this.selectedBrands);
   }
 
@@ -61,7 +61,7 @@ export class CarsBrandFilterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.selectedBrands.push(value);
+    this.selectedBrands = [...this.selectedBrands, value];
     this.brandFormControl.reset();
     this.filterBrandEvent.emit(this.selectedBrands);
   }

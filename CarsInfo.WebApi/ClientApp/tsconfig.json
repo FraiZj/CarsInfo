@@ -22,7 +22,8 @@
     ],
     "paths": {
       "@core/*": ["app/modules/core/*"],
-      "@auth/*": ["app/modules/auth/*"]
+      "@auth/*": ["app/modules/auth/*"],
+      "@cars-filter/*": ["app/modules/cars-filter/*"]
     }
   },
   "angularCompilerOptions": {

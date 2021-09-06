@@ -1,3 +1,5 @@
+import { Filters } from './../../../cars-filter/enums/filters';
+import { switchMap } from 'rxjs/operators';
 import { ItemsSkipPerLoad } from './../../consts/filter-consts';
 import { OrderBy } from './../../../cars/enums/order-by';
 import { FilterService } from './../../../cars/services/filter.service';
@@ -7,6 +9,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { Observable, Subscription } from 'rxjs';
 import { ItemsTakePerLoad } from '../../consts/filter-consts';
+import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
+import * as FilterSelectors from '@cars-filter/store/selectors/cars-filter.selectors';
+import * as FilterActions from '@cars-filter/store/actions/cars-filter.actions';
+import { Filter } from '@cars-filter/interfaces/filter';
 
 @Component({
   selector: 'cars-list',
@@ -14,7 +20,7 @@ import { ItemsTakePerLoad } from '../../consts/filter-consts';
   styleUrls: ['./cars-list.component.scss']
 })
 export class CarsListComponent implements OnInit, OnDestroy {
-  @Input() public filterName!: string;
+  @Input() public filterName!: Filters;
   @Input() public getCars!: (filter?: FilterWithPaginator, orderBy?: OrderBy) => Observable<Car[]>;
   private readonly subscriptions: Subscription[] = [];
   public filter!: FilterWithPaginator;
@@ -25,23 +31,24 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public mobileFilterOpened: boolean = false;
 
   constructor(
+    private readonly store: Store,
     private readonly filterService: FilterService,
     private readonly spinner: NgxSpinnerService
   ) { }
 
   public ngOnInit(): void {
-    const savedFilter = this.filterService.getFilter(this.filterName);
-    this.filter = FilterWithPaginator.CreateDefault();
+    const filterSelector = this.filterName == Filters.CarsFilter ?
+      FilterSelectors.selectCarsFilter :
+      FilterSelectors.selectFavoriteCarsFilter;
 
-    if (savedFilter != null) {
-      this.filter.brands = savedFilter.brands;
-      this.filter.model = savedFilter.model;
-    }
-
-    this.orderBy = this.filterService.getOrderBy(this.filterName) ?? OrderBy.BrandNameAsc;
-
-    this.subscriptions.push(this.getCars(this.filter, this.orderBy)
-      .subscribe(cars => this.cars = cars));
+    this.store.select(filterSelector).pipe(
+      switchMap(filter => {
+        this.filter = FilterWithPaginator.CreateDefault();
+        this.filter.brands = filter?.brands ?? [];
+        this.filter.model = filter?.model ?? '';
+        return this.getCars(this.filter, this.orderBy)
+      })
+    ).subscribe(cars => this.cars = cars);
   }
 
   public ngOnDestroy(): void {
@@ -55,10 +62,10 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public getFilteredCars(filter: FilterWithPaginator): void {
     this.filter = filter;
     this.filter.skip = ItemsSkipPerLoad;
-    this.filterService.saveFilter(this.filterName, {
-      brands: this.filter.brands,
-      model: this.filter.model
-    });
+    this.store.dispatch(FilterActions.saveFilter({
+      filterName: this.filterName,
+      filter: this.filter
+    }));
     this.notEmptyPost = true;
     this.subscriptions.push(this.getCars(this.filter, this.orderBy)
       .subscribe(cars => this.cars = cars));
