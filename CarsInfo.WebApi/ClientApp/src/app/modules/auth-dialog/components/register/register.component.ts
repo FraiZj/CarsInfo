@@ -1,7 +1,7 @@
 import { UserRegister } from './../../../auth/interfaces/user-register';
-import { register } from './../../../auth/store/actions/auth.actions';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
+import * as AuthActions from '@auth/store/actions/auth.actions';
+import * as AuthSelectors from '@auth/store/selectors/auth.selectors';
+import { Component, EventEmitter, Output, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss', './../../auth-dialog.module.scss']
 })
-export class RegisterComponent implements OnDestroy {
+export class RegisterComponent implements OnInit, OnDestroy {
   public static readonly PasswordMaxLength: number = 6;
   @Output() public switchToLoginEvent = new EventEmitter();
   @Output() public onLoginEvent = new EventEmitter();
@@ -24,6 +24,7 @@ export class RegisterComponent implements OnDestroy {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(RegisterComponent.PasswordMaxLength)]],
   });
+  public error$ = this.store.select(AuthSelectors.selectAuthError);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,6 +32,16 @@ export class RegisterComponent implements OnDestroy {
     private readonly store: Store,
     private readonly _snackBar: MatSnackBar
   ) { }
+
+  public ngOnInit(): void {
+    this.subscriptions.push(
+      this.error$.subscribe((error) => {
+        if (error != null) {
+          this.openSnackBar(error);
+        }
+      })
+    );
+  }
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
@@ -61,7 +72,7 @@ export class RegisterComponent implements OnDestroy {
     }
 
     const userRegister = this.registerForm.value as UserRegister;
-    this.store.dispatch(register({ userRegister }));
+    this.store.dispatch(AuthActions.register({ userRegister }));
     this.onLoginEvent.emit();
   }
 
