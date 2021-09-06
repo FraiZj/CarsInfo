@@ -116,13 +116,17 @@ export class AuthService {
   }
 
   public refreshToken(): Observable<AuthTokens> {
-    const tokens = this.getTokensFromLocalStorage() ?? this.currentUserTokenSubject.value;
+    const tokens = this.getTokensFromLocalStorage();
+
+    if (tokens == null) {
+      return throwError(new Error('Invalid tokens'));
+    }
+
     return this.http.post<AuthTokens>(`${this.url}/refresh-token`, tokens)
       .pipe(tap({
         next: this.authenticationSuccededHandler,
         error: () => {
           localStorage.removeItem(AuthService.TokensName);
-          this.currentUserTokenSubject.next(null);
           this.stopRefreshTokenTimer();
         }
       }));
