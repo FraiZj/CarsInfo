@@ -1,22 +1,19 @@
-import { Observable } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
-import { Car } from 'app/modules/cars/interfaces/car';
-import { OrderBy } from 'app/modules/cars/enums/order-by';
-import { FilterWithPaginator } from '../../interfaces/filterWithPaginator';
-import { CarsService } from 'app/modules/cars/services/cars.service';
+import { selectCanLoadNextCars, selectCars } from './../../store/selectors/cars-list.selectors';
+import { fetchCars, loadNextCars } from './../../store/actions/cars-list.actions';
+import { Component } from '@angular/core';
 import { Filters } from '@cars-filter/enums/filters';
+import { selectCarsFilter } from '@cars-filter/store/selectors/cars-filter.selectors';
 
 @Component({
   selector: 'cars-main-list',
-  template: `<cars-list [filterName]="filterName" [getCars]="getCars"></cars-list>`
+  template: `<cars-list [filterName]="filterName" [fetchCars]="fetchCars" [fetchNextCars]="fetchNextCars"
+    [selectCanLoad]="selectCanLoad" [selectFilter]="selectFilter" [selectCars]="selectCars"></cars-list>`
 })
-export class CarsMainListComponent implements OnInit {
+export class CarsMainListComponent {
   public readonly filterName: Filters = Filters.CarsFilter;
-  public getCars!: (filter?: FilterWithPaginator, orderBy?: OrderBy) => Observable<Car[]>
-
-  constructor(private readonly carsService: CarsService) { }
-
-  ngOnInit(): void {
-    this.getCars = this.carsService.getCars.bind(this.carsService);
-  }
+  public readonly fetchCars = fetchCars;
+  public readonly fetchNextCars = loadNextCars;
+  public readonly selectCanLoad = selectCanLoadNextCars;
+  public readonly selectFilter = selectCarsFilter;
+  public readonly selectCars = selectCars;
 }

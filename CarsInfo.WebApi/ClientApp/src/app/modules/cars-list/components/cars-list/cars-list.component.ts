@@ -1,8 +1,8 @@
-import { Filters } from './../../../cars-filter/enums/filters';
-import { switchMap } from 'rxjs/operators';
+import { AsyncPipe } from '@angular/common';
+import { Filters } from '@cars-filter/enums/filters';
+import { map } from 'rxjs/operators';
 import { ItemsSkipPerLoad } from './../../consts/filter-consts';
-import { OrderBy } from './../../../cars/enums/order-by';
-import { FilterService } from './../../../cars/services/filter.service';
+import { OrderBy } from '@cars/enums/order-by';
 import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -10,9 +10,12 @@ import { Car } from 'app/modules/cars/interfaces/car';
 import { Observable, Subscription } from 'rxjs';
 import { ItemsTakePerLoad } from '../../consts/filter-consts';
 import { DefaultProjectorFn, MemoizedSelector, Store } from '@ngrx/store';
-import * as FilterSelectors from '@cars-filter/store/selectors/cars-filter.selectors';
 import * as FilterActions from '@cars-filter/store/actions/cars-filter.actions';
 import { Filter } from '@cars-filter/interfaces/filter';
+
+type CanLoadNextCarsSelector = MemoizedSelector<object, boolean, DefaultProjectorFn<boolean>>;
+type CarsSelector = MemoizedSelector<object, Car[], DefaultProjectorFn<Car[]>>;
+type FilterSelector = MemoizedSelector<object, Filter | null, DefaultProjectorFn<Filter | null>>;
 
 @Component({
   selector: 'cars-list',
@@ -20,6 +23,11 @@ import { Filter } from '@cars-filter/interfaces/filter';
   styleUrls: ['./cars-list.component.scss']
 })
 export class CarsListComponent implements OnInit, OnDestroy {
+  @Input() public fetchCars!: any;
+  @Input() public fetchNextCars!: any;
+  @Input() public selectCanLoad!: CanLoadNextCarsSelector;
+  @Input() public selectFilter!: FilterSelector;
+  @Input() public selectCars!: CarsSelector;
   @Input() public filterName!: Filters;
   @Input() public getCars!: (filter?: FilterWithPaginator, orderBy?: OrderBy) => Observable<Car[]>;
   private readonly subscriptions: Subscription[] = [];
@@ -27,28 +35,28 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public orderBy: OrderBy = OrderBy.BrandNameAsc;
   public notEmptyPost = true;
   public notscrolly = true;
-  public cars!: Car[];
+  public cars$!: Observable<Car[]>;
   public mobileFilterOpened: boolean = false;
 
   constructor(
     private readonly store: Store,
-    private readonly filterService: FilterService,
-    private readonly spinner: NgxSpinnerService
+    private readonly spinner: NgxSpinnerService,
+    private readonly asyncPipe: AsyncPipe
   ) { }
 
   public ngOnInit(): void {
-    const filterSelector = this.filterName == Filters.CarsFilter ?
-      FilterSelectors.selectCarsFilter :
-      FilterSelectors.selectFavoriteCarsFilter;
+    this.cars$ = this.store.select(this.selectCars);
 
-    this.store.select(filterSelector).pipe(
-      switchMap(filter => {
+    this.store.select(this.selectFilter).pipe(
+      map(filter => {
         this.filter = FilterWithPaginator.CreateDefault();
         this.filter.brands = filter?.brands ?? [];
         this.filter.model = filter?.model ?? '';
-        return this.getCars(this.filter, this.orderBy)
       })
-    ).subscribe(cars => this.cars = cars);
+    ).subscribe(() => this.store.dispatch(this.fetchCars({
+      filter: this.filter,
+      orderBy: this.orderBy
+    })));
   }
 
   public ngOnDestroy(): void {
@@ -67,17 +75,24 @@ export class CarsListComponent implements OnInit, OnDestroy {
       filter: this.filter
     }));
     this.notEmptyPost = true;
-    this.subscriptions.push(this.getCars(this.filter, this.orderBy)
-      .subscribe(cars => this.cars = cars));
+    this.store.dispatch(this.fetchCars({
+      filter: this.filter,
+      orderBy: this.orderBy
+    }));
   }
 
   public orderByChange(orderBy: OrderBy) {
     this.notEmptyPost = true;
     this.orderBy = orderBy;
-    this.filter.skip = ItemsSkipPerLoad;
-    this.filter.take = ItemsTakePerLoad;
-    this.subscriptions.push(this.getCars(this.filter, this.orderBy)
-      .subscribe(cars => this.cars = cars));
+    this.filter = {
+      ...this.filter,
+      skip: ItemsSkipPerLoad,
+      take: ItemsTakePerLoad
+    };
+    this.store.dispatch(this.fetchCars({
+      filter: this.filter,
+      orderBy: this.orderBy
+    }));
   }
 
   public openMobileFilter() {
@@ -97,17 +112,17 @@ export class CarsListComponent implements OnInit, OnDestroy {
   }
 
   public loadNextCars(): void {
-    this.filter.skip = this.cars.length;
-    this.subscriptions.push(this.getCars(this.filter, this.orderBy)
-      .subscribe(cars => {
-        this.spinner.hide();
+    this.filter = {
+      ...this.filter,
+      skip: this.asyncPipe.transform(this.cars$)?.length ?? 0
+    };
 
-        if (cars.length < ItemsTakePerLoad) {
-          this.notEmptyPost = false;
-        }
-
-        this.cars = this.cars.concat(cars);
-        this.notscrolly = true;
-      }));
+    this.spinner.hide();
+    this.store.dispatch(this.fetchNextCars({
+      filter: this.filter,
+      orderBy: this.orderBy
+    }));
+    this.notscrolly = true;
+    this.store.select(this.selectCanLoad).subscribe(can => this.notEmptyPost = can as boolean);
   }
 }

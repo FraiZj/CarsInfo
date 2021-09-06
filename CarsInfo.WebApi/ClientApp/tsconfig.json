@@ -23,7 +23,16 @@
     "paths": {
       "@core/*": ["app/modules/core/*"],
       "@auth/*": ["app/modules/auth/*"],
-      "@cars-filter/*": ["app/modules/cars-filter/*"]
+      "@cars-filter/*": ["app/modules/cars-filter/*"],
+      "@cars-list/*": ["app/modules/cars-list/*"],
+      "@auth-dialog/*": ["app/modules/auth-dialog/*"],
+      "@brands/*": ["app/modules/brands/*"],
+      "@car-creation/*": ["app/modules/car-creation/*"],
+      "@shared/*": ["app/modules/shared/*"],
+      "@car-deletion-dialog/*": ["app/modules/car-delete-confirmation-dialog/*"],
+      "@car-editor/*": ["app/modules/car-editor/*"],
+      "@car-editor-form/*": ["app/modules/car-editor-form/*"],
+      "@cars/*": ["app/modules/cars/*"],
     }
   },
   "angularCompilerOptions": {
