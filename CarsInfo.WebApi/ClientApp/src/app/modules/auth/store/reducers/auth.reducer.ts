@@ -14,8 +14,3 @@ export const reducer = createReducer(
   on(AuthActions.logoutSuccess, (state) => ({ ...state, tokens: null, error: null })),
   on(AuthActions.clearLoginError, (state) => ({ ...state, error: null }))
 );
-
-export function authStatusFeatureKey<T>(authStatusFeatureKey: any) {
-  throw new Error('Function not implemented.');
-}
-

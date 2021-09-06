@@ -1,3 +1,6 @@
+import { reducer } from './store/reducers/cars-filter.reducers';
+import { filterFeatureKey } from './store/states/cars-filter.state';
+import { StoreModule } from '@ngrx/store';
 import { CarsModule } from './../cars/cars.module';
 import { BrandsModule } from './../brands/brands.module';
 import { CommonModule } from "@angular/common";
@@ -40,6 +43,10 @@ import { CarsSortingSelectComponent } from './components/cars-sorting-select/car
     ReactiveFormsModule,
     CommonModule,
     FormsModule,
+    StoreModule.forFeature({
+      name: filterFeatureKey,
+      reducer: reducer
+    }),
 
     // app modules
     CarsModule,
