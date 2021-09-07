@@ -7,10 +7,12 @@ namespace CarsInfo.Application.Persistence.Contracts
 {
     public interface ICarsRepository : IGenericRepository<Car>
     {
-        Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(FilterModel filter = null);
+        Task<IEnumerable<Car>> GetAsync(FilterModel filter = null);
         
-        Task<IEnumerable<Car>> GetUserCarsAsync(string userId, FilterModel filter = null);
+        Task<IEnumerable<Car>> GetUserFavoriteCarsAsync(int userId, FilterModel filter = null);
+        
+        Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId, FilterModel filter = null);
 
-        Task<Car> GetWithAllIncludesAsync(int id, bool includeDeleted = false);
+        Task<Car> GetByIdAsync(int id, bool includeDeleted = false);
     }
 }

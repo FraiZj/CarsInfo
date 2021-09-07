@@ -12,8 +12,6 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
         
         public string Brand { get; set; }
 
-        public bool IsLiked { get; set; }
-
         public ICollection<string> CarPicturesUrls { get; set; }
 
         public ICollection<CommentDto> Comments { get; set; }

@@ -68,7 +68,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var car = await _carsRepository.GetAsync(carId);
+                var car = await _carsRepository.GetByIdAsync(carId);
                 ValidationHelper.ThrowIfNull(car);
 
                 var userCar = await _userCarRepository.GetAsync(new List<FiltrationField>
@@ -130,7 +130,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync();
+                var cars = await _carsRepository.GetAsync();
                 var carsDtos = _mapper.MapToCarsDtos(cars);
                 return carsDtos;
             }
@@ -151,9 +151,8 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 }
 
                 var filter = _filterService.ConfigureCarFilter(filterDto);
-                var cars = await _carsRepository.GetAllWithBrandAndPicturesAsync(filter);
-                var currentUserFavoriteCars = await GetUserCarAsync(filterDto.CurrentUserId);
-                var carsDtos = _mapper.MapToCarsDtos(cars, currentUserFavoriteCars);
+                var cars = await _carsRepository.GetAsync(filter);
+                var carsDtos = _mapper.MapToCarsDtos(cars);
 
                 return carsDtos;
             }
@@ -164,18 +163,16 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public async Task<IEnumerable<CarDto>> GetUserCarsAsync(FilterDto filter)
+        public async Task<IEnumerable<CarDto>> GetUserFavoriteCarsAsync(int userId, FilterDto filter)
         {
             try
             {
                 ValidationHelper.ThrowIfNull(filter);
-                ValidationHelper.ThrowIfStringNullOrWhiteSpace(filter.CurrentUserId);
 
                 var filterModel = _filterService.ConfigureCarFilter(filter);
                 filterModel.Filters.Add(new FiltrationField("UserCar.IsDeleted", 0));
-                var cars = await _carsRepository.GetUserCarsAsync(filter.CurrentUserId, filterModel);
+                var cars = await _carsRepository.GetUserFavoriteCarsAsync(userId, filterModel);
                 var carsDtos = _mapper.MapToCarsDtos(cars).ToList();
-                carsDtos.ForEach(c => c.IsLiked = true);
 
                 return carsDtos;
             }
@@ -183,6 +180,22 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             {
                 _logger.LogError(e, "An error occurred while fetching all cars");
                 return new List<CarDto>();
+            }
+        }
+
+        public async Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId)
+        {
+            try
+            {
+                var filterModel = new FilterModel();
+                filterModel.Filters.Add(new FiltrationField("UserCar.IsDeleted", 0));
+                var carsIds = await _carsRepository.GetUserFavoriteCarsIdsAsync(userId, filterModel);
+                return carsIds;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching favorite cars ids");
+                return new List<int>();
             }
         }
         
@@ -203,7 +216,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var car = await _carsRepository.GetWithAllIncludesAsync(id);
+                var car = await _carsRepository.GetByIdAsync(id);
                 var carDto = _mapper.MapToCarDto(car);
 
                 return carDto;
@@ -219,7 +232,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var car = await _carsRepository.GetWithAllIncludesAsync(id);
+                var car = await _carsRepository.GetByIdAsync(id);
                 var carDto = _mapper.MapToCarEditorDto(car);
 
                 return carDto;
@@ -237,7 +250,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             {
                 ValidateCarEditorDto(entity);
                 var car = _mapper.MapToCar(entity);
-                var oldCar = await _carsRepository.GetWithAllIncludesAsync(entity.Id);
+                var oldCar = await _carsRepository.GetByIdAsync(entity.Id);
 
                 await _carsRepository.UpdateAsync(car);
                 await _carsPictureRepository.DeleteRangeAsync(oldCar.CarPictures.Select(cp => cp.Id));

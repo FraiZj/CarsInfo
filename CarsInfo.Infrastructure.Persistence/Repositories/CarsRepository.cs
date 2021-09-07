@@ -13,7 +13,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             : base(context)
         { }
 
-        public async Task<IEnumerable<Car>> GetAllWithBrandAndPicturesAsync(FilterModel filter)
+        public async Task<IEnumerable<Car>> GetAsync(FilterModel filter)
         {
             filter ??= new FilterModel();
             
@@ -52,8 +52,8 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return GroupSet(cars);
         }
 
-        public async Task<IEnumerable<Car>> GetUserCarsAsync(
-            string userId, FilterModel filter)
+        public async Task<IEnumerable<Car>> GetUserFavoriteCarsAsync(
+            int userId, FilterModel filter)
         {
             filter ??= new FilterModel();
             var orderBy = filter.OrderBy is null ? string.Empty : ConfigureOrderBy(filter.OrderBy);
@@ -93,7 +93,21 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return GroupSet(cars);
         }
 
-        public async Task<Car> GetWithAllIncludesAsync(int id, bool includeDeleted = false)
+        public async Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId, FilterModel filter = null)
+        {
+            filter ??= new FilterModel();
+            var orderBy = filter.OrderBy is null ? string.Empty : ConfigureOrderBy(filter.OrderBy);
+            var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
+            var sql = $@"SELECT Car.Id FROM Car
+                         INNER JOIN UserCar
+                         ON Car.Id = UserCar.CarId AND UserCar.UserId = { userId }
+                         { filters }";
+
+            var cars = await Context.QueryIdsAsync(sql);
+            return cars;
+        }
+        
+        public async Task<Car> GetByIdAsync(int id, bool includeDeleted = false)
         {
             var sql = @$"SELECT * FROM Car
                          LEFT JOIN Brand

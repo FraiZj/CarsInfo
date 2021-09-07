@@ -21,6 +21,8 @@ namespace CarsInfo.Application.Persistence.Contracts
             where TSecond : BaseEntity
             where TThird : BaseEntity;
         
+        Task<IEnumerable<int>> QueryIdsAsync(string sql, object parameters = null);
+        
         Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null) where T : BaseEntity;
 
         Task<IEnumerable<T>> QueryAsync<T, TFirst>(
