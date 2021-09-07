@@ -71,6 +71,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 var car = await _carsRepository.GetByIdAsync(carId);
                 ValidationHelper.ThrowIfNull(car);
 
+                
                 var userCar = await _userCarRepository.GetAsync(new List<FiltrationField>
                 {
                     new("CarId", car.Id, separator: "AND"),
@@ -197,19 +198,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 _logger.LogError(e, "An error occurred while fetching favorite cars ids");
                 return new List<int>();
             }
-        }
-        
-        private async Task<ICollection<UserCar>> GetUserCarAsync(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                return null;
-            }
-
-            return (await _userCarRepository.GetAllAsync(new List<FiltrationField>
-            {
-                new("UserId", int.Parse(id))
-            })).ToList();
         }
 
         public async Task<CarDto> GetByIdAsync(int id)

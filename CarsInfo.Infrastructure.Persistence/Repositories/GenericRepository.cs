@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using CarsInfo.Application.Persistence.Contracts;
-using CarsInfo.Application.Persistence.Enums;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities.Base;
+using CarsInfo.Infrastructure.Persistence.Configurators;
+using CarsInfo.Infrastructure.Persistence.Parsers;
 
 namespace CarsInfo.Infrastructure.Persistence.Repositories
 {
@@ -27,7 +27,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public virtual async Task<int> AddAsync(T entity)
         {
-            var propertyContainer = ParseProperties(entity);
+            var propertyContainer = PropertyParser<T>.ParseProperties(entity);
             var sql = $@"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) 
                          VALUES(@{string.Join(", @", propertyContainer.ValueNames)})";
             return await Context.AddAsync(sql, propertyContainer.ValuePairs);
@@ -35,13 +35,15 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public async Task AddRangeAsync(IList<T> entities)
         {
-            var propertyContainer = ParseProperties(entities.First());
+            var propertyContainer = PropertyParser<T>.ParseProperties(entities.First());
             var sql = $@"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) 
                          VALUES {CombineValuesToInsert(entities, propertyContainer)}";
             await Context.ExecuteAsync(sql);
         }
 
-        protected string CombineValuesToInsert(IList<T> entities, PropertyContainer propertyContainer)
+        protected string CombineValuesToInsert(
+            IList<T> entities, 
+            PropertyParser<T>.PropertyContainer propertyContainer)
         {
             var result = new List<string>();
 
@@ -75,14 +77,19 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             {
                 new("Id", $"({string.Join(", ", ids)})", "IN")
             };
-            var filter = ConfigureFilter(filters);
+            var filter = SqlQueryConfigurator.ConfigureFilter(TableName, filters);
             var sql = $"UPDATE [{TableName}] SET IsDeleted = 1 WHERE {filter}";
             await Context.ExecuteAsync(sql);
         }
 
         public async Task<T> GetAsync(IList<FiltrationField> filters, bool includeDeleted = false)
         {
-            var filter = ConfigureFilter(filters, includeDeleted);
+            if (filters?.Any() ?? true)
+            {
+                return null;
+            }
+            
+            var filter = SqlQueryConfigurator.ConfigureFilter(TableName, filters, includeDeleted);
             var sql = $"SELECT TOP 1 * FROM [{TableName}] {filter}";
             return await Context.QueryFirstOrDefaultAsync<T>(sql);
         }
@@ -94,13 +101,18 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return await Context.QueryAsync<T>(sql);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(IList<FiltrationField> filters)
+        public async Task<IEnumerable<T>> GetAllAsync(FilterModel filterModel)
         {
-            var sql = $"SELECT * FROM [{TableName}]";
+            var filters = SqlQueryConfigurator.ConfigureFilter(
+                TableName, filterModel.Filters, filterModel.IncludeDeleted);
+            var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filterModel.OrderBy);
+            var sql = $@"SELECT * FROM [{TableName}]
+                        { filters }
+	                    { orderBy }";
 
-            if (filters is not null && filters.Any())
+            if (filterModel?.Filters is not null && filterModel.Filters.Any())
             {
-                var filter = ConfigureFilter(filters);
+                var filter = SqlQueryConfigurator.ConfigureFilter(TableName, filterModel.Filters);
                 sql += $" {filter}";
             }
             
@@ -114,7 +126,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                 return null;
             }
 
-            var filter = ConfigureFilter(filters);
+            var filter = SqlQueryConfigurator.ConfigureFilter(TableName, filters);
 
             var sql = @$"
                         SELECT
@@ -125,158 +137,34 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                           THEN 1
                           ELSE 0
                         END";
-
+ 
             return await Context.ContainsAsync(sql);
         }
 
-        public virtual async Task<T> GetAsync(int id)
+        public virtual async Task<T> GetAsync(int id, bool includeDeleted = false)
         {
             var sql = $"SELECT * FROM [{TableName}] WHERE Id=@id";
+
+            if (!includeDeleted)
+            {
+                sql += " AND IsDeleted = 0";
+            }
+            
             return await Context.QueryFirstOrDefaultAsync<T>(sql, new { id });
         }
 
         public virtual async Task UpdateAsync(T entity)
         {
-            var propertyContainer = ParseProperties(entity);
-            var sqlValuePairs = GetSqlPairs(propertyContainer.ValueNames);
+            var propertyContainer = PropertyParser<T>.ParseProperties(entity);
+            var sqlValuePairs = SqlQueryConfigurator.GetSqlPairs(propertyContainer.ValueNames);
             var sql = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE Id={entity.Id}";
             await Context.ExecuteAsync(sql, propertyContainer.AllPairs.ToList());
         }
 
-        protected static string GetTableName(MemberInfo memberInfo)
+        private static string GetTableName(MemberInfo memberInfo)
         {
             var tableAttribute = Attribute.GetCustomAttribute(memberInfo, typeof(TableAttribute)) as TableAttribute;
             return tableAttribute?.Name;
-        }
-        
-        protected string ConfigureOrderBy(SortingField sortingField)
-        {
-            if (sortingField is null || string.IsNullOrWhiteSpace(sortingField.Field))
-            {
-                return string.Empty;
-            }
-
-            var order = sortingField.Order == Order.Ascending ? "ASC" : "DESC";
-            return $"ORDER BY {string.Join(", ", sortingField.Field)} {order}";
-        }
-
-        protected string ConfigureFilter(IList<FiltrationField> filters, bool includeDeleted = false)
-        {
-            if (includeDeleted && !filters.Any())
-            {
-                return string.Empty;
-            }
-
-            var result = new StringBuilder("WHERE ");
-
-            if (!includeDeleted)
-            {
-                result.Append($"{TableName}.IsDeleted = 0 ");
-
-                if (filters.Any())
-                {
-                    result.Append("AND ");
-                }
-            }
-
-            for (var i = 0; i < filters.Count; i++)
-            {
-                var filter = filters[i];
-                filter.Value = filter.Value is string && filter.Operator != "IN" ?
-                    new string($"'{filter.Value}'") :
-                    filter.Value;
-
-                result.Append($"{filter.Field} {filter.Operator} {filter.Value} ");
-
-                if (!string.IsNullOrEmpty(filter.Separator) && i != filters.Count - 1)
-                {
-                    result.Append($"{filter.Separator} ");
-                }
-            }
-
-            
-
-            return result.ToString();
-        }
-
-        protected static PropertyContainer ParseProperties<TU>(TU obj)
-        {
-            var propertyContainer = new PropertyContainer();
-
-            if (obj is null)
-            {
-                return propertyContainer;
-            }
-
-            var properties = typeof(T).GetProperties();
-            
-            foreach (var property in properties)
-            {
-                if (property.PropertyType.IsInterface)
-                {
-                    continue;
-                }
-
-                if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
-                {
-                    continue;
-                }
-
-                var name = property.Name;
-                var value = typeof(T).GetProperty(property.Name)?.GetValue(obj, null);
-
-                if (name == IdName)
-                {
-                    propertyContainer.AddId(name, value);
-                }
-                else
-                {
-                    propertyContainer.AddValue(name, value);
-                }
-            }
-
-            return propertyContainer;
-        }
-
-        protected static string GetSqlPairs(IEnumerable<string> keys, string tableAlias = null, string separator = ", ")
-        {
-            var prefix = tableAlias is null ? string.Empty : $"{tableAlias}.";
-            var pairs = keys.Select(key => $"{prefix}{key}=@{key}").ToList();
-            return string.Join(separator, pairs);
-        }
-
-        protected class PropertyContainer
-        {
-            private readonly Dictionary<string, object> _ids;
-            private readonly Dictionary<string, object> _values;
-
-            internal PropertyContainer()
-            {
-                _ids = new Dictionary<string, object>();
-                _values = new Dictionary<string, object>();
-            }
-
-            internal IEnumerable<string> IdNames => _ids.Keys;
-
-            internal IEnumerable<string> ValueNames => _values.Keys;
-
-            internal IEnumerable<string> AllNames => _ids.Keys.Union(_values.Keys);
-
-            internal IDictionary<string, object> IdPairs => _ids;
-
-            internal IDictionary<string, object> ValuePairs => _values;
-
-            internal IEnumerable<KeyValuePair<string, object>> AllPairs => _ids.Concat(_values);
-
-            internal void AddId(string name, object value)
-            {
-                _ids.Add(name, value);
-            }
-
-            internal void AddValue(string name, object value)
-            {
-                _values.Add(name, value);
-            }
         }
     }
 }
