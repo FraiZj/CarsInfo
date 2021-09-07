@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
 
 namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface ICommentService
     {
-        Task AddAsync(CommentDto commentDto);
-        Task GetByCarIdAsync(int carId);
+        Task AddAsync(CommentEditorDto commentDto);
+        Task<IEnumerable<CommentDto>> GetByCarIdAsync(int carId);
     }
 }

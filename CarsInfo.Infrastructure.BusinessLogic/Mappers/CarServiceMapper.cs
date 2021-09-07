@@ -2,6 +2,7 @@
 using System.Linq;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Domain.Entities;
+using CarsInfo.Infrastructure.BusinessLogic.Mappers.Contracts;
 
 namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
 {

@@ -33,45 +33,21 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return await Context.AddAsync(sql, propertyContainer.ValuePairs);
         }
 
-        public async Task AddRangeAsync(IList<T> entities)
+        public virtual async Task AddRangeAsync(IList<T> entities)
         {
             var propertyContainer = PropertyParser<T>.ParseProperties(entities.First());
             var sql = $@"INSERT INTO [{TableName}] ({string.Join(", ", propertyContainer.ValueNames)}) 
-                         VALUES {CombineValuesToInsert(entities, propertyContainer)}";
+                         VALUES {SqlQueryConfigurator.CombineValuesToInsert(entities, propertyContainer)}";
             await Context.ExecuteAsync(sql);
         }
-
-        protected string CombineValuesToInsert(
-            IList<T> entities, 
-            PropertyParser<T>.PropertyContainer propertyContainer)
-        {
-            var result = new List<string>();
-
-            foreach (var entity in entities)
-            {
-                var rowValues = new List<object>();
-                
-                foreach (var valueName in propertyContainer.ValueNames)
-                {
-                    var value = typeof(T).GetProperty(valueName)?.GetValue(entity);
-                    value = value is string ? new string($"'{value}'") : value;
-                    value = value is bool ? Convert.ToByte(value) : value;
-                    rowValues.Add(value);
-                }
-
-                result.Add($"({string.Join(", ", rowValues)})");
-            }
-
-            return string.Join(", ", result);
-        }
-
+        
         public virtual async Task DeleteAsync(int id)
         {
             var sql = $"UPDATE [{TableName}] SET IsDeleted = 1 WHERE Id=@id";
             await Context.ExecuteAsync(sql, new { id });
         }
 
-        public async Task DeleteRangeAsync(IEnumerable<int> ids)
+        public virtual async Task DeleteRangeAsync(IEnumerable<int> ids)
         {
             var filters = new List<FiltrationField>
             {
@@ -82,7 +58,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             await Context.ExecuteAsync(sql);
         }
 
-        public async Task<T> GetAsync(IList<FiltrationField> filters, bool includeDeleted = false)
+        public virtual async Task<T> GetAsync(IList<FiltrationField> filters, bool includeDeleted = false)
         {
             if (filters?.Any() ?? true)
             {
@@ -101,7 +77,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return await Context.QueryAsync<T>(sql);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(FilterModel filterModel)
+        public virtual async Task<IEnumerable<T>> GetAllAsync(FilterModel filterModel)
         {
             var filters = SqlQueryConfigurator.ConfigureFilter(
                 TableName, filterModel.Filters, filterModel.IncludeDeleted);
@@ -109,17 +85,11 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             var sql = $@"SELECT * FROM [{TableName}]
                         { filters }
 	                    { orderBy }";
-
-            if (filterModel?.Filters is not null && filterModel.Filters.Any())
-            {
-                var filter = SqlQueryConfigurator.ConfigureFilter(TableName, filterModel.Filters);
-                sql += $" {filter}";
-            }
             
             return await Context.QueryAsync<T>(sql);
         }
 
-        public async Task<bool?> ContainsAsync(IList<FiltrationField> filters)
+        public virtual async Task<bool?> ContainsAsync(IList<FiltrationField> filters)
         {
             if (filters is not null && filters.Any())
             {

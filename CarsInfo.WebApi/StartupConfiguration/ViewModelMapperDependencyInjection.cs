@@ -9,6 +9,8 @@ namespace CarsInfo.WebApi.StartupConfiguration
         {
             services.AddSingleton<AuthorizationControllerMapper>();
             services.AddSingleton<CarsControllerMapper>();
+            services.AddSingleton<BrandControllerMapper>();
+            services.AddSingleton<CommentControllerMapper>();
         }
     }
 }

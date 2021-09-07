@@ -19,8 +19,6 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
 
         public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
 
-        public ICollection<CarDto> FavoriteCars { get; set; }
-
         public ICollection<string> Roles { get; set; }
     }
 }

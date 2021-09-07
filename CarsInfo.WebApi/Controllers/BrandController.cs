@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.WebApi.Mappers;
+using CarsInfo.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarsInfo.WebApi.Controllers
@@ -10,10 +12,12 @@ namespace CarsInfo.WebApi.Controllers
     public class BrandController : Controller
     {
         private readonly IBrandService _brandService;
+        private readonly BrandControllerMapper _mapper;
 
-        public BrandController(IBrandService brandService)
+        public BrandController(IBrandService brandService, BrandControllerMapper mapper)
         {
             _brandService = brandService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -31,16 +35,18 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BrandDto brand)
+        public async Task<IActionResult> Create([FromBody] BrandEditorViewModel brand)
         {
-            await _brandService.AddAsync(brand);
+            var brandDto = _mapper.MapToBrandDto(brand);
+            await _brandService.AddAsync(brandDto);
             return Created("", brand);
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromBody] BrandDto brand)
+        public async Task<IActionResult> Update([FromBody] BrandEditorViewModel brand)
         {
-            await _brandService.UpdateAsync(brand);
+            var brandDto = _mapper.MapToBrandDto(brand);
+            await _brandService.UpdateAsync(brandDto);
             return Ok(brand);
         }
 
