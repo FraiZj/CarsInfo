@@ -6,11 +6,10 @@ namespace CarsInfo.Infrastructure.DependencyInjection
     internal static class DbInitialization
     {
         public static void AddDbInitialization(
-            this IServiceCollection services, 
-            string masterConnectionString, 
-            string carsInfoConnectionString)
+            this IServiceCollection services,
+            string connectionString)
         {
-            DbInitializer.Initialize(masterConnectionString, carsInfoConnectionString);
+            DbInitializer.Initialize(connectionString);
         }
     }
 }

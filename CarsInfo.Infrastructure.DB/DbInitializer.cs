@@ -1,6 +1,7 @@
 ﻿using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
+using CarsInfo.Infrastructure.DB.Extensions;
 
 namespace CarsInfo.Infrastructure.DB
 {
@@ -9,131 +10,96 @@ namespace CarsInfo.Infrastructure.DB
         private const string CreateTablesPath = @"/SQL/CreateTables.sql";
         private const string SeedDataPath = @"/SQL/SeedData.sql";
         private static readonly string Directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static SqlConnectionStringBuilder _connectionStringBuilder;
 
-        public static void Initialize(string masterDbConnectionString, string carsInfoConnectionString)
+        public static void Initialize(string connectionString)
         {
-            CreateDatabase(masterDbConnectionString);
-            CreateSchema(carsInfoConnectionString, masterDbConnectionString);
-            SeedData(carsInfoConnectionString, masterDbConnectionString);
+            _connectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
+            CreateDatabase();
+            CreateSchema();
+            ApplySeedData();
         }
 
-        private static void CreateDatabase(string masterDbConnectionString)
+        private static void CreateDatabase()
         {
-            if (CheckDatabaseExists(masterDbConnectionString))
+            if (DatabaseExists())
             {
                 return;
             }
 
-            using (var masterCon = new SqlConnection(masterDbConnectionString))
-            {
-                masterCon.Open();
-
-                using (var createDb = new SqlCommand("CREATE DATABASE CarsInfo", masterCon))
-                {
-                    createDb.ExecuteNonQuery();
-                }
-
-                masterCon.Close();
-            }
+            ExecuteNonQuery(_connectionStringBuilder.GetDataSourceString(),
+                $"CREATE DATABASE {_connectionStringBuilder.InitialCatalog}");
         }
 
-        private static void CreateSchema(string carsInfoConnectionString, string masterDbConnectionString)
+        private static void CreateSchema()
         {
-            if (!CheckDatabaseExists(masterDbConnectionString) || TablesExist(carsInfoConnectionString))
+            if (!DatabaseExists() || TablesExist())
             {
                 return;
             }
 
             var createTablesScript = File.ReadAllText(Directory + CreateTablesPath);
-
-            using (var carsInfoCon = new SqlConnection(carsInfoConnectionString))
-            {
-                carsInfoCon.Open();
-                using (var createTables = new SqlCommand(createTablesScript, carsInfoCon))
-                {
-                    createTables.ExecuteNonQuery();
-                }
-                carsInfoCon.Close();
-            }
+            ExecuteNonQuery(_connectionStringBuilder.ToString(), createTablesScript);
         }
 
-        private static void SeedData(string carsInfoConnectionString, string masterDbConnectionString)
+        private static void ApplySeedData()
         {
-            if (!CheckDatabaseExists(masterDbConnectionString) || !TablesExist(carsInfoConnectionString) || SeedDataExist(carsInfoConnectionString))
+            if (!DatabaseExists() || 
+                !TablesExist() || 
+                SeedDataExist())
             {
                 return;
             }
 
             var seedDataScript = File.ReadAllText(Directory + SeedDataPath);
-
-            using (var carsInfoCon = new SqlConnection(carsInfoConnectionString))
-            {
-                carsInfoCon.Open();
-                using (var seedData = new SqlCommand(seedDataScript, carsInfoCon))
-                {
-                    seedData.ExecuteNonQuery();
-                }
-                carsInfoCon.Close();
-            }
+            ExecuteNonQuery(_connectionStringBuilder.ToString(), seedDataScript);
         }
 
-        private static bool SeedDataExist(string carsInfoConString)
+        private static bool SeedDataExist()
         {
-            const string cmdText = @"USE CarsInfo; SELECT TOP 1 * FROM [User]";
+            var query = @$"USE {_connectionStringBuilder.InitialCatalog}; SELECT TOP 1 * FROM [User]";
+            return QueryHasRows(_connectionStringBuilder.ToString(), query);
+        }
+
+        private static bool TablesExist()
+        {
+            var query = @$"USE {_connectionStringBuilder.InitialCatalog}; SELECT * FROM INFORMATION_SCHEMA.TABLES";
+            return QueryHasRows(_connectionStringBuilder.ToString(), query);
+        }
+
+        private static bool DatabaseExists()
+        {
+            var query = $"SELECT * FROM master.dbo.sysdatabases WHERE name = '{_connectionStringBuilder.InitialCatalog}'";
+            return QueryHasRows(_connectionStringBuilder.GetDataSourceString(), query);
+        }
+
+        private static void ExecuteNonQuery(string connectionString, string commandText)
+        {
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var createTables = new SqlCommand(commandText, connection))
+                {
+                    createTables.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
+        
+        private static bool QueryHasRows(string connectionString, string commandText)
+        {
             var isExist = false;
 
-            using (var con = new SqlConnection(carsInfoConString))
+            using (var connection = new SqlConnection(connectionString))
             {
-                con.Open();
-                using (var cmd = new SqlCommand(cmdText, con))
+                using (var cmd = new SqlCommand(commandText, connection))
                 {
+                    connection.Open();
                     using (var reader = cmd.ExecuteReader())
                     {
                         isExist = reader.HasRows;
                     }
-                }
-                con.Close();
-            }
-
-            return isExist;
-        }
-
-        private static bool TablesExist(string carsInfoConString)
-        {
-            const string cmdText = @"USE CarsInfo; SELECT * FROM INFORMATION_SCHEMA.TABLES";
-            var isExist = false;
-
-            using (var con = new SqlConnection(carsInfoConString))
-            {
-                con.Open();
-                using (var cmd = new SqlCommand(cmdText, con))
-                {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        isExist = reader.HasRows;
-                    }
-                }
-                con.Close();
-            }
-
-            return isExist;
-        }
-
-        private static bool CheckDatabaseExists(string masterDbConnectionString)
-        {
-            const string cmdText = "SELECT * FROM master.dbo.sysdatabases WHERE name = 'CarsInfo'";
-            var isExist = false;
-
-            using (var con = new SqlConnection(masterDbConnectionString))
-            {
-                using (var cmd = new SqlCommand(cmdText, con))
-                {
-                    con.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        isExist = reader.HasRows;
-                    }
-                    con.Close();
+                    connection.Close();
                 }
             }
 
