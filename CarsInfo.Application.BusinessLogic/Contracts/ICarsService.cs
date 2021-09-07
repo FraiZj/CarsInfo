@@ -12,9 +12,11 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
         Task<IEnumerable<CarDto>> GetAllAsync();
 
         Task<IEnumerable<CarDto>> GetAllAsync(FilterDto filter);
-
-        Task<IEnumerable<CarDto>> GetUserCarsAsync(FilterDto filter);
-
+        
+        Task<IEnumerable<CarDto>> GetUserFavoriteCarsAsync(int userId, FilterDto filter);
+        
+        Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId);
+        
         Task<CarDto> GetByIdAsync(int id);
 
         Task<CarEditorDto> GetCarEditorDtoByIdAsync(int id);

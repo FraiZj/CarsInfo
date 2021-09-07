@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("cars")]
-    
     public class CarsController : ControllerBase
     {
         private readonly ICarsService _carsService;
@@ -31,8 +30,6 @@ namespace CarsInfo.WebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Get([FromQuery] FilterDto filter)
         {
-            var userId = User.GetUserId();
-            filter.CurrentUserId = userId.HasValue ? userId.ToString() : null;
             var cars = await _carsService.GetAllAsync(filter);
             return Ok(cars);
         }
@@ -48,8 +45,7 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest("User is not authorized");
             }
 
-            filter.CurrentUserId = userId.ToString();
-            var cars = await _carsService.GetUserCarsAsync(filter);
+            var cars = await _carsService.GetUserFavoriteCarsAsync(userId.Value, filter);
             return Ok(cars);
         }
 

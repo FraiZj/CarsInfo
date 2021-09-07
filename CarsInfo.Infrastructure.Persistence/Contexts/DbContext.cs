@@ -69,6 +69,19 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
             }
         }
 
+        public async Task<IEnumerable<int>> QueryIdsAsync(string sql, object parameters = null)
+        {
+            try
+            {
+                return await _connection.QueryAsync<int>(sql, parameters);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching data");
+                return new List<int>();
+            }
+        }
+
         public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null) where T : BaseEntity
         {
             try
