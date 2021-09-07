@@ -49,7 +49,6 @@ namespace CarsInfo.WebApi.Mappers
                 LastName = user.LastName,
                 Email = user.Email,
                 Password = user.Password,
-                FavoriteCars = user.FavoriteCars,
                 Roles = user.Roles
             };
         }

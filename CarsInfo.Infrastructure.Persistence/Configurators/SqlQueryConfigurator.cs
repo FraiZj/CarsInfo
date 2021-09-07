@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CarsInfo.Application.Persistence.Enums;
 using CarsInfo.Application.Persistence.Filters;
+using CarsInfo.Domain.Entities.Base;
+using CarsInfo.Infrastructure.Persistence.Parsers;
 
 namespace CarsInfo.Infrastructure.Persistence.Configurators
 {
@@ -66,6 +69,31 @@ namespace CarsInfo.Infrastructure.Persistence.Configurators
             var prefix = tableAlias is null ? string.Empty : $"{tableAlias}.";
             var pairs = keys.Select(key => $"{prefix}{key}=@{key}").ToList();
             return string.Join(separator, pairs);
+        }
+        
+        public static string CombineValuesToInsert<T>(
+            IList<T> entities, 
+            PropertyParser<T>.PropertyContainer propertyContainer)
+            where T : BaseEntity
+        {
+            var result = new List<string>();
+
+            foreach (var entity in entities)
+            {
+                var rowValues = new List<object>();
+                
+                foreach (var valueName in propertyContainer.ValueNames)
+                {
+                    var value = typeof(T).GetProperty(valueName)?.GetValue(entity);
+                    value = value is string ? new string($"'{value}'") : value;
+                    value = value is bool ? Convert.ToByte(value) : value;
+                    rowValues.Add(value);
+                }
+
+                result.Add($"({string.Join(", ", rowValues)})");
+            }
+
+            return string.Join(", ", result);
         }
     }
 }

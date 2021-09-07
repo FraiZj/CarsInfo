@@ -1,5 +1,6 @@
 ﻿using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;
+using CarsInfo.Infrastructure.BusinessLogic.Mappers.Contracts;
 using CarsInfo.Infrastructure.BusinessLogic.Services;
 using Microsoft.Extensions.DependencyInjection;
 

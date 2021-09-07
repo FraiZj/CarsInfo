@@ -7,13 +7,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
 {
     public class UserServiceMapper
     {
-        private readonly CarServiceMapper _carServiceMapper;
-
-        public UserServiceMapper(CarServiceMapper carServiceMapper)
-        {
-            _carServiceMapper = carServiceMapper;
-        }
-
         public UserDto MapToUserDto(User user)
         {
             if (user is null)
@@ -29,7 +22,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
                 Email = user.Email,
                 RefreshToken = user.RefreshToken,
                 RefreshTokenExpiryTime = user.RefreshTokenExpiryTime,
-                FavoriteCars = _carServiceMapper.MapToCarsDtos(user.Cars),
                 Roles = user.Roles.Select(r => r.Name).ToList()
             };
         }

@@ -9,6 +9,8 @@ namespace CarsInfo.Domain.Entities
     {
         public int UserId { get; set; }
 
+        public int CarId { get; set; }
+
         public string Text { get; set; }
 
         public DateTimeOffset PublishDate { get; set; }
