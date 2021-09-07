@@ -61,7 +61,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         private async Task<int> GetRoleIdAsync(string roleName)
         {
             ValidationHelper.ThrowIfStringNullOrWhiteSpace(roleName);
-
+            
             var role = await _roleRepository.GetAsync(new List<FiltrationField>
             {
                 new("Name", Roles.User)

@@ -17,13 +17,13 @@ namespace CarsInfo.Application.Persistence.Contracts
 
         Task DeleteRangeAsync(IEnumerable<int> ids);
 
-        Task<T> GetAsync(int id);
+        Task<T> GetAsync(int id, bool includeDeleted = false);
 
         Task<T> GetAsync(IList<FiltrationField> filters, bool includeDeleted = false);
 
         Task<IEnumerable<T>> GetAllAsync();
 
-        Task<IEnumerable<T>> GetAllAsync(IList<FiltrationField> filters);
+        Task<IEnumerable<T>> GetAllAsync(FilterModel filterModel);
 
         Task<bool?> ContainsAsync(IList<FiltrationField> filters);
     }

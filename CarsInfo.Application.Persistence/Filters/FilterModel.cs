@@ -13,7 +13,5 @@ namespace CarsInfo.Application.Persistence.Filters
         public int Take { get; set; } = 6;
 
         public SortingField OrderBy = null;
-
-        public SortingField ThenOrderBy = null;
     }
 }

@@ -48,16 +48,13 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
         public async Task<IEnumerable<BrandDto>> GetAllAsync(string name)
         {
-            var filters = new List<FiltrationField>();
+            var filter = new FilterModel();
             if (!string.IsNullOrWhiteSpace(name))
             {
-                filters = new List<FiltrationField>
-                {
-                    new("Name", $"{name}%", "LIKE")
-                };
+                filter.Filters.Add(new FiltrationField("Name", $"{name}%", "LIKE"));
             }
 
-            var brands = await _brandRepository.GetAllAsync(filters);
+            var brands = await _brandRepository.GetAllAsync(filter);
             var brandsDtos = _mapper.MapToBrandsDtos(brands);
             return brandsDtos;
         }

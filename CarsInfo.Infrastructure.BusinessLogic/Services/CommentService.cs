@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.Persistence.Contracts;
+using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;
 
@@ -28,8 +30,14 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
         public async Task GetByCarIdAsync(int carId)
         {
-            //var comment = _mapper.Map<Comment>(commentDto);
-            //await _commentRepository.AddAsync(comment);
+            var filter = new FilterModel()
+            {
+                Filters = new List<FiltrationField>
+                {
+                    new("Comment.CarId", carId)
+                }
+            };
+            await _commentRepository.GetAllAsync(filter);
         }
     }
 }

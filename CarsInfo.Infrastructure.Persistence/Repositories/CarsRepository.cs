@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
+using CarsInfo.Infrastructure.Persistence.Configurators;
 
 namespace CarsInfo.Infrastructure.Persistence.Repositories
 {
@@ -17,8 +18,8 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         {
             filter ??= new FilterModel();
             
-            var orderBy = filter.OrderBy is null ? string.Empty : ConfigureOrderBy(filter.OrderBy);
-            var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
+            var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
+            var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
             var sql = $@"SELECT * FROM (
 	                        SELECT Car.Id AS CarId FROM Car
 	                        LEFT JOIN Brand
@@ -56,8 +57,8 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             int userId, FilterModel filter)
         {
             filter ??= new FilterModel();
-            var orderBy = filter.OrderBy is null ? string.Empty : ConfigureOrderBy(filter.OrderBy);
-            var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
+            var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
+            var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
             var sql = $@"SELECT * FROM (
 	                        SELECT Car.Id AS CarId FROM Car
                             INNER JOIN UserCar
@@ -96,8 +97,8 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         public async Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId, FilterModel filter = null)
         {
             filter ??= new FilterModel();
-            var orderBy = filter.OrderBy is null ? string.Empty : ConfigureOrderBy(filter.OrderBy);
-            var filters = ConfigureFilter(filter.Filters, filter.IncludeDeleted);
+            var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
+            var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
             var sql = $@"SELECT Car.Id FROM Car
                          INNER JOIN UserCar
                          ON Car.Id = UserCar.CarId AND UserCar.UserId = { userId }
