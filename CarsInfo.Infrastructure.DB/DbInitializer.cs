@@ -27,7 +27,7 @@ namespace CarsInfo.Infrastructure.DB
                 return;
             }
 
-            ExecuteNonQuery(_connectionStringBuilder.GetDataSourceString(),
+            ExecuteNonQuery(_connectionStringBuilder.GetConnectionStringWithoutInitialCatalog(),
                 $"CREATE DATABASE {_connectionStringBuilder.InitialCatalog}");
         }
 
@@ -70,7 +70,7 @@ namespace CarsInfo.Infrastructure.DB
         private static bool DatabaseExists()
         {
             var query = $"SELECT * FROM master.dbo.sysdatabases WHERE name = '{_connectionStringBuilder.InitialCatalog}'";
-            return QueryHasRows(_connectionStringBuilder.GetDataSourceString(), query);
+            return QueryHasRows(_connectionStringBuilder.GetConnectionStringWithoutInitialCatalog(), query);
         }
 
         private static void ExecuteNonQuery(string connectionString, string commandText)
