@@ -11,8 +11,7 @@ namespace CarsInfo.WebApi
 {
     public class Startup
     {
-        private const string MasterDbConnectionStringName = "MasterDb";
-        private const string CarsInfoDbConnectionStringName = "CarsInfoDb";
+        private const string ConnectionStringName = "CarsInfoDb";
         private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
@@ -22,11 +21,10 @@ namespace CarsInfo.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var masterConnectionString = _configuration.GetConnectionString(MasterDbConnectionStringName);
-            var connectionString = _configuration.GetConnectionString(CarsInfoDbConnectionStringName);
+            var connectionString = _configuration.GetConnectionString(ConnectionStringName);
             var apiAuthSettings = GetApiAuthSettings(services);
 
-            services.AddInfrastructure(masterConnectionString, connectionString);
+            services.AddInfrastructure(connectionString);
             services.AddJwtAuthentication(apiAuthSettings);
             services.AddViewModelMapper();
             services.AddSwagger();

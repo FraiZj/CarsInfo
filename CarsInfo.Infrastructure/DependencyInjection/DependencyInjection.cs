@@ -6,11 +6,10 @@ namespace CarsInfo.Infrastructure.DependencyInjection
     {
         public static void AddInfrastructure(
             this IServiceCollection services,
-            string masterConnectionString,
-            string carsInfoConnectionString)
+            string connectionString)
         {
-            services.AddDbInitialization(masterConnectionString, carsInfoConnectionString);
-            services.AddPersistenceLayer(carsInfoConnectionString);
+            services.AddDbInitialization(connectionString);
+            services.AddPersistenceLayer(connectionString);
             services.AddBusinessLogicLayer();
         }
     }
