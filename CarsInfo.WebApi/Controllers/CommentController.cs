@@ -1,10 +1,8 @@
 ﻿using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Enums;
-using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
-using CarsInfo.WebApi.ViewModels;
 using CarsInfo.WebApi.ViewModels.Comment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("/cars/{carId}/comments")]
-    public class CommentController : AppControllerBase
+    public class CommentController : ControllerBase
     {
         private readonly ICommentService _commentService;
         private readonly CommentControllerMapper _mapper;
@@ -32,9 +30,7 @@ namespace CarsInfo.WebApi.Controllers
 
             if (!operation.Success)
             {
-                return operation.IsException ? 
-                    ApplicationError() :
-                    BadRequest(operation.FailureMessage);
+                return BadRequest(operation.FailureMessage);
             }
             
             var comments = _mapper.MapToCommentViewModels(operation.Result);
@@ -55,11 +51,6 @@ namespace CarsInfo.WebApi.Controllers
             commentDto.CarId = carId;
             commentDto.UserId = User.GetUserId()!.Value;
             var operation = await _commentService.AddAsync(commentDto);
-
-            if (operation.IsException)
-            {
-                return ApplicationError();
-            }
             
             return operation.Success ?
                 Ok("Comment added") :

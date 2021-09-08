@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.OperationResult;
-using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
@@ -47,7 +46,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred during creating brand");
-                return OperationResult<int>.ExceptionResult(e);
+                return OperationResult<int>.ExceptionResult();
             }
         }
 
@@ -67,7 +66,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred during deleting brand");
-                return OperationResult.ExceptionResult(e);
+                return OperationResult.ExceptionResult();
             }
         }
 
@@ -85,7 +84,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred during fetching brands");
-                return OperationResult<IEnumerable<BrandDto>>.ExceptionResult(e);
+                return OperationResult<IEnumerable<BrandDto>>.ExceptionResult();
             }
         }
 
@@ -101,7 +100,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred during fetching brand with id={id}");
-                return OperationResult<BrandDto>.ExceptionResult(e);
+                return OperationResult<BrandDto>.ExceptionResult();
             }
         }
 
@@ -121,7 +120,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred updating deleting brand");
-                return OperationResult.ExceptionResult(e);
+                return OperationResult.ExceptionResult();
             }
         }
     }

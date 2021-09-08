@@ -65,7 +65,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while creating user");
-                return OperationResult<int>.ExceptionResult(e);
+                return OperationResult<int>.ExceptionResult();
             }
         }
         
@@ -113,7 +113,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while authorizing user with email={entity.Email}");
-                return OperationResult<ICollection<Claim>>.ExceptionResult(e);
+                return OperationResult<ICollection<Claim>>.ExceptionResult();
             }
         }
 
@@ -126,7 +126,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
                 if (contains is null)
                 {
-                    return OperationResult<bool>.ExceptionResult(new BllException("Cannot fetch result"));
+                    return OperationResult<bool>.FailureResult("Cannot fetch result");
                 }
                 
                 return OperationResult<bool>.SuccessResult(contains.Value);
@@ -134,7 +134,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while fetching user with email={email}");
-                return OperationResult<bool>.ExceptionResult(e);
+                return OperationResult<bool>.ExceptionResult();
             }
         }
 
@@ -153,7 +153,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while deleting user with id={id}");
-                return OperationResult.ExceptionResult(e);
+                return OperationResult.ExceptionResult();
             }
         }
 
@@ -167,7 +167,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while fetching users");
-                return OperationResult<IEnumerable<UserDto>>.ExceptionResult(e);
+                return OperationResult<IEnumerable<UserDto>>.ExceptionResult();
             }
         }
 
@@ -183,7 +183,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while fetching user with email={email}");
-                return OperationResult<UserDto>.ExceptionResult(e);
+                return OperationResult<UserDto>.ExceptionResult();
             }
         }
 
@@ -202,7 +202,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while updating user with id={entity.Id}");
-                return OperationResult.ExceptionResult(e);
+                return OperationResult.ExceptionResult();
             }
         }
     }

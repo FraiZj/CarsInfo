@@ -12,10 +12,6 @@ namespace CarsInfo.Application.BusinessLogic.OperationResult
         protected OperationResult(string message)
             : base(message)
         { }
-        
-        protected OperationResult(Exception exception)
-            : base(exception)
-        { }
 
         public T Result { get; set; }
         
@@ -29,9 +25,9 @@ namespace CarsInfo.Application.BusinessLogic.OperationResult
             return new OperationResult<T>(message);
         }
         
-        public static OperationResult<T> ExceptionResult(Exception exception)
+        public static OperationResult<T> ExceptionResult()
         {
-            return new OperationResult<T>(exception);
+            return new OperationResult<T>("An error occurred, please try again later");
         }
     }
 }

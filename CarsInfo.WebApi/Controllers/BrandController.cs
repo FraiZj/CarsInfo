@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
-using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Mappers;
-using CarsInfo.WebApi.ViewModels;
 using CarsInfo.WebApi.ViewModels.Brand;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("brands")]
-    public class BrandController : AppControllerBase
+    public class BrandController : ControllerBase
     {
         private readonly IBrandService _brandService;
         private readonly BrandControllerMapper _mapper;
@@ -29,11 +26,6 @@ namespace CarsInfo.WebApi.Controllers
         {
             var operation = await _brandService.GetAllAsync(name);
             
-            if (operation.IsException)
-            {
-                return ApplicationError();
-            }
-            
             return operation.Success ? 
                 Ok(operation.Result) :
                 BadRequest(operation.FailureMessage);
@@ -43,11 +35,6 @@ namespace CarsInfo.WebApi.Controllers
         public async Task<ActionResult<BrandDto>> Get(int id)
         {
             var operation = await _brandService.GetByIdAsync(id);
-            
-            if (operation.IsException)
-            {
-                return ApplicationError();
-            }
             
             return operation.Success ?
                 Ok(operation.Result) :
@@ -59,11 +46,6 @@ namespace CarsInfo.WebApi.Controllers
         {
             var brandDto = _mapper.MapToBrandDto(brand);
             var operation = await _brandService.AddAsync(brandDto);
-
-            if (operation.IsException)
-            {
-                return ApplicationError();
-            }
             
             return operation.Success ?
                 CreatedAtAction(nameof(Get), new { id = operation.Result }, brand) :
@@ -77,11 +59,6 @@ namespace CarsInfo.WebApi.Controllers
             brandDto.Id = id;
             var operation = await _brandService.UpdateAsync(brandDto);
             
-            if (operation.IsException)
-            {
-                return ApplicationError();
-            }
-            
             return operation.Success ?
                 NoContent() :
                 BadRequest(operation.FailureMessage);
@@ -91,11 +68,6 @@ namespace CarsInfo.WebApi.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var operation = await _brandService.DeleteByIdAsync(id);
-            
-            if (operation.IsException)
-            {
-                return ApplicationError();
-            }
             
             return operation.Success ?
                 NoContent() :

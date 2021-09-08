@@ -50,7 +50,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occured while adding comment");
-                return OperationResult.ExceptionResult(e);
+                return OperationResult.ExceptionResult();
             }
         }
 
@@ -72,7 +72,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occured while fetching comments with CarId={carId}");
-                return OperationResult<IEnumerable<CommentDto>>.ExceptionResult(e);
+                return OperationResult<IEnumerable<CommentDto>>.ExceptionResult();
             }
         }
     }

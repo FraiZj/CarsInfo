@@ -94,7 +94,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while fetching user refresh token");
-                return OperationResult<ClaimsPrincipal>.ExceptionResult(e);
+                return OperationResult<ClaimsPrincipal>.ExceptionResult();
             }
         }
 
@@ -116,7 +116,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while fetching user refresh token");
-                return OperationResult<UserRefreshTokenDto>.ExceptionResult(e);
+                return OperationResult<UserRefreshTokenDto>.ExceptionResult();
             }
         }
         
@@ -147,7 +147,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while updating refresh token");
-                return OperationResult.ExceptionResult(e);
+                return OperationResult.ExceptionResult();
             }
         }
 
