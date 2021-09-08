@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.AuthModels;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.OperationResult;
 using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
@@ -64,55 +65,72 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
-        {
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                RequireExpirationTime = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authSetting.Secret)),
-                ValidIssuer = _authSetting.Issuer,
-                ValidateIssuer = true,
-                ValidateAudience = false
-            };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-
-            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, 
-                    StringComparison.InvariantCultureIgnoreCase))
-            {
-
-                throw new SecurityTokenException("Invalid token");
-            }
-
-            return principal;
-        }
-
-        public async Task<UserRefreshTokenDto> GetUserRefreshTokenAsync(int userId)
-        {
-            var userRefreshToken = await _userRefreshTokenRepository.GetAsync(userId);
-            return _mapper.MapToUserRefreshTokenDto(userRefreshToken);
-        }
-        
-        public async Task UpdateRefreshTokenByUserIdAsync(UserRefreshTokenDto userRefreshTokenDto)
+        public OperationResult<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
             try
             {
-                ValidationHelper.ThrowIfNull(userRefreshTokenDto);
-                ValidationHelper.ThrowIfStringNullOrWhiteSpace(userRefreshTokenDto.Token);
-
-                var filters = new List<FiltrationField>
+                var tokenValidationParameters = new TokenValidationParameters
                 {
-                    new ("UserId", userRefreshTokenDto.UserId)
+                    RequireExpirationTime = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authSetting.Secret)),
+                    ValidIssuer = _authSetting.Issuer,
+                    ValidateIssuer = true,
+                    ValidateAudience = false
                 };
-                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filters);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+                if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                    !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, 
+                        StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return OperationResult<ClaimsPrincipal>.FailureResult("Invalid jwt token");
+                }
+
+                return OperationResult<ClaimsPrincipal>.SuccessResult(principal);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching user refresh token");
+                return OperationResult<ClaimsPrincipal>.ExceptionResult(e);
+            }
+        }
+
+        public async Task<OperationResult<UserRefreshTokenDto>> GetUserRefreshTokenAsync(int userId)
+        {
+            try
+            {
+                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(userId);
+
+                if (userRefreshToken is null)
+                {
+                    return OperationResult<UserRefreshTokenDto>.FailureResult(
+                        $"Refresh token with for user with id={userId} does not exist");
+                }
+                
+                return OperationResult<UserRefreshTokenDto>.SuccessResult(
+                    _mapper.MapToUserRefreshTokenDto(userRefreshToken));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while fetching user refresh token");
+                return OperationResult<UserRefreshTokenDto>.ExceptionResult(e);
+            }
+        }
+        
+        public async Task<OperationResult> UpdateRefreshTokenByUserIdAsync(UserRefreshTokenDto userRefreshTokenDto)
+        {
+            try
+            {
+                var filter = new FilterModel(new FiltrationField("UserId", userRefreshTokenDto.UserId));
+                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filter.Filters);
 
                 if (userRefreshToken is null)
                 {
                     await AddRefreshTokenAsync(userRefreshTokenDto);
-                    return;
+                    return OperationResult.SuccessResult();
                 }
                 
                 userRefreshToken.Token = userRefreshTokenDto.Token;
@@ -123,10 +141,13 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 }
 
                 await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
+                
+                return OperationResult.SuccessResult();
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while updating refresh token");
+                return OperationResult.ExceptionResult(e);
             }
         }
 

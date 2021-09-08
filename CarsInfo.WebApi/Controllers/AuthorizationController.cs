@@ -68,14 +68,16 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> Refresh([FromBody] AuthViewModel authViewModel)
         {
-            if (authViewModel is null)
+            var getPrincipalOperation = _tokenService.GetPrincipalFromExpiredToken(authViewModel.AccessToken);
+
+            if (!getPrincipalOperation.Success)
             {
-                return BadRequest("Invalid client request");
+                return getPrincipalOperation.IsException ?
+                    ApplicationError() :
+                    BadRequest(getPrincipalOperation.FailureMessage);
             }
 
-            var accessToken = authViewModel.AccessToken;
-            var refreshToken = authViewModel.RefreshToken;
-            var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+            var principal = getPrincipalOperation.Result;
             var userId = principal.GetUserId();
 
             if (!userId.HasValue)
@@ -83,25 +85,45 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest("Cannot authenticate user");
             }
             
-            var user = await _tokenService.GetUserRefreshTokenAsync(userId.Value);
+            var getRefreshTokenOperation = await _tokenService.GetUserRefreshTokenAsync(userId.Value);
 
-            if (user == null || user.Token != refreshToken || user.ExpiryTime <= DateTime.Now)
+            if (!getRefreshTokenOperation.Success)
+            {
+                return getRefreshTokenOperation.IsException ?
+                    ApplicationError() :
+                    BadRequest(getRefreshTokenOperation.FailureMessage);
+            }
+
+            if (!IsTokenValid(getRefreshTokenOperation.Result, authViewModel.RefreshToken))
             {
                 return BadRequest("Invalid refresh token");
             }
 
-            var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
             var userRefreshToken = new UserRefreshTokenDto
             {
                 UserId = userId.Value,
                 Token = newRefreshToken
             };
-            await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
+            var updateRefreshTokenOperation = await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
 
-            return Ok(new AuthViewModel(newAccessToken, newRefreshToken));
+            if (!updateRefreshTokenOperation.Success)
+            {
+                return updateRefreshTokenOperation.IsException ?
+                    ApplicationError() :
+                    BadRequest(updateRefreshTokenOperation.FailureMessage);
+            }
+            
+            return Ok(new AuthViewModel(_tokenService.GenerateAccessToken(principal.Claims), newRefreshToken));
         }
 
+        [NonAction]
+        private bool IsTokenValid(UserRefreshTokenDto userRefreshTokenDto, string refreshToken)
+        {
+            return userRefreshTokenDto == null || userRefreshTokenDto.Token != refreshToken ||
+                   userRefreshTokenDto.ExpiryTime <= DateTime.Now;
+        }
+        
         [Authorize, HttpPost("revoke-token")]
         public async Task<IActionResult> Revoke()
         {
