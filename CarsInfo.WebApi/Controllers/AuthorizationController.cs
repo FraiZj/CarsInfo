@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
@@ -66,17 +67,22 @@ namespace CarsInfo.WebApi.Controllers
             var accessToken = authViewModel.AccessToken;
             var refreshToken = authViewModel.RefreshToken;
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-            var userEmail = principal.GetEmail();
-            var user = await _userService.GetByEmailAsync(userEmail);
+            var userId = principal.GetUserId();
+            var user = await _tokenService.GetUserRefreshTokenAsync(userId.Value);
 
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user == null || user.Token != refreshToken || user.ExpiryTime <= DateTime.Now)
             {
                 return BadRequest("Invalid client request");
             }
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
-            await _userService.UpdateRefreshTokenByEmailAsync(user.Email, newRefreshToken);
+            var userRefreshToken = new UserRefreshTokenDto
+            {
+                UserId = userId.Value,
+                Token = newRefreshToken
+            };
+            await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
 
             return Ok(new AuthViewModel(newAccessToken, newRefreshToken));
         }
@@ -84,15 +90,19 @@ namespace CarsInfo.WebApi.Controllers
         [Authorize, HttpPost("revoke-token")]
         public async Task<IActionResult> Revoke()
         {
-            var userEmail = User.GetEmail();
-            var user = await _userService.GetByEmailAsync(userEmail);
+            var user = await _userService.GetByEmailAsync(User.GetEmail());
 
             if (user == null)
             {
                 return BadRequest();
             }
 
-            await _userService.UpdateRefreshTokenByEmailAsync(userEmail, null);
+            var userRefreshToken = new UserRefreshTokenDto
+            {
+                UserId = User.GetUserId().Value,
+                Token = null
+            };
+            await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
 
             return Ok();
         }
@@ -106,13 +116,18 @@ namespace CarsInfo.WebApi.Controllers
             {
                 return BadRequest("Cannot authorize user");
             }
-
+            
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
             var userDto = await _userService.GetByEmailAsync(user.Email);
-            await _userService.UpdateRefreshTokenByEmailAsync(
-                userDto.Email, refreshToken, DateTimeOffset.Now.AddDays(7));
+            var userRefreshToken = new UserRefreshTokenDto
+            {
+                UserId = userDto.Id,
+                Token = refreshToken,
+                ExpiryTime = DateTimeOffset.Now.AddDays(7)
+            };
+            await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
 
             return Ok(new AuthViewModel(accessToken, refreshToken));
         }

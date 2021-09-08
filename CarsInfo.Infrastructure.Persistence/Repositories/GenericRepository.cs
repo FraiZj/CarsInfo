@@ -60,7 +60,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public virtual async Task<T> GetAsync(IList<FiltrationField> filters, bool includeDeleted = false)
         {
-            if (filters?.Any() ?? true)
+            if (!filters?.Any() ?? true)
             {
                 return null;
             }
@@ -91,7 +91,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public virtual async Task<bool?> ContainsAsync(IList<FiltrationField> filters)
         {
-            if (filters is not null && filters.Any())
+            if (filters is not null && !filters.Any())
             {
                 return null;
             }

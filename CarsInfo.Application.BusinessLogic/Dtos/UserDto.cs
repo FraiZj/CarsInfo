@@ -15,10 +15,6 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
         
         public string Password { get; set; }
 
-        public string RefreshToken { get; set; }
-
-        public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
-
         public ICollection<string> Roles { get; set; }
     }
 }
