@@ -1,5 +1,6 @@
 using CarsInfo.Application.BusinessLogic.AuthModels;
 using CarsInfo.Infrastructure.DependencyInjection;
+using CarsInfo.WebApi.Attributes;
 using CarsInfo.WebApi.StartupConfiguration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +34,7 @@ namespace CarsInfo.WebApi
             services.AddControllers(options =>
             {
                 options.InputFormatters.Insert(0, JsonPatchConfiguration.GetJsonPatchInputFormatter());
+                options.Filters.Add(typeof(ValidateModelAttribute));
             }).AddNewtonsoftJson();
         }
 
