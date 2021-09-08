@@ -27,8 +27,16 @@ namespace CarsInfo.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int carId)
         {
-            var commentsDtos = await _commentService.GetByCarIdAsync(carId);
-            var comments = _mapper.MapToCommentViewModels(commentsDtos);
+            var operation = await _commentService.GetByCarIdAsync(carId);
+
+            if (!operation.Success)
+            {
+                return operation.IsException ? 
+                    BadRequest("An error occured") :
+                    BadRequest(operation.FailureMessage);
+            }
+            
+            var comments = _mapper.MapToCommentViewModels(operation.Result);
             return Ok(comments);
         }
         
@@ -45,9 +53,16 @@ namespace CarsInfo.WebApi.Controllers
             var commentDto = _mapper.MapToCommentEditorDto(comment);
             commentDto.CarId = carId;
             commentDto.UserId = User.GetUserId()!.Value;
-            await _commentService.AddAsync(commentDto);
+            var operation = await _commentService.AddAsync(commentDto);
 
-            return Ok();
+            if (operation.IsException)
+            {
+                return BadRequest("An error occured");
+            }
+            
+            return operation.Success ?
+                Ok("Comment added") :
+                BadRequest(operation.FailureMessage);
         }
     }
 }
