@@ -5,7 +5,7 @@ using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
-using CarsInfo.WebApi.ViewModels;
+using CarsInfo.WebApi.ViewModels.Car;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -64,7 +64,7 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [HttpGet("{id:int}/editor")]
-        [AllowAnonymous]
+        [Authorize(Roles = Roles.Admin)] 
         public async Task<IActionResult> GetEditor(int id)
         {
             var car = await _carsService.GetCarEditorDtoByIdAsync(id);

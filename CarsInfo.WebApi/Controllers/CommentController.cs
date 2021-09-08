@@ -4,6 +4,7 @@ using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels;
+using CarsInfo.WebApi.ViewModels.Comment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

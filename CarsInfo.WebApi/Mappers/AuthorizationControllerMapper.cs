@@ -1,5 +1,6 @@
 ﻿using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.WebApi.ViewModels;
+using CarsInfo.WebApi.ViewModels.Auth;
 
 namespace CarsInfo.WebApi.Mappers
 {

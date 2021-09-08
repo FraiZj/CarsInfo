@@ -27,8 +27,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
                 Brand = car.Brand?.Name,
                 CarPicturesUrls = car.CarPictures?.Select(cp => cp?.PictureLink).ToList(),
                 Description = car.Description,
-                Model = car.Model,
-                Comments = _commentServiceMapper.MapToCommentsDtos(car.Comments)
+                Model = car.Model
             };
         }
 

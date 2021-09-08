@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using CarsInfo.Application.BusinessLogic.Dtos;
-
-namespace CarsInfo.WebApi.ViewModels
+﻿namespace CarsInfo.WebApi.ViewModels.Auth
 {
     public class UserViewModel
     {
