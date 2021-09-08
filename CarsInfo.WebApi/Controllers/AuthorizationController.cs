@@ -31,6 +31,13 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
+            var contains = await _userService.ContainsUserWithEmailAsync(model.Email);
+
+            if (contains ?? true)
+            {
+                return BadRequest($"Email '{model.Email}' is already in use");
+            }
+            
             var user = _mapper.MapToUserDto(model);
             await _userService.AddAsync(user);
             return await AuthorizeAsync(user);
@@ -68,11 +75,17 @@ namespace CarsInfo.WebApi.Controllers
             var refreshToken = authViewModel.RefreshToken;
             var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
             var userId = principal.GetUserId();
+
+            if (!userId.HasValue)
+            {
+                return BadRequest("Cannot authenticate user");
+            }
+            
             var user = await _tokenService.GetUserRefreshTokenAsync(userId.Value);
 
             if (user == null || user.Token != refreshToken || user.ExpiryTime <= DateTime.Now)
             {
-                return BadRequest("Invalid client request");
+                return BadRequest("Invalid refresh token");
             }
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims);
@@ -90,16 +103,15 @@ namespace CarsInfo.WebApi.Controllers
         [Authorize, HttpPost("revoke-token")]
         public async Task<IActionResult> Revoke()
         {
-            var user = await _userService.GetByEmailAsync(User.GetEmail());
-
-            if (user == null)
+            var userId = User.GetUserId();
+            if (!userId.HasValue)
             {
-                return BadRequest();
+                return BadRequest("Cannot authenticate user");
             }
-
+            
             var userRefreshToken = new UserRefreshTokenDto
             {
-                UserId = User.GetUserId().Value,
+                UserId = userId.Value,
                 Token = null
             };
             await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
@@ -120,10 +132,15 @@ namespace CarsInfo.WebApi.Controllers
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            var userDto = await _userService.GetByEmailAsync(user.Email);
+            var userId = User.GetUserId();
+            if (!userId.HasValue)
+            {
+                return BadRequest("Cannot authenticate user");
+            }
+            
             var userRefreshToken = new UserRefreshTokenDto
             {
-                UserId = userDto.Id,
+                UserId = userId.Value,
                 Token = refreshToken,
                 ExpiryTime = DateTimeOffset.Now.AddDays(7)
             };
