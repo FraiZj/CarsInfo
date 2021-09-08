@@ -175,29 +175,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 _logger.LogError(e, $"An error occurred while updating user with id={entity.Id}");
             }
         }
-        
-        public async Task UpdateRefreshTokenByEmailAsync(
-            string email, 
-            string refreshToken, 
-            DateTimeOffset? refreshTokenExpiryTime = null)
-        {
-            try
-            {
-                var user = await _usersRepository.GetWithRolesAsync(email);
-                user.RefreshToken = refreshToken;
-
-                if (refreshTokenExpiryTime is not null)
-                {
-                    user.RefreshTokenExpiryTime = refreshTokenExpiryTime;
-                }
-
-                await _usersRepository.UpdateAsync(user);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"An error occurred while updating user with email={email}");
-            }
-        }
 
         private static void ValidateUserDto(UserDto user)
         {

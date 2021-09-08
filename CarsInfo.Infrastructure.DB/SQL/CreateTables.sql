@@ -13,8 +13,16 @@ CREATE TABLE [User] (
 	LastName nvarchar(50) NOT NULL,
 	Email nvarchar(50) NOT NULL UNIQUE,
 	[Password] nvarchar(500) NOT NULL,
-	RefreshToken nvarchar(max),
-	RefreshTokenExpiryTime DATETIMEOFFSET
+	
+)
+
+CREATE TABLE UserRefreshToken (
+    Id int PRIMARY KEY IDENTITY(1,1),
+    IsDeleted bit DEFAULT 0,
+    UserId int NOT NULL,
+    Token nvarchar(max),
+    ExpiryTime DATETIMEOFFSET,
+    CONSTRAINT FK_UserRefreshToken_User FOREIGN KEY (UserId) REFERENCES [User](Id),
 )
 
 CREATE TABLE Car (

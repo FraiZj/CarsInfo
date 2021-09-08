@@ -16,11 +16,6 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 
         Task UpdateAsync(UserDto entity);
 
-        Task UpdateRefreshTokenByEmailAsync(
-            string email,
-            string refreshToken,
-            DateTimeOffset? refreshTokenExpiryTime = null);
-
         Task DeleteByIdAsync(int id);
         
         Task<ICollection<Claim>> GetUserClaimsAsync(UserDto entity);

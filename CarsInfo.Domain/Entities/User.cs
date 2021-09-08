@@ -16,12 +16,8 @@ namespace CarsInfo.Domain.Entities
         
         public string Password { get; set; }
 
-        public string RefreshToken { get; set; }
-
-        public DateTimeOffset? RefreshTokenExpiryTime { get; set; }
-
-        public ICollection<Car> Cars { get; set; } = new List<Car>();
-
+        public UserRefreshToken UserRefreshToken { get; set; }
+        
         public ICollection<Role> Roles { get; set; } = new List<Role>();
     }
 }

@@ -1,6 +1,5 @@
 ﻿using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;
-using CarsInfo.Infrastructure.BusinessLogic.Mappers.Contracts;
 using CarsInfo.Infrastructure.BusinessLogic.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,6 +22,7 @@ namespace CarsInfo.Infrastructure.DependencyInjection
             services.AddSingleton<BrandServiceMapper>();
             services.AddSingleton<UserServiceMapper>();
             services.AddSingleton<CommentServiceMapper>();
+            services.AddSingleton<TokenServiceMapper>();
         }
     }
 }

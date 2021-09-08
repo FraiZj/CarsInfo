@@ -4,8 +4,16 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.AuthModels;
 using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.Validators;
+using CarsInfo.Application.Persistence.Contracts;
+using CarsInfo.Application.Persistence.Filters;
+using CarsInfo.Domain.Entities;
+using CarsInfo.Infrastructure.BusinessLogic.Mappers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -13,10 +21,20 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 {
     public class TokenService : ITokenService
     {
+        private readonly IGenericRepository<UserRefreshToken> _userRefreshTokenRepository;
+        private readonly ILogger<TokenService> _logger;
+        private readonly TokenServiceMapper _mapper;
         private readonly ApiAuthSetting _authSetting;
 
-        public TokenService(IOptions<ApiAuthSetting> authSetting)
+        public TokenService(
+            IOptions<ApiAuthSetting> authSetting,
+            IGenericRepository<UserRefreshToken> userRefreshTokenRepository,
+            ILogger<TokenService> logger,
+            TokenServiceMapper mapper)
         {
+            _userRefreshTokenRepository = userRefreshTokenRepository;
+            _logger = logger;
+            _mapper = mapper;
             _authSetting = authSetting.Value;
         }
 
@@ -70,6 +88,52 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
 
             return principal;
+        }
+
+        public async Task<UserRefreshTokenDto> GetUserRefreshTokenAsync(int userId)
+        {
+            var userRefreshToken = await _userRefreshTokenRepository.GetAsync(userId);
+            return _mapper.MapToUserRefreshTokenDto(userRefreshToken);
+        }
+        
+        public async Task UpdateRefreshTokenByUserIdAsync(UserRefreshTokenDto userRefreshTokenDto)
+        {
+            try
+            {
+                ValidationHelper.ThrowIfNull(userRefreshTokenDto);
+                ValidationHelper.ThrowIfStringNullOrWhiteSpace(userRefreshTokenDto.Token);
+
+                var filters = new List<FiltrationField>
+                {
+                    new ("UserId", userRefreshTokenDto.UserId)
+                };
+                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filters);
+
+                if (userRefreshToken is null)
+                {
+                    await AddRefreshTokenAsync(userRefreshTokenDto);
+                    return;
+                }
+                
+                userRefreshToken.Token = userRefreshTokenDto.Token;
+
+                if (userRefreshTokenDto.ExpiryTime is not null)
+                {
+                    userRefreshToken.ExpiryTime = userRefreshTokenDto.ExpiryTime;
+                }
+
+                await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while updating refresh token");
+            }
+        }
+
+        private Task AddRefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto)
+        {
+            var token = _mapper.MapToUserRefreshToken(userRefreshTokenDto);
+            return _userRefreshTokenRepository.AddAsync(token);
         }
     }
 }
