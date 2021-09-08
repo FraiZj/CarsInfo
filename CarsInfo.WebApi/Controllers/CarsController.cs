@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Car;
@@ -13,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("cars")]
-    public class CarsController : ControllerBase
+    public class CarsController : AppControllerBase
     {
         private readonly ICarsService _carsService;
         private readonly CarsControllerMapper _mapper;

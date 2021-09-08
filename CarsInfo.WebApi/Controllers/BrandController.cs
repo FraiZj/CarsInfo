@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels;
 using CarsInfo.WebApi.ViewModels.Brand;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("brands")]
-    public class BrandController : Controller
+    public class BrandController : AppControllerBase
     {
         private readonly IBrandService _brandService;
         private readonly BrandControllerMapper _mapper;

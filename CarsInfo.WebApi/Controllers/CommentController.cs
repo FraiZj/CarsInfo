@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("/cars/{carId}/comments")]
-    public class CommentController : ControllerBase
+    public class CommentController : AppControllerBase
     {
         private readonly ICommentService _commentService;
         private readonly CommentControllerMapper _mapper;
@@ -32,7 +33,7 @@ namespace CarsInfo.WebApi.Controllers
             if (!operation.Success)
             {
                 return operation.IsException ? 
-                    BadRequest("An error occured") :
+                    ApplicationError() :
                     BadRequest(operation.FailureMessage);
             }
             
@@ -57,7 +58,7 @@ namespace CarsInfo.WebApi.Controllers
 
             if (operation.IsException)
             {
-                return BadRequest("An error occured");
+                return ApplicationError();
             }
             
             return operation.Success ?
