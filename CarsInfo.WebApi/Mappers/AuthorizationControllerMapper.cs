@@ -47,9 +47,7 @@ namespace CarsInfo.WebApi.Mappers
                 Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                Roles = user.Roles
+                Email = user.Email
             };
         }
     }
