@@ -81,17 +81,10 @@ namespace CarsInfo.WebApi.Controllers
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Create([FromBody] CarEditorViewModel car)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var carEditor = _mapper.MapToCarEditorDto(car);
-            var created = await _carsService.AddAsync(carEditor);
-
-            return created ? 
-                Created("", car) : 
-                BadRequest("Car was not created.");
+            var operation = await _carsService.AddAsync(_mapper.MapToCarEditorDto(car));
+            return operation.Success ? 
+                CreatedAtAction(nameof(Get), new { id = operation.Result }, car) : 
+                BadRequest(operation.FailureMessage);
         }
 
         [HttpPut("{carId:int}/favorite")]
@@ -105,62 +98,50 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest("Cannot get user id");
             }
 
-            var status = await _carsService.ToggleFavoriteAsync(userId.Value, carId);
+            var operation = await _carsService.ToggleFavoriteAsync(userId.Value, carId);
 
-            if (status == ToggleFavoriteStatus.Error)
-            {
-                return BadRequest("Cannot toggle favorite car with for user");
-            }
-
-            return Ok(status);
+            return operation.Success ?
+                Ok(operation.Result) :
+                BadRequest(operation.FailureMessage);
         }
 
         [HttpPut("{id:int}")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Update(int id, [FromBody] CarEditorViewModel updateCar)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var carEditor = _mapper.MapToCarEditorDto(updateCar);
             carEditor.Id = id;
-            await _carsService.UpdateAsync(carEditor);
-            return Ok(carEditor);
+            var operation = await _carsService.UpdateAsync(carEditor);
+            return operation.Success ?
+                NoContent() :
+                BadRequest(operation.FailureMessage);
         }
 
         [HttpPatch("{id:int}")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<CarEditorViewModel> patchCar)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var car = await _carsService.GetCarEditorDtoByIdAsync(id);
             var carViewModel = _mapper.MapToCarEditorViewModel(car);
 
             patchCar.ApplyTo(carViewModel, ModelState);
             var updatedCar = _mapper.MapToCarEditorDto(carViewModel);
             updatedCar.Id = car.Id;
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState.Values.First().Errors.First().ErrorMessage);
-            }
-
-            await _carsService.UpdateAsync(updatedCar);
-            return Ok(car);
+            
+            var operation = await _carsService.UpdateAsync(updatedCar);
+            return operation.Success ?
+                NoContent() :
+                BadRequest(operation.FailureMessage);
         }
 
         [HttpDelete("{id:int}")]
         [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Delete(int id)
         {
-            await _carsService.DeleteByIdAsync(id);
-            return Ok($"Car with id={id} has been deleted");
+            var operation = await _carsService.DeleteByIdAsync(id);
+            return operation.Success ?
+                NoContent() :
+                BadRequest(operation.FailureMessage);
         }
     }
 }

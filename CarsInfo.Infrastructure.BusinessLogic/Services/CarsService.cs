@@ -6,6 +6,7 @@ using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.Application.BusinessLogic.Exceptions;
+using CarsInfo.Application.BusinessLogic.OperationResult;
 using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
@@ -19,6 +20,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
     {
         private readonly ICarsRepository _carsRepository;
         private readonly IGenericRepository<CarPicture> _carsPictureRepository;
+        private readonly IUsersRepository _usersRepository;
         private readonly IGenericRepository<UserCar> _userCarRepository;
         private readonly ILogger<CarsService> _logger;
         private readonly CarServiceMapper _mapper;
@@ -27,6 +29,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         public CarsService(
             ICarsRepository carsRepository,
             IGenericRepository<CarPicture> carsPictureRepository,
+            IUsersRepository usersRepository,
             IGenericRepository<UserCar> userCarRepository,
             ILogger<CarsService> logger,
             CarServiceMapper mapper,
@@ -34,20 +37,23 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             _carsRepository = carsRepository;
             _carsPictureRepository = carsPictureRepository;
+            _usersRepository = usersRepository;
             _userCarRepository = userCarRepository;
             _logger = logger;
             _mapper = mapper;
             _filterService = filterService;
         }
 
-        public async Task<bool> AddAsync(CarEditorDto entity)
+        public async Task<OperationResult<int>> AddAsync(CarEditorDto entity)
         {
             try
             {
-                ValidateCarEditorDto(entity);
-                var car = _mapper.MapToCar(entity);
-                var carId = await _carsRepository.AddAsync(car);
-
+                if (!entity.CarPicturesUrls?.Any() ?? true)
+                {
+                    return OperationResult<int>.FailureResult("Car should have at least one picture");
+                }
+                
+                var carId = await _carsRepository.AddAsync(_mapper.MapToCar(entity));
                 await _carsPictureRepository.AddRangeAsync(entity.CarPicturesUrls.Select(
                     carPicture => new CarPicture
                     {
@@ -55,22 +61,30 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                         PictureLink = carPicture
                     }).ToList());
 
-                return true;
+                return OperationResult<int>.SuccessResult(carId);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while creating car");
-                return false;
+                return OperationResult<int>.ExceptionResult();
             }
         }
 
-        public async Task<ToggleFavoriteStatus> ToggleFavoriteAsync(int userId, int carId)
+        public async Task<OperationResult<ToggleFavoriteStatus>> ToggleFavoriteAsync(int userId, int carId)
         {
             try
             {
                 var car = await _carsRepository.GetByIdAsync(carId);
-                ValidationHelper.ThrowIfNull(car);
+                if (car is null)
+                {
+                    return OperationResult<ToggleFavoriteStatus>.FailureResult($"Car with id={carId} does not exist");
+                }
 
+                var user = await _usersRepository.GetAsync(userId);
+                if (user is null)
+                {
+                    return OperationResult<ToggleFavoriteStatus>.FailureResult($"User with id={carId} does not exist");
+                }
                 
                 var userCar = await _userCarRepository.GetAsync(new List<FiltrationField>
                 {
@@ -80,19 +94,21 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
                 if (userCar is null || userCar.IsDeleted)
                 {
-                    return await AddToFavoriteAsync(userCar, carId, userId);
+                    await AddToFavoriteAsync(userCar, carId, userId);
+                    return OperationResult<ToggleFavoriteStatus>.SuccessResult(ToggleFavoriteStatus.AddedToFavorite);
                 }
 
-                return await DeleteFromFavoriteAsync(userCar.Id);
+                await DeleteFromFavoriteAsync(userCar.Id);
+                return OperationResult<ToggleFavoriteStatus>.SuccessResult(ToggleFavoriteStatus.DeleteFromFavorite);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while adding car with to favorite");
-                return ToggleFavoriteStatus.Error;
+                return OperationResult<ToggleFavoriteStatus>.ExceptionResult();
             }
         }
 
-        private async Task<ToggleFavoriteStatus> AddToFavoriteAsync(UserCar userCar, int carId, int userId)
+        private async Task AddToFavoriteAsync(UserCar userCar, int carId, int userId)
         {
             if (userCar is null)
             {
@@ -101,29 +117,35 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                     CarId = carId,
                     UserId = userId
                 });
-                return ToggleFavoriteStatus.AddedToFavorite;
+                return;
             }
 
             userCar.IsDeleted = false;
             await _userCarRepository.UpdateAsync(userCar);
-            return ToggleFavoriteStatus.AddedToFavorite;
         }
 
-        private async Task<ToggleFavoriteStatus> DeleteFromFavoriteAsync(int userCarId)
+        private async Task DeleteFromFavoriteAsync(int userCarId)
         {
             await _userCarRepository.DeleteAsync(userCarId);
-            return ToggleFavoriteStatus.DeleteFromFavorite;
         }
 
-        public async Task DeleteByIdAsync(int id)
+        public async Task<OperationResult> DeleteByIdAsync(int id)
         {
             try
             {
+                var car = await _carsRepository.GetByIdAsync(id);
+                if (car is null)
+                {
+                    return OperationResult.FailureResult($"Car with id={id} does not exist");
+                }
+                
                 await _carsRepository.DeleteAsync(id);
+                return OperationResult.SuccessResult();
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while deleting car with id={id}");
+                return OperationResult.ExceptionResult();
             }
         }
 
@@ -232,37 +254,35 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public async Task UpdateAsync(CarEditorDto entity)
+        public async Task<OperationResult> UpdateAsync(CarEditorDto entity)
         {
             try
             {
-                ValidateCarEditorDto(entity);
-                var car = _mapper.MapToCar(entity);
-                var oldCar = await _carsRepository.GetByIdAsync(entity.Id);
-
-                await _carsRepository.UpdateAsync(car);
-                await _carsPictureRepository.DeleteRangeAsync(oldCar.CarPictures.Select(cp => cp.Id));
+                if (!entity.CarPicturesUrls?.Any() ?? true)
+                {
+                    return OperationResult.FailureResult("Car should have at least one picture");
+                }
+                
+                var car = await _carsRepository.GetByIdAsync(entity.Id);
+                if (car is null)
+                {
+                    return OperationResult.FailureResult($"Car with id={entity.Id} does not exist");
+                }
+                
+                await _carsRepository.UpdateAsync(_mapper.MapToCar(entity));
+                await _carsPictureRepository.DeleteRangeAsync(car.CarPictures.Select(cp => cp.Id));
                 await _carsPictureRepository.AddRangeAsync(entity.CarPicturesUrls.Select(
                     carPicture => new CarPicture
                     {
-                        CarId = car.Id,
+                        CarId = entity.Id,
                         PictureLink = carPicture
                     }).ToList());
+                return OperationResult.SuccessResult();
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while updating car with id={entity.Id}");
-            }
-        }
-
-        private static void ValidateCarEditorDto(CarEditorDto car)
-        {
-            ValidationHelper.ThrowIfNull(car);
-            ValidationHelper.ThrowIfStringNullOrWhiteSpace(car.Model);
-
-            if (!car.CarPicturesUrls?.Any() ?? true)
-            {
-                throw new BllException("Car should have at least one picture");
+                return OperationResult.ExceptionResult();
             }
         }
     }
