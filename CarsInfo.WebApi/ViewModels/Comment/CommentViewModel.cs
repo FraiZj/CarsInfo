@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CarsInfo.WebApi.ViewModels
+namespace CarsInfo.WebApi.ViewModels.Comment
 {
     public class CommentViewModel
     {

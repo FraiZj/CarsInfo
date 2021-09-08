@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.WebApi.ViewModels;
+using CarsInfo.WebApi.ViewModels.Comment;
 
 namespace CarsInfo.WebApi.Mappers
 {

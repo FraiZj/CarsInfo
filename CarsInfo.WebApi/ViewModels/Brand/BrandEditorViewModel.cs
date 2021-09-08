@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CarsInfo.WebApi.ViewModels
+namespace CarsInfo.WebApi.ViewModels.Brand
 {
     public class BrandEditorViewModel
     {

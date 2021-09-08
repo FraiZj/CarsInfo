@@ -7,6 +7,7 @@ using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels;
+using CarsInfo.WebApi.ViewModels.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -131,16 +132,10 @@ namespace CarsInfo.WebApi.Controllers
             
             var accessToken = _tokenService.GenerateAccessToken(claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
-
-            var userId = User.GetUserId();
-            if (!userId.HasValue)
-            {
-                return BadRequest("Cannot authenticate user");
-            }
-            
+;
             var userRefreshToken = new UserRefreshTokenDto
             {
-                UserId = userId.Value,
+                UserId = Convert.ToInt32(claims.First(c => c.Type == "Id").Value),
                 Token = refreshToken,
                 ExpiryTime = DateTimeOffset.Now.AddDays(7)
             };

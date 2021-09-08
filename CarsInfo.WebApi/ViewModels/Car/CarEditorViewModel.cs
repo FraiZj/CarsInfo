@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace CarsInfo.WebApi.ViewModels
+namespace CarsInfo.WebApi.ViewModels.Car
 {
     public class CarEditorViewModel
     {
