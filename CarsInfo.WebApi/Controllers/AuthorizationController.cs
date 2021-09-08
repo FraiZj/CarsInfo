@@ -33,15 +33,25 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
-            var contains = await _userService.ContainsUserWithEmailAsync(model.Email);
+            var containsOperation = await _userService.ContainsUserWithEmailAsync(model.Email);
 
-            if (contains ?? true)
+            if (!containsOperation.Success)
             {
-                return BadRequest($"Email '{model.Email}' is already in use");
+                return containsOperation.IsException ?
+                    ApplicationError() :
+                    BadRequest(containsOperation.FailureMessage);
             }
             
             var user = _mapper.MapToUserDto(model);
-            await _userService.AddAsync(user);
+            var registerUserResult = await _userService.AddAsync(user);
+            
+            if (!registerUserResult.Success)
+            {
+                return registerUserResult.IsException ?
+                    ApplicationError() :
+                    BadRequest(containsOperation.FailureMessage);
+            }
+            
             return await AuthorizeAsync(user);
         }
 
@@ -55,14 +65,16 @@ namespace CarsInfo.WebApi.Controllers
         [HttpGet("emailAvailable/{email}")]
         public async Task<IActionResult> IsEmailAvailable(string email)
         {
-            var contains = await _userService.ContainsUserWithEmailAsync(email);
+            var operation = await _userService.ContainsUserWithEmailAsync(email);
 
-            if (contains is null)
+            if (operation.IsException)
             {
-                return BadRequest("Could not fetch the result.");
+                return ApplicationError();
             }
 
-            return Ok(!contains);
+            return operation.Success ? 
+                Ok(operation.Result) : 
+                BadRequest(operation.FailureMessage);
         }
 
         [HttpPost("refresh-token")]
@@ -146,14 +158,16 @@ namespace CarsInfo.WebApi.Controllers
         [NonAction]
         private async Task<IActionResult> AuthorizeAsync(UserDto user)
         {
-            var claims = await _userService.GetUserClaimsAsync(user);
+            var getClaimsOperation = await _userService.GetUserClaimsAsync(user);
 
-            if (!claims.Any())
+            if (!getClaimsOperation.Success)
             {
-                return BadRequest("Cannot authorize user");
+                return getClaimsOperation.IsException ?
+                    ApplicationError() :
+                    BadRequest(getClaimsOperation.FailureMessage);
             }
-            
-            var accessToken = _tokenService.GenerateAccessToken(claims);
+
+            var claims = getClaimsOperation.Result;
             var refreshToken = _tokenService.GenerateRefreshToken();
 ;
             var userRefreshToken = new UserRefreshTokenDto
@@ -162,9 +176,16 @@ namespace CarsInfo.WebApi.Controllers
                 Token = refreshToken,
                 ExpiryTime = DateTimeOffset.Now.AddDays(7)
             };
-            await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
+            var updateRefreshTokenOperation = await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
 
-            return Ok(new AuthViewModel(accessToken, refreshToken));
+            if (!updateRefreshTokenOperation.Success)
+            {
+                return updateRefreshTokenOperation.IsException ?
+                    ApplicationError() :
+                    BadRequest(updateRefreshTokenOperation.FailureMessage);
+            }
+            
+            return Ok(new AuthViewModel(_tokenService.GenerateAccessToken(claims), refreshToken));
         }
     }
 }

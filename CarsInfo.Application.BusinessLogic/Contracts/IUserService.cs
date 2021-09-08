@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.OperationResult;
 
 namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserDto>> GetAllAsync();
+        Task<OperationResult<IEnumerable<UserDto>>> GetAllAsync();
 
-        Task<UserDto> GetByEmailAsync(string email);
+        Task<OperationResult<UserDto>> GetByEmailAsync(string email);
         
-        Task AddAsync(UserDto entity);
+        Task<OperationResult<int>> AddAsync(UserDto entity);
 
-        Task UpdateAsync(UserDto entity);
+        Task<OperationResult.OperationResult> UpdateAsync(UserDto entity);
 
-        Task DeleteByIdAsync(int id);
+        Task<OperationResult.OperationResult> DeleteByIdAsync(int id);
         
-        Task<ICollection<Claim>> GetUserClaimsAsync(UserDto entity);
+        Task<OperationResult<ICollection<Claim>>> GetUserClaimsAsync(UserDto entity);
 
-        Task<bool?> ContainsUserWithEmailAsync(string email);
+        Task<OperationResult<bool>> ContainsUserWithEmailAsync(string email);
     }
 }

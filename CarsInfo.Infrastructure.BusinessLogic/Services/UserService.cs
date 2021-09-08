@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.Application.BusinessLogic.Exceptions;
+using CarsInfo.Application.BusinessLogic.OperationResult;
 using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
@@ -37,11 +39,17 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             _logger = logger;
         }
 
-        public async Task AddAsync(UserDto entity)
+        public async Task<OperationResult<int>> AddAsync(UserDto entity)
         {
             try
             {
-                ValidateUserDto(entity);
+                var filter = new FilterModel(new FiltrationField("User.Email", entity.Email));
+                var userAlreadyExist = await _usersRepository.ContainsAsync(filter.Filters);
+                if (userAlreadyExist ?? true)
+                {
+                    return OperationResult<int>.FailureResult($"User with email'{entity.Email}' already exists");
+                }
+                
                 var user = _mapper.MapToUser(entity);
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 var userId = await _usersRepository.AddAsync(user);
@@ -51,17 +59,18 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                     UserId = userId,
                     RoleId = roleId
                 });
+                
+                return OperationResult<int>.SuccessResult(userId);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while creating user");
+                return OperationResult<int>.ExceptionResult(e);
             }
         }
         
         private async Task<int> GetRoleIdAsync(string roleName)
         {
-            ValidationHelper.ThrowIfStringNullOrWhiteSpace(roleName);
-            
             var role = await _roleRepository.GetAsync(new List<FiltrationField>
             {
                 new("Name", Roles.User)
@@ -72,7 +81,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             return role.Id;
         }
 
-        public async Task<ICollection<Claim>> GetUserClaimsAsync(UserDto entity)
+        public async Task<OperationResult<ICollection<Claim>>> GetUserClaimsAsync(UserDto entity)
         {
             try
             {
@@ -84,12 +93,14 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
                 if (user is null)
                 {
-                    return new List<Claim>();
+                    return OperationResult<ICollection<Claim>>.FailureResult(
+                        $"User with email'{entity.Email}' does not exist");
                 }
 
                 if (!BCrypt.Net.BCrypt.Verify(entity.Password, user.Password))
                 {
-                    return new List<Claim>();
+                    return OperationResult<ICollection<Claim>>.FailureResult(
+                        $"Incorrect password for user with email='{entity.Email}'");
                 }
 
                 var claims = user.Roles.Select(
@@ -97,92 +108,102 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
                 claims.Add(new Claim("Id", user.Id.ToString()));
 
-                return claims;
+                return OperationResult<ICollection<Claim>>.SuccessResult(claims);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while authorizing user with email={entity.Email}");
-                return new List<Claim>();
+                return OperationResult<ICollection<Claim>>.ExceptionResult(e);
             }
         }
 
-        public async Task<bool?> ContainsUserWithEmailAsync(string email)
+        public async Task<OperationResult<bool>> ContainsUserWithEmailAsync(string email)
         {
             try
             {
-                var user = await _usersRepository.GetWithRolesAsync(email);
-                return user != null;
+                var filter = new FilterModel(new FiltrationField("User.Email", email));
+                var contains = await _usersRepository.ContainsAsync(filter.Filters);
+
+                if (contains is null)
+                {
+                    return OperationResult<bool>.ExceptionResult(new BllException("Cannot fetch result"));
+                }
+                
+                return OperationResult<bool>.SuccessResult(contains.Value);
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while fetching user with email={email}");
-                return null;
+                return OperationResult<bool>.ExceptionResult(e);
             }
         }
 
-        public async Task DeleteByIdAsync(int id)
+        public async Task<OperationResult> DeleteByIdAsync(int id)
         {
             try
             {
+                var user = await _usersRepository.GetAsync(id);
+                if (user is null)
+                {
+                    return OperationResult.FailureResult($"User with id={id} does not exist");
+                }
                 await _usersRepository.DeleteAsync(id);
+                return OperationResult.SuccessResult();
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while deleting user with id={id}");
+                return OperationResult.ExceptionResult(e);
             }
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        public async Task<OperationResult<IEnumerable<UserDto>>> GetAllAsync()
         {
             try
             {
                 var users = await _usersRepository.GetAllAsync();
-                var usersDtos = _mapper.MapToUsersDtos(users);
-                return usersDtos;
+                return OperationResult<IEnumerable<UserDto>>.SuccessResult(_mapper.MapToUsersDtos(users));
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occurred while fetching users");
-                return new List<UserDto>();
+                return OperationResult<IEnumerable<UserDto>>.ExceptionResult(e);
             }
         }
 
-        public async Task<UserDto> GetByEmailAsync(string email)
+        public async Task<OperationResult<UserDto>> GetByEmailAsync(string email)
         {
             try
             {
                 var user = await _usersRepository.GetWithRolesAsync(email);
-                var userDto = _mapper.MapToUserDto(user);
-                return userDto;
+                return user is null ? 
+                    OperationResult<UserDto>.FailureResult($"User with email='{email}' does not exist") : 
+                    OperationResult<UserDto>.SuccessResult(_mapper.MapToUserDto(user));
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while fetching user with email={email}");
-                return null;
+                return OperationResult<UserDto>.ExceptionResult(e);
             }
         }
 
-        public async Task UpdateAsync(UserDto entity)
+        public async Task<OperationResult> UpdateAsync(UserDto entity)
         {
             try
             {
-                ValidateUserDto(entity);
-                var user = _mapper.MapToUser(entity);
-                await _usersRepository.UpdateAsync(user);
+                var user = await _usersRepository.GetAsync(entity.Id);
+                if (user is null)
+                {
+                    return OperationResult.FailureResult($"User with id={entity.Id} does not exist");
+                }
+                await _usersRepository.UpdateAsync(_mapper.MapToUser(entity));
+                return OperationResult.SuccessResult();
             }
             catch (Exception e)
             {
                 _logger.LogError(e, $"An error occurred while updating user with id={entity.Id}");
+                return OperationResult.ExceptionResult(e);
             }
-        }
-
-        private static void ValidateUserDto(UserDto user)
-        {
-            ValidationHelper.ThrowIfNull(user);
-            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.Email);
-            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.FirstName);
-            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.LastName);
-            ValidationHelper.ThrowIfStringNullOrWhiteSpace(user.Password);
         }
     }
 }
