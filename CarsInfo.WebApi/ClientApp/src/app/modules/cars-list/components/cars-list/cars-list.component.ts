@@ -1,8 +1,8 @@
-import { CarsService } from '@cars/services/cars.service';
+import { selectLoggedIn } from '@auth/store/selectors/auth.selectors';
 import * as CarsListActions from './../../store/actions/cars-list.actions';
 import { AsyncPipe } from '@angular/common';
 import { Filters } from '@cars-filter/enums/filters';
-import { map, tap } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { ItemsSkipPerLoad } from './../../consts/filter-consts';
 import { OrderBy } from '@cars/enums/order-by';
 import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
@@ -31,7 +31,6 @@ export class CarsListComponent implements OnInit, OnDestroy {
   @Input() public selectFilter!: FilterSelector;
   @Input() public selectCars!: CarsSelector;
   @Input() public filterName!: Filters;
-  @Input() public getCars!: (filter?: FilterWithPaginator, orderBy?: OrderBy) => Observable<Car[]>;
   private readonly subscriptions: Subscription[] = [];
   public filter!: FilterWithPaginator;
   public orderBy: OrderBy = OrderBy.BrandNameAsc;
@@ -40,28 +39,47 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public cars$!: Observable<Car[]>;
   public mobileFilterOpened: boolean = false;
 
-
   constructor(
     private readonly store: Store,
     private readonly spinner: NgxSpinnerService,
-    private readonly asyncPipe: AsyncPipe,
-    private readonly carsService: CarsService
+    private readonly asyncPipe: AsyncPipe
   ) { }
 
   public ngOnInit(): void {
     this.cars$ = this.store.select(this.selectCars);
+    this.dispatchFetchingFavoriteCarsIds();
+    this.dispatchFetchingCarsByFilter();
+  }
 
-    this.store.dispatch(CarsListActions.fetchFavoriteCarsIds());
-    this.store.select(this.selectFilter).pipe(
-      map(filter => {
-        this.filter = FilterWithPaginator.CreateDefault();
-        this.filter.brands = filter?.brands ?? [];
-        this.filter.model = filter?.model ?? '';
-      })
-    ).subscribe(() => this.store.dispatch(this.fetchCars({
-      filter: this.filter,
-      orderBy: this.orderBy
-    })));
+  private dispatchFetchingFavoriteCarsIds(): void {
+    this.subscriptions.push(
+      this.store.select(selectLoggedIn).pipe(
+        tap(() => {
+          this.notEmptyPost = true;
+          this.notscrolly = true;
+        }),
+        filter(loggedIn => loggedIn)
+      ).subscribe(
+        () => this.store.dispatch(CarsListActions.fetchFavoriteCarsIds())
+      )
+    );
+  }
+
+  private dispatchFetchingCarsByFilter(): void {
+    this.subscriptions.push(
+      this.store.select(this.selectFilter).pipe(
+        map(filter => {
+          this.filter = FilterWithPaginator.CreateDefault();
+          this.filter.brands = filter?.brands ?? [];
+          this.filter.model = filter?.model ?? '';
+        })
+      ).subscribe(() =>
+        this.store.dispatch(this.fetchCars({
+          filter: this.filter,
+          orderBy: this.orderBy
+        }))
+      )
+    );
   }
 
   public ngOnDestroy(): void {
