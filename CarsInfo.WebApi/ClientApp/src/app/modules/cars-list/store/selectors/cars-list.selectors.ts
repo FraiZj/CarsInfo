@@ -22,3 +22,8 @@ export const selectCanLoadNextFavoriteCars = createSelector(
   selectCarsListState,
   (state) => state.favoriteCarsCanLoadNext
 );
+
+export const favoriteCarsIds = createSelector(
+  selectCarsListState,
+  (state) => state.favoriteCarsIds
+);

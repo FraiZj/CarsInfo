@@ -10,8 +10,6 @@ namespace CarsInfo.Application.Persistence.Contracts
         Task<IEnumerable<Car>> GetAsync(FilterModel filter = null);
         
         Task<IEnumerable<Car>> GetUserFavoriteCarsAsync(int userId, FilterModel filter = null);
-        
-        Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId, FilterModel filter = null);
 
         Task<Car> GetByIdAsync(int id, bool includeDeleted = false);
     }

@@ -93,20 +93,6 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
             return GroupSet(cars);
         }
-
-        public async Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId, FilterModel filter = null)
-        {
-            filter ??= new FilterModel();
-            var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
-            var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
-            var sql = $@"SELECT Car.Id FROM Car
-                         INNER JOIN UserCar
-                         ON Car.Id = UserCar.CarId AND UserCar.UserId = { userId }
-                         { filters }";
-
-            var cars = await Context.QueryIdsAsync(sql);
-            return cars;
-        }
         
         public async Task<Car> GetByIdAsync(int id, bool includeDeleted = false)
         {

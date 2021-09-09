@@ -6,7 +6,8 @@ export const initialState: CarsListState = {
   cars: [],
   carsCanLoadNext: true,
   favoriteCars: [],
-  favoriteCarsCanLoadNext: true
+  favoriteCarsCanLoadNext: true,
+  favoriteCarsIds: []
 };
 
 export const reducer = createReducer(
@@ -17,4 +18,5 @@ export const reducer = createReducer(
   on(CarsListActions.fetchFavoriteCarsSuccess, (state, { cars }) => ({ ...state, favoriteCars: cars })),
   on(CarsListActions.loadNextFavoriteCarsSuccess, (state, { cars }) => ({ ...state, favoriteCars: state.favoriteCars.concat(cars) })),
   on(CarsListActions.canLoadNextFavoriteCars, (state, { can }) => ({ ...state, favoriteCarsCanLoadNext: can })),
+  on(CarsListActions.fetchFavoriteCarsIdsSuccess, (state, { ids }) => ({ ...state, favoriteCarsIds: ids })),
 );

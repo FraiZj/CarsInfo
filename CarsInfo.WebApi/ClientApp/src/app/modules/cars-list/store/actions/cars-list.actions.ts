@@ -52,3 +52,17 @@ export const canLoadNextFavoriteCars = createAction(
   '[Cars List] Can Load Next Favorite Cars',
   props<{ can: boolean }>()
 );
+
+export const fetchFavoriteCarsIds = createAction(
+  '[Cars List] Fetch Favorite Cars Ids'
+);
+
+export const fetchFavoriteCarsIdsSuccess = createAction(
+  '[Cars List] Fetch Favorite Cars Ids Success',
+  props<{ ids: number[] }>()
+);
+
+export const toggleFavoriteCar = createAction(
+  '[Cars List] Toggle Favorite Car',
+  props<{ id: number }>()
+);

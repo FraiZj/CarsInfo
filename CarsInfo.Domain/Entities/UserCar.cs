@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using CarsInfo.Domain.Entities.Base;
 
 namespace CarsInfo.Domain.Entities

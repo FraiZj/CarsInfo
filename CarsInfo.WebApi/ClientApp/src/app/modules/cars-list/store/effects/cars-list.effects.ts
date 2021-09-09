@@ -87,4 +87,23 @@ export class CarsListEffects {
       map(cars => CarsListActions.canLoadNextFavoriteCars({ can: cars.length == ItemsTakePerLoad }))
     )
   );
+
+  fetchFavoriteCarsIds$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CarsListActions.fetchFavoriteCarsIds),
+      exhaustMap(() => this.carsService.getCurrentUserFavoriteCarsIds()
+        .pipe(map(ids => CarsListActions.fetchFavoriteCarsIdsSuccess({ ids })))
+      )
+    )
+  );
+
+  toggleFavoriteCar$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(CarsListActions.toggleFavoriteCar),
+      map(action => action.id),
+      exhaustMap((id) => this.carsService.toggleFavorite(id)
+        .pipe(map(() => CarsListActions.fetchFavoriteCarsIds()))
+      )
+    )
+  );
 }

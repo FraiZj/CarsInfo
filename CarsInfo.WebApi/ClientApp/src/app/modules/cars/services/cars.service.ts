@@ -63,6 +63,10 @@ export class CarsService {
     return params;
   }
 
+  public getCurrentUserFavoriteCarsIds(): Observable<number[]> {
+    return this.http.get<number[]>(`${this.url}/favorite/ids`);
+  }
+
   public getCarById(id: number): Observable<Car> {
     return this.http.get<Car>(`${this.url}/${id}`);
   }
@@ -82,7 +86,6 @@ export class CarsService {
   public deleteCar(id: number): Observable<string> {
     return this.http.delete(`${this.url}/${id}`, { responseType: 'text'});
   }
-
 
   public toggleFavorite(carId: number) : Observable<ToggleFavoriteStatus> {
     return this.http.put<ToggleFavoriteStatus>(`${this.url}/${carId}/favorite`, { });

@@ -7,6 +7,7 @@ export interface CarsListState {
   carsCanLoadNext: boolean,
   favoriteCars: Car[],
   favoriteCarsCanLoadNext: boolean,
+  favoriteCarsIds: number[]
 }
 
 export interface State {

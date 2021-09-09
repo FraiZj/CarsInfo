@@ -114,8 +114,8 @@ namespace CarsInfo.WebApi.Controllers
         [NonAction]
         private bool IsTokenValid(UserRefreshTokenDto userRefreshTokenDto, string refreshToken)
         {
-            return userRefreshTokenDto == null || userRefreshTokenDto.Token != refreshToken ||
-                   userRefreshTokenDto.ExpiryTime <= DateTime.Now;
+            return userRefreshTokenDto is not null && userRefreshTokenDto.Token == refreshToken &&
+                   userRefreshTokenDto.ExpiryTime > DateTime.Now;
         }
         
         [Authorize, HttpPost("revoke-token")]
