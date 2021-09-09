@@ -63,8 +63,8 @@ export class CarsListComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  public trackCarsById(index: number, car: Car): number {
-    return car.id;
+  public trackBy(index: number, car: Car): string {
+    return Object.values(car).toString();
   }
 
   public getFilteredCars(filter: FilterWithPaginator): void {

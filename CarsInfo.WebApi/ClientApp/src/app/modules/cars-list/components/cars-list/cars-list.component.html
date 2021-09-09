@@ -15,7 +15,7 @@
   </div>
   <div class="cars" infiniteScroll [alwaysCallback]="true" (scrolled)="onScroll()"
     *ngIf="cars && cars.length > 0; else carsNotFoundBlock">
-    <car-card *ngFor='let car of cars; trackBy: trackCarsById;' [car]="car">
+    <car-card *ngFor='let car of cars; trackBy: trackBy;' [car]="car">
     </car-card>
   </div>
   <div>
