@@ -1,14 +1,15 @@
 import { Subscription } from 'rxjs';
 import { ToggleFavoriteStatus } from './../../../cars/enums/toggle-favorite-status';
 import { CarsService } from './../../../cars/services/cars.service';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
 
 @Component({
   selector: 'car-card',
   templateUrl: './car-card.component.html',
-  styleUrls: ['./car-card.component.scss']
+  styleUrls: ['./car-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarCardComponent implements OnInit, OnDestroy {
   @Input() public car!: Car;
@@ -19,7 +20,8 @@ export class CarCardComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly carsService: CarsService,
-    private readonly router: Router) { }
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.currentImage = this.car.isLiked ?
@@ -48,5 +50,6 @@ export class CarCardComponent implements OnInit, OnDestroy {
     } else {
       this.currentImage = CarCardComponent.DefaultStarImagePath;
     }
+    this.cdr.detectChanges();
   }
 }

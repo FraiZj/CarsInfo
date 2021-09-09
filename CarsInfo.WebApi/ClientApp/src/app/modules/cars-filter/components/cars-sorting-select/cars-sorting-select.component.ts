@@ -1,10 +1,11 @@
-import { OrderBy } from './../../../cars/enums/order-by';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { OrderBy } from '@cars/enums/order-by';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'cars-sorting-select',
   templateUrl: './cars-sorting-select.component.html',
-  styleUrls: ['./cars-sorting-select.component.scss']
+  styleUrls: ['./cars-sorting-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarsSortingSelectComponent {
   @Input() public orderBy: OrderBy = OrderBy.BrandNameAsc;
@@ -13,11 +14,6 @@ export class CarsSortingSelectComponent {
     { text: "Brand Asc", value: OrderBy.BrandNameAsc },
     { text: "Brand Desc", value: OrderBy.BrandNameDesc },
   ]
-
-  public onSelect(target: EventTarget | null): void {
-    this.orderBy = (target as HTMLInputElement).value as OrderBy;
-    this.orderByChange.emit(this.orderBy);
-  }
 
   public onClick(orderBy: OrderBy): void {
     this.orderBy = orderBy;

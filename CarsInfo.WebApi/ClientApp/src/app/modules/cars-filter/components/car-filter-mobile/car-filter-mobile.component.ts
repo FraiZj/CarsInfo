@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FilterWithPaginator } from 'app/modules/cars-list/interfaces/filterWithPaginator';
 import { OrderBy } from 'app/modules/cars/enums/order-by';
 
 @Component({
   selector: 'car-filter-mobile',
   templateUrl: './car-filter-mobile.component.html',
-  styleUrls: ['./car-filter-mobile.component.scss']
+  styleUrls: ['./car-filter-mobile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarFilterMobileComponent {
   @Input() public filter!: FilterWithPaginator;
