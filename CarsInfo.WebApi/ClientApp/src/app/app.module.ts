@@ -14,6 +14,7 @@ import { JwtInterceptor } from '@core/request-configuration/jwt-interceptor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StoreModule } from '@ngrx/store';
 import { AuthEffects } from '@auth/store/effects/auth.effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,10 @@ import { AuthEffects } from '@auth/store/effects/auth.effects';
     CommonModule,
     NgbModule,
     StoreModule.forRoot({}),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      autoPause: true
+    }),
     EffectsModule.forRoot([AuthEffects]),
 
     // app modules
