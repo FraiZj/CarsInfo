@@ -15,7 +15,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class CarsBrandFilterComponent implements OnInit, OnDestroy {
   @Input() public selectedBrands: string[] = [];
   @Output() public filterBrandEvent = new EventEmitter<string[]>();
-  private static readonly BrandsInFilterMaxValue: number = 5;
   private static readonly FilterDebounceTime: number = 400;
   private readonly subscriptions: Subscription[] = [];
   public selectable = true;
@@ -56,8 +55,7 @@ export class CarsBrandFilterComponent implements OnInit, OnDestroy {
   public onBrandSelect(event: MatAutocompleteSelectedEvent): void {
     const value = event.option.viewValue;
 
-    if (this.selectedBrands.includes(value) ||
-      this.selectedBrands.length >= CarsBrandFilterComponent.BrandsInFilterMaxValue) {
+    if (this.selectedBrands.includes(value)) {
       this.brandFormControl.reset();
       return;
     }
