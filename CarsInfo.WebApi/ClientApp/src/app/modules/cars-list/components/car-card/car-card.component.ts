@@ -1,9 +1,10 @@
-import { Subscription } from 'rxjs';
-import { ToggleFavoriteStatus } from './../../../cars/enums/toggle-favorite-status';
-import { CarsService } from './../../../cars/services/cars.service';
+import { Observable, Subscription } from 'rxjs';
+import * as CarsListSelectors from './../../store/selectors/cars-list.selectors';
+import * as CarsListActions from './../../store/actions/cars-list.actions';
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'car-card',
@@ -17,16 +18,25 @@ export class CarCardComponent implements OnInit, OnDestroy {
   public static readonly DefaultStarImagePath: string = '../../../../../assets/images/star-default.png';
   public static readonly SelectedStarImagePath: string = '../../../../../assets/images/star-selected.png';
   public currentImage: string = CarCardComponent.DefaultStarImagePath;
+  public favoriteCarsIds$!: Observable<number[]>;
 
   constructor(
-    private readonly carsService: CarsService,
+    private readonly store: Store,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.currentImage = this.car.isLiked ?
-      CarCardComponent.SelectedStarImagePath :
-      CarCardComponent.DefaultStarImagePath;
+    this.subscriptions.push(
+      this.store.select(CarsListSelectors.favoriteCarsIds)
+        .subscribe(
+          ids => {
+            this.currentImage = ids.includes(this.car.id) ?
+              CarCardComponent.SelectedStarImagePath :
+              CarCardComponent.DefaultStarImagePath;
+            this.cdr.detectChanges();
+          }
+        )
+    );
   }
 
   ngOnDestroy(): void {
@@ -38,18 +48,6 @@ export class CarCardComponent implements OnInit, OnDestroy {
   }
 
   public onStarClick(): void {
-    this.subscriptions.push(
-      this.carsService.toggleFavorite(this.car.id)
-        .subscribe(status => this.toggleStarColor(status))
-    );
-  }
-
-  private toggleStarColor(status: ToggleFavoriteStatus) {
-    if (status === ToggleFavoriteStatus.AddedToFavorite) {
-      this.currentImage = CarCardComponent.SelectedStarImagePath;
-    } else {
-      this.currentImage = CarCardComponent.DefaultStarImagePath;
-    }
-    this.cdr.detectChanges();
+    this.store.dispatch(CarsListActions.toggleFavoriteCar({ id: this.car.id }));
   }
 }

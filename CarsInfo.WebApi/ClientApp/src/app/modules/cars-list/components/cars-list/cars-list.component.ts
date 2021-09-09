@@ -1,6 +1,8 @@
+import { CarsService } from '@cars/services/cars.service';
+import * as CarsListActions from './../../store/actions/cars-list.actions';
 import { AsyncPipe } from '@angular/common';
 import { Filters } from '@cars-filter/enums/filters';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { ItemsSkipPerLoad } from './../../consts/filter-consts';
 import { OrderBy } from '@cars/enums/order-by';
 import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
@@ -38,15 +40,18 @@ export class CarsListComponent implements OnInit, OnDestroy {
   public cars$!: Observable<Car[]>;
   public mobileFilterOpened: boolean = false;
 
+
   constructor(
     private readonly store: Store,
     private readonly spinner: NgxSpinnerService,
-    private readonly asyncPipe: AsyncPipe
+    private readonly asyncPipe: AsyncPipe,
+    private readonly carsService: CarsService
   ) { }
 
   public ngOnInit(): void {
     this.cars$ = this.store.select(this.selectCars);
 
+    this.store.dispatch(CarsListActions.fetchFavoriteCarsIds());
     this.store.select(this.selectFilter).pipe(
       map(filter => {
         this.filter = FilterWithPaginator.CreateDefault();

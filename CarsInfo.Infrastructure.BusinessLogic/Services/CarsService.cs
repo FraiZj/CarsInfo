@@ -215,10 +215,10 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                     return OperationResult<IEnumerable<int>>.FailureResult($"User with id={userId} does not exist");
                 }
 
-                var filterModel = new FilterModel(new FiltrationField("UserCar.IsDeleted", 0));
-                var carsIds = await _carsRepository.GetUserFavoriteCarsIdsAsync(userId, filterModel);
+                var filterModel = new FilterModel(new FiltrationField("UserCar.UserId", userId));
+                var userCars = await _userCarRepository.GetAllAsync(filterModel);
 
-                return OperationResult<IEnumerable<int>>.SuccessResult(carsIds);
+                return OperationResult<IEnumerable<int>>.SuccessResult(userCars.Select(userCar => userCar.CarId));
             }
             catch (Exception e)
             {

@@ -102,7 +102,8 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(userId);
+                var filterModel = new FilterModel(new FiltrationField("UserId", userId));
+                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filterModel.Filters);
 
                 if (userRefreshToken is null)
                 {

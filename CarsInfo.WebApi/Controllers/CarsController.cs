@@ -35,8 +35,7 @@ namespace CarsInfo.WebApi.Controllers
                 BadRequest(operation.FailureMessage);
         }
 
-        [HttpGet("favorite")]
-        [AllowAnonymous]
+        [HttpGet("favorite"), Authorize(Roles = Roles.User)]
         public async Task<IActionResult> Favorite(FilterDto filter)
         {
             var userId = User.GetUserId();
@@ -47,6 +46,23 @@ namespace CarsInfo.WebApi.Controllers
             }
 
             var operation = await _carsService.GetUserFavoriteCarsAsync(userId.Value, filter);
+            return operation.Success ?
+                Ok(operation.Result) :
+                BadRequest(operation.FailureMessage);
+        }
+        
+        [HttpGet("favorite/ids"), Authorize(Roles = Roles.User)]
+        [Authorize]
+        public async Task<IActionResult> FavoriteCarsIds()
+        {
+            var userId = User.GetUserId();
+
+            if (!userId.HasValue)
+            {
+                return BadRequest("User is not authorized");
+            }
+
+            var operation = await _carsService.GetUserFavoriteCarsIdsAsync(userId.Value);
             return operation.Success ?
                 Ok(operation.Result) :
                 BadRequest(operation.FailureMessage);
@@ -63,9 +79,9 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest(operation.FailureMessage);
             }
 
-            return operation.Result is null ? 
-                Ok(operation.Result) : 
-                NotFound();
+            return operation.Result is null ?
+                NotFound():
+                Ok(operation.Result);
         }
 
         [HttpGet("{id:int}/editor")]

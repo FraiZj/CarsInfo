@@ -4,5 +4,4 @@ export interface Car {
   model: string;
   description: string;
   carPicturesUrls: string[];
-  isLiked: boolean;
 }

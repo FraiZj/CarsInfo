@@ -1,5 +1,5 @@
 import { ClaimTypes } from './../enums/claim-types';
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse, HttpResponseBase } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { JwtPayload } from "app/modules/auth/interfaces/jwt-payload";
 import { UserClaims } from "app/modules/auth/interfaces/user-claims";
@@ -142,14 +142,14 @@ export class AuthService {
     return throwError(response.error as string);
   }
 
-  public logout(): Observable<void> {
+  public logout(): Observable<string> {
     const logoutHandler = () => {
       localStorage.removeItem(AuthService.TokensName);
       this.currentUserTokenSubject.next(null);
       this.stopRefreshTokenTimer();
     }
 
-    return this.http.post<void>(`${this.url}/revoke-token`, {})
+    return this.http.post<string>(`${this.url}/revoke-token`, {}, { responseType: 'text' as 'json'})
       .pipe(tap({
         next: logoutHandler,
         error: logoutHandler
