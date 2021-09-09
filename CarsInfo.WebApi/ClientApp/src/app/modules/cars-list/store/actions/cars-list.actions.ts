@@ -34,7 +34,7 @@ export const fetchFavoriteCarsSuccess = createAction(
 );
 
 export const loadNextFavoriteCars = createAction(
-  '[Cars List] Load Next Cars',
+  '[Cars List] Load Next Favorite Cars',
   props<{ filter: FilterWithPaginator, orderBy: OrderBy }>()
 );
 
