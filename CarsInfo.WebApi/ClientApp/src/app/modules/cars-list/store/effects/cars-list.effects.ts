@@ -1,9 +1,12 @@
+import { loginSuccess } from './../../../auth/store/actions/auth.actions';
 import { CarsService } from '@cars/services/cars.service';
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as CarsListActions from './../actions/cars-list.actions'
 import { exhaustMap, map } from 'rxjs/operators';
 import { ItemsTakePerLoad } from '@cars-list/consts/filter-consts';
+import { FilterWithPaginator } from '@cars-list/interfaces/filterWithPaginator';
+import { OrderBy } from '@cars/enums/order-by';
 
 @Injectable()
 export class CarsListEffects {
@@ -11,6 +14,15 @@ export class CarsListEffects {
     private readonly actions$: Actions,
     private readonly carsService: CarsService,
   ) { }
+
+  loginFetchCars$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(loginSuccess),
+      map(() => CarsListActions.fetchCars({
+        filter: FilterWithPaginator.CreateDefault(),
+        orderBy: OrderBy.BrandNameAsc
+      }))
+    ))
 
   fetchCars$ = createEffect(() =>
     this.actions$.pipe(
