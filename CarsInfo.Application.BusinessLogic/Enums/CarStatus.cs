@@ -3,7 +3,6 @@
     public enum ToggleFavoriteStatus
     {
         AddedToFavorite,
-        DeleteFromFavorite,
-        Error
+        DeleteFromFavorite
     }
 }

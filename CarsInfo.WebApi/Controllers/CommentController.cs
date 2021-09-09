@@ -3,7 +3,6 @@ using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
-using CarsInfo.WebApi.ViewModels;
 using CarsInfo.WebApi.ViewModels.Comment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +26,14 @@ namespace CarsInfo.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int carId)
         {
-            var commentsDtos = await _commentService.GetByCarIdAsync(carId);
-            var comments = _mapper.MapToCommentViewModels(commentsDtos);
+            var operation = await _commentService.GetByCarIdAsync(carId);
+
+            if (!operation.Success)
+            {
+                return BadRequest(operation.FailureMessage);
+            }
+            
+            var comments = _mapper.MapToCommentViewModels(operation.Result);
             return Ok(comments);
         }
         
@@ -45,9 +50,11 @@ namespace CarsInfo.WebApi.Controllers
             var commentDto = _mapper.MapToCommentEditorDto(comment);
             commentDto.CarId = carId;
             commentDto.UserId = User.GetUserId()!.Value;
-            await _commentService.AddAsync(commentDto);
-
-            return Ok();
+            var operation = await _commentService.AddAsync(commentDto);
+            
+            return operation.Success ?
+                Ok("Comment added") :
+                BadRequest(operation.FailureMessage);
         }
     }
 }

@@ -2,29 +2,30 @@
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.Application.BusinessLogic.OperationResult;
 
 namespace CarsInfo.Application.BusinessLogic.Contracts
 {
     public interface ICarsService
     {
-        Task<ToggleFavoriteStatus> ToggleFavoriteAsync(int userId, int carId);
-
-        Task<IEnumerable<CarDto>> GetAllAsync();
-
-        Task<IEnumerable<CarDto>> GetAllAsync(FilterDto filter);
+        Task<OperationResult<ToggleFavoriteStatus>> ToggleFavoriteAsync(int userId, int carId);
         
-        Task<IEnumerable<CarDto>> GetUserFavoriteCarsAsync(int userId, FilterDto filter);
+        Task<OperationResult<IEnumerable<CarDto>>> GetAllAsync();
+
+        Task<OperationResult<IEnumerable<CarDto>>> GetAllAsync(FilterDto filter);
         
-        Task<IEnumerable<int>> GetUserFavoriteCarsIdsAsync(int userId);
+        Task<OperationResult<IEnumerable<CarDto>>> GetUserFavoriteCarsAsync(int userId, FilterDto filter);
         
-        Task<CarDto> GetByIdAsync(int id);
+        Task<OperationResult<IEnumerable<int>>> GetUserFavoriteCarsIdsAsync(int userId);
+        
+        Task<OperationResult<CarDto>> GetByIdAsync(int id);
 
-        Task<CarEditorDto> GetCarEditorDtoByIdAsync(int id);
+        Task<OperationResult<CarEditorDto>> GetCarEditorDtoByIdAsync(int id);
 
-        Task<bool> AddAsync(CarEditorDto entity);
+        Task<OperationResult<int>> AddAsync(CarEditorDto entity);
 
-        Task UpdateAsync(CarEditorDto entity);
+        Task<OperationResult.OperationResult> UpdateAsync(CarEditorDto entity);
 
-        Task DeleteByIdAsync(int id);
+        Task<OperationResult.OperationResult> DeleteByIdAsync(int id);
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.OperationResult;
 
 namespace CarsInfo.Application.BusinessLogic.Contracts
 {
@@ -12,10 +12,10 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
         
         string GenerateRefreshToken();
         
-        ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        OperationResult<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token);
 
-        Task<UserRefreshTokenDto> GetUserRefreshTokenAsync(int userId);
+        Task<OperationResult<UserRefreshTokenDto>> GetUserRefreshTokenAsync(int userId);
         
-        Task UpdateRefreshTokenByUserIdAsync(UserRefreshTokenDto userRefreshTokenDto);
+        Task<OperationResult.OperationResult> UpdateRefreshTokenByUserIdAsync(UserRefreshTokenDto userRefreshTokenDto);
     }
 }
