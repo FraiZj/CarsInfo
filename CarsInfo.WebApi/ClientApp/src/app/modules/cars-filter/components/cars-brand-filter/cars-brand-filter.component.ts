@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, OnInit, Output, OnDestroy, Input } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, OnDestroy, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Brand } from 'app/modules/brands/interfaces/brand';
@@ -9,7 +9,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'cars-brand-filter',
   templateUrl: './cars-brand-filter.component.html',
-  styleUrls: ['./cars-brand-filter.component.scss']
+  styleUrls: ['./cars-brand-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarsBrandFilterComponent implements OnInit, OnDestroy {
   @Input() public selectedBrands: string[] = [];

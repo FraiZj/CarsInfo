@@ -1,5 +1,5 @@
 import { ItemsSkipPerLoad, ItemsTakePerLoad } from './../consts/filter-consts';
-import { Filter } from './../../cars-filter/interfaces/filter';
+import { Filter } from '@cars-filter/interfaces/filter';
 
 export class FilterWithPaginator implements Filter {
   public brands?: string[];
@@ -18,6 +18,14 @@ export class FilterWithPaginator implements Filter {
     return this.skip == ItemsSkipPerLoad &&
       this.take == ItemsTakePerLoad &&
       (this.brands?.length == 0 ?? true) &&
-      (this.model?.length == 0 ?? true)
+      (this.model?.length == 0 ?? true);
+  }
+
+  public static convertToFilter(filter: FilterWithPaginator): Filter
+  {
+    return {
+      brands: filter.brands,
+      model: filter.model
+    };
   }
 }
