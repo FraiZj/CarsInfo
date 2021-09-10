@@ -1,9 +1,9 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Domain.Entities;
 using CarsInfo.Infrastructure.Persistence.Contexts;
 using CarsInfo.Infrastructure.Persistence.Repositories;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CarsInfo.Infrastructure.DependencyInjection
