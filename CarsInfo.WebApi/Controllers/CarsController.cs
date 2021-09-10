@@ -96,8 +96,8 @@ namespace CarsInfo.WebApi.Controllers
             }
 
             return operation.Result is null ?
-                Ok(operation.Result) :
-                NotFound();
+                NotFound() :
+                Ok(operation.Result);
         }
 
         [HttpPost]

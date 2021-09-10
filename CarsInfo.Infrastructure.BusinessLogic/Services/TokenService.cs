@@ -9,7 +9,6 @@ using CarsInfo.Application.BusinessLogic.AuthModels;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.OperationResult;
-using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
@@ -108,7 +107,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 if (userRefreshToken is null)
                 {
                     return OperationResult<UserRefreshTokenDto>.FailureResult(
-                        $"Refresh token with for user with id={userId} does not exist");
+                        $"Refresh token for user with id={userId} does not exist");
                 }
                 
                 return OperationResult<UserRefreshTokenDto>.SuccessResult(

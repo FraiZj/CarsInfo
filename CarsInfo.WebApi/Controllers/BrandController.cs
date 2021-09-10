@@ -35,10 +35,15 @@ namespace CarsInfo.WebApi.Controllers
         public async Task<ActionResult<BrandDto>> Get(int id)
         {
             var operation = await _brandService.GetByIdAsync(id);
-            
-            return operation.Success ?
-                Ok(operation.Result) :
-                BadRequest(operation.FailureMessage);
+
+            if (!operation.Success)
+            {
+                return BadRequest(operation.FailureMessage);
+            }
+
+            return operation.Result is null ?
+                NotFound() :
+                Ok(operation.Result);
         }
 
         [HttpPost, Authorize(Roles = Roles.Admin)]
