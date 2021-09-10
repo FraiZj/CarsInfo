@@ -1,8 +1,10 @@
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, throwError } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'car-editor',
@@ -22,8 +24,18 @@ export class CarEditorComponent implements OnInit, OnDestroy {
   ) { }
 
   public ngOnInit(): void {
-    this.id = this.getIdFromRoute();
-    this.carEditor$ = this.carsService.getCarEditorById(this.id);
+    this.carEditor$ = this.getIdFromRoute()
+    .pipe(
+      switchMap(id => this.carsService.getCarEditorById(id)),
+      catchError(err => {
+        if (err instanceof HttpErrorResponse) return throwError(err.error);
+        if (err instanceof Error) return throwError(err.message);
+        return throwError('An error occurred');
+      }),
+      tap({
+        error: () => this.router.navigateByUrl("not-found")
+      })
+    )
   }
 
   public ngOnDestroy(): void {
@@ -37,13 +49,13 @@ export class CarEditorComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getIdFromRoute(): number {
-    const routeId = this.route.snapshot.paramMap.get('id');
+  private getIdFromRoute(): Observable<number> {
+    return this.route.params.pipe(map(params => {
+      if (params.id == null || Number.isNaN(+params.id)) {
+        throw new Error(`Invalid route param id=${params.id}`);
+      }
 
-    if (routeId === null) {
-      this.router.navigateByUrl("404");
-    }
-
-    return parseInt(routeId as string);
+      return params.id;
+    }))
   }
 }
