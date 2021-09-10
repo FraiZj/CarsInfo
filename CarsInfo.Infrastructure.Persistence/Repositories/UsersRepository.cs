@@ -32,19 +32,14 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public async Task<User> GetWithRolesAsync(string email)
         {
-            var sql = @$"SELECT u.*, Role.* FROM [{TableName}] u
-                         INNER JOIN UserRole 
-                         ON u.Id = UserRole.UserId
-                         INNER JOIN Role
-                         ON UserRole.RoleId = Role.Id
-                         WHERE u.Email = '{email}'";
+            const string procedure = "[SelectUserByEmail] @Email";
 
-            var users = (await Context.QueryAsync<User, Role>(sql,
+            var users = (await Context.QueryAsync<User, Role>(procedure,
                 (user, role) =>
                 {
                     user.Roles.Add(role);
                     return user;
-                })).ToList();
+                }, new { Email = email })).ToList();
 
             return users.Count == 0 ? null : GroupSet(users).FirstOrDefault();
         }
