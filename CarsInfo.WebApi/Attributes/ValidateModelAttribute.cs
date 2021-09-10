@@ -1,19 +1,22 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace CarsInfo.WebApi.Attributes
 {
-    public class ValidateModelAttribute : Attribute, IActionFilter
+    [AttributeUsage(AttributeTargets.Method)]
+    public class ValidateModelAttribute : Attribute, IAsyncActionFilter
     {
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (!context.ModelState.IsValid)
             {
                 context.Result = new BadRequestObjectResult(context.ModelState);
+                return;
             }
-        }
 
-        public void OnActionExecuted(ActionExecutedContext context) { }
+            await next();
+        }
     }
 }
