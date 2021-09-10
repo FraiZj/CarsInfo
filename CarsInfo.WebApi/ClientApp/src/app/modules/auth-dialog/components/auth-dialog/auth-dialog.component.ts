@@ -1,8 +1,9 @@
+import { selectLoggedIn } from './../../../auth/store/selectors/auth.selectors';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import { AuthenticationOption } from '../../types/authentication-option';
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthenticationDialogData } from '../../interfaces/authentication-dialog-data';
 import { Store } from '@ngrx/store';
@@ -13,7 +14,7 @@ import { Store } from '@ngrx/store';
   styleUrls: ['./auth-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuthDialogComponent implements OnInit {
+export class AuthDialogComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   private returnUrl!: string;
   public title$: BehaviorSubject<AuthenticationOption> = new BehaviorSubject<AuthenticationOption>('Login');
@@ -39,6 +40,10 @@ export class AuthDialogComponent implements OnInit {
     );
   }
 
+  public ngOnDestroy(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+  }
+
   public switchToRegister(): void {
     this.title$.next('Register');
   }
@@ -49,7 +54,11 @@ export class AuthDialogComponent implements OnInit {
 
   public onLogin(): void {
     this.closeDialog();
-    this.router.navigateByUrl(this.returnUrl);
+    this.subscriptions.push(
+      this.store.select(selectLoggedIn).subscribe(
+        () => this.router.navigateByUrl(this.returnUrl)
+      )
+    );
   }
 
   public closeDialog(): void {

@@ -61,17 +61,10 @@ export class AuthEffects implements OnInitEffects {
     )
   );
 
-  loginSuccess$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.loginSuccess),
-      tap(() => this.router.navigate(['/cars']))
-    ),
-    { dispatch: false }
-  );
-
   loginRedirect$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.loginRedirect),
+      map(action => action.returnUrl),
       tap((returnUrl) => {
         this.dialog.open(AuthDialogComponent, {
           data: {
