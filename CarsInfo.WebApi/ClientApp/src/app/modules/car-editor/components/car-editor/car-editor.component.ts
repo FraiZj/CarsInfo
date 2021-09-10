@@ -1,13 +1,14 @@
 import { Observable, Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarsService } from 'app/modules/cars/services/cars.service';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
 
 @Component({
   selector: 'car-editor',
   templateUrl: './car-editor.component.html',
-  styleUrls: ['./car-editor.component.scss']
+  styleUrls: ['./car-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarEditorComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];

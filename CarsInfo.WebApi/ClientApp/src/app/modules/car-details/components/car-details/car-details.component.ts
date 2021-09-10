@@ -2,7 +2,7 @@ import { CarDeleteConfirmDialogComponent } from './../../../car-delete-confirm-d
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { Observable } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
@@ -12,7 +12,8 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'card-details',
   templateUrl: './car-details.component.html',
-  styleUrls: ['./car-details.component.scss']
+  styleUrls: ['./car-details.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarDetailsComponent implements OnInit {
   public car$!: Observable<Car>;
@@ -21,7 +22,8 @@ export class CarDetailsComponent implements OnInit {
     private readonly carsService: CarsService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    public readonly dialog: MatDialog) { }
+    public readonly dialog: MatDialog
+  ) { }
 
   public ngOnInit(): void {
     this.car$ = this.getIdFromRoute()

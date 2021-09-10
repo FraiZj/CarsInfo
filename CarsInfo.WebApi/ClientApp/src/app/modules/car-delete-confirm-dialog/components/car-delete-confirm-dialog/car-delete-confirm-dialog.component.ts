@@ -1,6 +1,6 @@
 import { CarDeleteConfirmationData } from './../../interfaces/car-delele-confirmation-data';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -13,7 +13,8 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 @Component({
   selector: 'car-delete-confirm-dialog',
   templateUrl: './car-delete-confirm-dialog.component.html',
-  styleUrls: ['./car-delete-confirm-dialog.component.scss']
+  styleUrls: ['./car-delete-confirm-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarDeleteConfirmDialogComponent implements OnInit {
   private car$!: Observable<Car>;

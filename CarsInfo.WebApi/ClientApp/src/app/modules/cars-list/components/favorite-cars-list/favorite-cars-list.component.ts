@@ -1,6 +1,6 @@
 import { selectCanLoadNextFavoriteCars } from './../../store/selectors/cars-list.selectors';
 import { fetchFavoriteCars, loadNextFavoriteCars } from './../../store/actions/cars-list.actions';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Filters } from '@cars-filter/enums/filters';
 import { selectFavoriteCars } from '@cars-list/store/selectors/cars-list.selectors';
 import { selectFavoriteCarsFilter } from '@cars-filter/store/selectors/cars-filter.selectors';
@@ -8,7 +8,8 @@ import { selectFavoriteCarsFilter } from '@cars-filter/store/selectors/cars-filt
 @Component({
   selector: 'favorite-cars-list',
   template: `<cars-list [filterName]="filterName" [fetchCars]="fetchCars" [fetchNextCars]="fetchNextCars"
-  [selectCanLoad]="selectCanLoad" [selectFilter]="selectFilter" [selectCars]="selectCars"></cars-list>`
+  [selectCanLoad]="selectCanLoad" [selectFilter]="selectFilter" [selectCars]="selectCars"></cars-list>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FavoriteCarsListComponent {
   public readonly filterName: Filters = Filters.FavoriteCarsFilter;

@@ -2,7 +2,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import { AuthenticationOption } from '../../types/authentication-option';
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AuthenticationDialogData } from '../../interfaces/authentication-dialog-data';
 import { Store } from '@ngrx/store';
@@ -10,7 +10,8 @@ import { Store } from '@ngrx/store';
 @Component({
   selector: 'auth-dialog',
   templateUrl: './auth-dialog.component.html',
-  styleUrls: ['./auth-dialog.component.scss']
+  styleUrls: ['./auth-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuthDialogComponent implements OnInit {
   private readonly subscriptions: Subscription[] = [];

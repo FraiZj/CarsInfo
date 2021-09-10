@@ -6,7 +6,7 @@ import { filter, map, tap } from 'rxjs/operators';
 import { ItemsSkipPerLoad } from './../../consts/filter-consts';
 import { OrderBy } from '@cars/enums/order-by';
 import { FilterWithPaginator } from './../../interfaces/filterWithPaginator';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { Observable, Subscription } from 'rxjs';
@@ -22,7 +22,8 @@ type FilterSelector = MemoizedSelector<object, Filter | null, DefaultProjectorFn
 @Component({
   selector: 'cars-list',
   templateUrl: './cars-list.component.html',
-  styleUrls: ['./cars-list.component.scss']
+  styleUrls: ['./cars-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarsListComponent implements OnInit, OnDestroy {
   @Input() public fetchCars!: any;
