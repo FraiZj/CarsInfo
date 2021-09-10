@@ -1,7 +1,9 @@
-﻿using System.Data.SqlClient;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using CarsInfo.Infrastructure.DB.Extensions;
+using Microsoft.Data.SqlClient;
+using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Management.Smo;
 
 namespace CarsInfo.Infrastructure.DB
 {
@@ -35,13 +37,13 @@ namespace CarsInfo.Infrastructure.DB
 
         private static void CreateSchema()
         {
-            if (!DatabaseExists() || TablesExist())
+            if (DatabaseExists() && TablesExist())
             {
                 return;
             }
 
             var createTablesScript = File.ReadAllText(Directory + CreateTablesPath);
-            ExecuteNonQuery(_connectionStringBuilder.ToString(), createTablesScript);
+            ExecuteNonQuery(_connectionStringBuilder.ConnectionString, createTablesScript);
         }
 
         private static void CreateProcedures()
@@ -65,19 +67,19 @@ namespace CarsInfo.Infrastructure.DB
             }
 
             var seedDataScript = File.ReadAllText(Directory + SeedDataPath);
-            ExecuteNonQuery(_connectionStringBuilder.ToString(), seedDataScript);
+            ExecuteNonQuery(_connectionStringBuilder.ConnectionString, seedDataScript);
         }
 
         private static bool SeedDataExist()
         {
             var query = @$"USE {_connectionStringBuilder.InitialCatalog}; SELECT TOP 1 * FROM [User]";
-            return QueryHasRows(_connectionStringBuilder.ToString(), query);
+            return QueryHasRows(_connectionStringBuilder.ConnectionString, query);
         }
 
         private static bool TablesExist()
         {
             var query = @$"USE {_connectionStringBuilder.InitialCatalog}; SELECT * FROM INFORMATION_SCHEMA.TABLES";
-            return QueryHasRows(_connectionStringBuilder.ToString(), query);
+            return QueryHasRows(_connectionStringBuilder.ConnectionString, query);
         }
 
         private static bool ProceduresExist()
@@ -91,7 +93,7 @@ namespace CarsInfo.Infrastructure.DB
                     BEGIN
 	                    SELECT TOP 0 1 FROM INFORMATION_SCHEMA.TABLES
                     END";
-            return QueryHasRows(_connectionStringBuilder.ToString(), query);
+            return QueryHasRows(_connectionStringBuilder.ConnectionString, query);
         }
 
         private static bool DatabaseExists()
@@ -104,12 +106,8 @@ namespace CarsInfo.Infrastructure.DB
         {
             using (var connection = new SqlConnection(connectionString))
             {
-                connection.Open();
-                using (var createTables = new SqlCommand(commandText, connection))
-                {
-                    createTables.ExecuteNonQuery();
-                }
-                connection.Close();
+                var server = new Server(new ServerConnection(connection));
+                server.ConnectionContext.ExecuteNonQuery(commandText);
             }
         }
         
@@ -119,15 +117,9 @@ namespace CarsInfo.Infrastructure.DB
 
             using (var connection = new SqlConnection(connectionString))
             {
-                using (var cmd = new SqlCommand(commandText, connection))
-                {
-                    connection.Open();
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        isExist = reader.HasRows;
-                    }
-                    connection.Close();
-                }
+                var server = new Server(new ServerConnection(connection));
+                var reader = server.ConnectionContext.ExecuteReader(commandText);
+                isExist = reader.HasRows;
             }
 
             return isExist;
