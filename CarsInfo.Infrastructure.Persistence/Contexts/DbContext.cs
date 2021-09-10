@@ -111,14 +111,17 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
         }
 
         public async Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond>(
-            string sql, Func<T, TFirst, TSecond, T> map, object parameters = null) 
+            string sql, 
+            Func<T, TFirst, TSecond, T> map, 
+            object parameters = null, 
+            CommandType commandType = CommandType.Text) 
             where T : BaseEntity 
             where TFirst : BaseEntity 
             where TSecond : BaseEntity
         {
             try
             {
-                return await _connection.QueryAsync(sql, map, parameters);
+                return await _connection.QueryAsync(sql, map, parameters, commandType: commandType);
             }
             catch (Exception e)
             {

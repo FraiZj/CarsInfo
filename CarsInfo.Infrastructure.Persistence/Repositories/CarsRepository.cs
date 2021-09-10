@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.Persistence.Contracts;
@@ -96,19 +97,14 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         
         public async Task<Car> GetByIdAsync(int id, bool includeDeleted = false)
         {
-            var sql = @$"SELECT * FROM Car
-                         LEFT JOIN Brand
-                         ON Car.BrandId = Brand.Id
-                         LEFT JOIN CarPicture
-                         ON Car.Id = CarPicture.CarId
-                         WHERE Car.Id=@id";
-
-            if (!includeDeleted)
+            const string procedure = "[SelectCarById]";
+            var values = new
             {
-                sql += " AND Car.IsDeleted = 0";
-            }
+                Id = id, 
+                IncludeDeleted = includeDeleted ? 0 : 1
+            };
 
-            var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
+            var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(procedure,
                 (car, brand, carPicture) =>
                 {
                     car.Brand = brand;
@@ -119,7 +115,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                     }
                     
                     return car;
-                }, new { id });
+                }, values, CommandType.StoredProcedure);
 
             return GroupSet(cars).FirstOrDefault();
         }

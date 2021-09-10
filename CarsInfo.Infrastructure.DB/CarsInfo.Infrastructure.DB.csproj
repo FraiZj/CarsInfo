@@ -5,11 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="SQL\CreateProcedures.sql" />
     <None Remove="SQL\CreateTables.sql" />
     <None Remove="SQL\SeedData.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="SQL\CreateProcedures.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="SQL\CreateTables.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

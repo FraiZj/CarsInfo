@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using CarsInfo.Domain.Entities.Base;
 
@@ -31,7 +32,10 @@ namespace CarsInfo.Application.Persistence.Contracts
             where TFirst : BaseEntity;
 
         Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond>(
-            string sql, Func<T, TFirst, TSecond, T> map, object parameters = null)
+            string sql, 
+            Func<T, TFirst, TSecond, T> map, 
+            object parameters = null,
+            CommandType commandType = CommandType.Text)
             where T : BaseEntity
             where TFirst : BaseEntity
             where TSecond : BaseEntity;
