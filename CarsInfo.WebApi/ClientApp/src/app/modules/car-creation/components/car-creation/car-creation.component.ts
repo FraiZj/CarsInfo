@@ -1,5 +1,5 @@
 import { CarsService } from 'app/modules/cars/services/cars.service';
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
 import { Router } from '@angular/router';
@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'car-creation',
   templateUrl: './car-creation.component.html',
-  styleUrls: ['./car-creation.component.scss']
+  styleUrls: ['./car-creation.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarCreationComponent implements OnDestroy {
   private readonly subscriptions: Subscription[] = [];

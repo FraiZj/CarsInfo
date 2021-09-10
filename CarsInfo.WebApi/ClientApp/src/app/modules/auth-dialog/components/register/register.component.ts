@@ -1,17 +1,19 @@
 import { UserRegister } from './../../../auth/interfaces/user-register';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import * as AuthSelectors from '@auth/store/selectors/auth.selectors';
-import { Component, EventEmitter, Output, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
 import { AuthService } from 'app/modules/auth/services/auth.service';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss', './../../auth-dialog.module.scss']
+  styleUrls: ['./register.component.scss', './../../auth-dialog.module.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   public static readonly PasswordMaxLength: number = 6;
@@ -64,16 +66,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   public onSubmit(): void {
-    if (!this.isEmailAvailable(this.email.value)) {
-      this.email.setErrors({
-        forbidden: this.email.value
-      });
-      return;
-    }
-
     const userRegister = this.registerForm.value as UserRegister;
     this.store.dispatch(AuthActions.register({ userRegister }));
-    this.onLoginEvent.emit();
+    this.store.select(AuthSelectors.selectLoggedIn).pipe(
+      filter(loggedIn => loggedIn)
+    ).subscribe(
+      () => this.onLoginEvent.emit()
+    );
   }
 
   private openSnackBar(message: string): void {
@@ -87,14 +86,5 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   public switchToLogin(): void {
     this.switchToLoginEvent.emit();
-  }
-
-  private isEmailAvailable(email: string): boolean {
-    let isAvailable: boolean = true;
-    this.authService.isEmailAvailable(email)
-      .toPromise()
-      .then(o => isAvailable = o);
-
-    return isAvailable;
   }
 }

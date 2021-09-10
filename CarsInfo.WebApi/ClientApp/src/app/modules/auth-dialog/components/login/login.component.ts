@@ -2,15 +2,17 @@ import { UserLogin } from '@auth/interfaces/user-login';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import * as AuthSelectors from '@auth/store/selectors/auth.selectors';
 import { Store } from '@ngrx/store';
-import { Component, Output, EventEmitter, OnDestroy, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss', './../../auth-dialog.module.scss']
+  styleUrls: ['./login.component.scss', './../../auth-dialog.module.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit, OnDestroy {
   @Output() public switchToRegisterEvent = new EventEmitter();
@@ -58,19 +60,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     const userLogin = this.loginForm.value as UserLogin;
     this.store.dispatch(AuthActions.login({ userLogin }));
-    this.store.select(AuthSelectors.selectLoggedIn).subscribe(loggedIn => {
-      if (loggedIn) {
-        this.onLoginEvent.emit();
-      }
-    })
-
-    // this.subscriptions.push(
-    //   this.authService.login(this.loginForm.value)
-    //     .subscribe({
-    //       next: () => this.onLoginEvent.emit(),
-    //       error: (error: HttpErrorResponse) => this.openSnackBar(error.error)
-    //     })
-    // )
+    this.store.select(AuthSelectors.selectLoggedIn).pipe(
+      filter(loggedIn => loggedIn)
+    ).subscribe(
+      () => this.onLoginEvent.emit()
+    );
   }
 
   public switchToRegister(): void {

@@ -1,6 +1,6 @@
 import { Observable, Subscription } from 'rxjs';
 import { Brand } from '../../../brands/interfaces/brand';
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { BrandsService } from 'app/modules/brands/services/brands.service';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
@@ -8,7 +8,8 @@ import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
 @Component({
   selector: 'car-editor-form',
   templateUrl: './car-editor-form.component.html',
-  styleUrls: ['./car-editor-form.component.scss']
+  styleUrls: ['./car-editor-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CarEditorFormComponent implements OnInit, OnDestroy {
   @Input() public carEditor: CarEditor | null = null;
