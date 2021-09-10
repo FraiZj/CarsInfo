@@ -93,9 +93,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             try
             {
                 var brand = await _brandRepository.GetAsync(id);
-                return brand is null ? 
-                    OperationResult<BrandDto>.FailureResult($"Brand with id={id} not found") : 
-                    OperationResult<BrandDto>.SuccessResult(_mapper.MapToBrandDto(brand));
+                return OperationResult<BrandDto>.SuccessResult(_mapper.MapToBrandDto(brand));
             }
             catch (Exception e)
             {
