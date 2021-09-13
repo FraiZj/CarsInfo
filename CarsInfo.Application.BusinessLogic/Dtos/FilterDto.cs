@@ -9,10 +9,10 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
 
         public string Model { get; set; } = string.Empty;
 
-        [MinLength(0)]
+        [Range(0, int.MaxValue)]
         public int Skip { get; set; } = 0;
 
-        [MinLength(0), MaxLength(100)]
+        [Range(0, 100)]
         public int Take { get; set; } = 3;
 
         public string OrderBy { get; set; } = Enums.OrderBy.BrandNameAsc;

@@ -20,7 +20,6 @@ namespace CarsInfo.Infrastructure.DB
             _connectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
             CreateDatabase();
             CreateSchema();
-            CreateProcedures();
             ApplySeedData();
         }
 
@@ -46,17 +45,6 @@ namespace CarsInfo.Infrastructure.DB
             ExecuteNonQuery(_connectionStringBuilder.ConnectionString, createTablesScript);
         }
 
-        private static void CreateProcedures()
-        {
-            if (!DatabaseExists() || !TablesExist() || ProceduresExist())
-            {
-                return;
-            }
-
-            var createProceduresScript = File.ReadAllText(Directory + CreateProceduresPath);
-            ExecuteNonQuery(_connectionStringBuilder.ToString(), createProceduresScript);
-        }
-
         private static void ApplySeedData()
         {
             if (!DatabaseExists() || 
@@ -79,20 +67,6 @@ namespace CarsInfo.Infrastructure.DB
         private static bool TablesExist()
         {
             var query = @$"USE {_connectionStringBuilder.InitialCatalog}; SELECT * FROM INFORMATION_SCHEMA.TABLES";
-            return QueryHasRows(_connectionStringBuilder.ConnectionString, query);
-        }
-
-        private static bool ProceduresExist()
-        {
-            var query = @$"USE {_connectionStringBuilder.InitialCatalog}; 
-                    IF (OBJECT_ID('[SelectCarById]') IS NOT NULL)
-                    BEGIN
-	                    SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES
-                    END
-                    ELSE
-                    BEGIN
-	                    SELECT TOP 0 1 FROM INFORMATION_SCHEMA.TABLES
-                    END";
             return QueryHasRows(_connectionStringBuilder.ConnectionString, query);
         }
 

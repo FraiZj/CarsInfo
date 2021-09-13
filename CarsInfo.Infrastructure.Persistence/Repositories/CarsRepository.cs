@@ -97,14 +97,19 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         
         public async Task<Car> GetByIdAsync(int id, bool includeDeleted = false)
         {
-            const string procedure = "[SelectCarById]";
-            var values = new
-            {
-                Id = id, 
-                IncludeDeleted = includeDeleted ? 0 : 1
-            };
+            var sql = @$"SELECT * FROM Car
+                         LEFT JOIN Brand
+                         ON Car.BrandId = Brand.Id
+                         LEFT JOIN CarPicture
+                         ON Car.Id = CarPicture.CarId
+                         WHERE Car.Id=@id";
 
-            var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(procedure,
+            if (!includeDeleted)
+            {
+                sql += " AND Car.IsDeleted = 0";
+            }
+
+            var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
                 (car, brand, carPicture) =>
                 {
                     car.Brand = brand;
@@ -115,7 +120,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                     }
                     
                     return car;
-                }, values, CommandType.StoredProcedure);
+                }, new { id });
 
             return GroupSet(cars).FirstOrDefault();
         }
