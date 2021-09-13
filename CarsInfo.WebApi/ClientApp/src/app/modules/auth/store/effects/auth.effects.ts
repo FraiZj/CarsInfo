@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { Router } from "@angular/router";
 import { AuthService } from "@auth/services/auth.service";
 import { Actions, createEffect, ofType, OnInitEffects } from "@ngrx/effects";
 import { of } from "rxjs";
@@ -15,7 +14,6 @@ export class AuthEffects implements OnInitEffects {
   constructor(
     private readonly actions$: Actions,
     private readonly authService: AuthService,
-    private readonly router: Router,
     private readonly dialog: MatDialog
   ) { }
 
