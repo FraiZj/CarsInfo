@@ -1,8 +1,9 @@
-import { CarsService } from 'app/modules/cars/services/cars.service';
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { createCar } from '../../store/actions/car-creation.actions';
 
 @Component({
   selector: 'car-creation',
@@ -14,7 +15,7 @@ export class CarCreationComponent implements OnDestroy {
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
-    private readonly carsService: CarsService,
+    private readonly store: Store,
     private readonly router: Router
   ) { }
 
@@ -23,9 +24,10 @@ export class CarCreationComponent implements OnDestroy {
   }
 
   public onSubmit(car: CarEditor): void {
-    this.subscriptions.push(
-      this.carsService.addCar(car)
-        .subscribe(() => this.router.navigateByUrl('/cars'))
-    );
+    this.store.dispatch(createCar({ car }));
   }
 }
+function carCreationSucceeded(carCreationSucceeded: any) {
+  throw new Error('Function not implemented.');
+}
+
