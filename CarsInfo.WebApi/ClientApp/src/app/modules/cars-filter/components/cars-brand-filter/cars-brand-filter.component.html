@@ -13,7 +13,7 @@
   <input matInput placeholder="Input brand" [formControl]="brandFormControl" [matAutocomplete]="auto"
     (input)="onBrandInput()" (change)="onBrandInput()">
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onBrandSelect($event)">
-    <mat-option *ngFor="let brand of filteredBrands$ | async" [value]="brand">
+    <mat-option *ngFor="let brand of brands$ | async" [value]="brand">
       {{ brand.name }}
     </mat-option>
   </mat-autocomplete>

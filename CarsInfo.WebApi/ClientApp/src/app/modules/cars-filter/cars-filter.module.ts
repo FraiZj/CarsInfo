@@ -1,5 +1,5 @@
-import { reducer } from './store/reducers/cars-filter.reducers';
-import { filterFeatureKey } from './store/states/cars-filter.state';
+import { carsFilterFeatureKey } from './store/states/index';
+import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { CarsModule } from './../cars/cars.module';
 import { BrandsModule } from './../brands/brands.module';
@@ -21,6 +21,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { CarFilterMobileComponent } from './components/car-filter-mobile/car-filter-mobile.component';
 import { CarsFilterRoutingModule } from './cars-filter-routing.module';
 import { CarsSortingSelectComponent } from './components/cars-sorting-select/cars-sorting-select.component';
+import { reducers } from './store/reducers';
+import { CarsBrandFilterEffects } from './store/effects/cars-brand-filter.effects';
 
 @NgModule({
   declarations: [
@@ -44,9 +46,10 @@ import { CarsSortingSelectComponent } from './components/cars-sorting-select/car
     CommonModule,
     FormsModule,
     StoreModule.forFeature({
-      name: filterFeatureKey,
-      reducer: reducer
+      name: carsFilterFeatureKey,
+      reducer: reducers
     }),
+    EffectsModule.forFeature([CarsBrandFilterEffects]),
 
     // app modules
     CarsModule,
