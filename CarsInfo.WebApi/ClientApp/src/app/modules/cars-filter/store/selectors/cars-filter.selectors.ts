@@ -13,6 +13,11 @@ export const selectCarsFilter = createSelector(
   (state) => state.carsFilter
 );
 
+export const selectSelectedBrands = createSelector(
+  selectCarsFilter,
+  (filter) => filter?.brands
+);
+
 export const selectFavoriteCarsFilter = createSelector(
   selectFilterState,
   (state) => state.favoriteCarsFilter
@@ -23,7 +28,13 @@ export const selectBrandsFilterState = createSelector(
   (state) => state.brandFilter
 );
 
-export const selectBrandsFilter = createSelector(
+export const selectAllBrands = createSelector(
   selectBrandsFilterState,
   (state) => state.brands
+);
+
+export const selectFilteredBrands = createSelector(
+  selectAllBrands,
+  selectSelectedBrands,
+  (brands, selectedBrands) => brands.filter(brand => !selectedBrands?.includes(brand.name))
 );
