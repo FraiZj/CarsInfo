@@ -1,10 +1,10 @@
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import * as CarsListSelectors from './../../store/selectors/cars-list.selectors';
 import * as CarsListActions from './../../store/actions/cars-list.actions';
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { Store } from '@ngrx/store';
-import { tap, exhaustMap, filter, switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { selectLoggedIn } from '@auth/store/selectors/auth.selectors';
 
 @Component({
@@ -19,7 +19,6 @@ export class CarCardComponent implements OnInit, OnDestroy {
   public static readonly DefaultStarImagePath: string = '../../../../../assets/images/star-default.png';
   public static readonly SelectedStarImagePath: string = '../../../../../assets/images/star-selected.png';
   public currentImage: string = CarCardComponent.DefaultStarImagePath;
-  private readonly favoriteCarsIds$!: Observable<number[]>;
 
   constructor(
     private readonly store: Store,

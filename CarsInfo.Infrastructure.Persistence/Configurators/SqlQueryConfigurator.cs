@@ -19,7 +19,7 @@ namespace CarsInfo.Infrastructure.Persistence.Configurators
             }
 
             var order = sortingField.Order == Order.Ascending ? "ASC" : "DESC";
-            return $"ORDER BY {string.Join(", ", sortingField.Field)} {order}";
+            return $"ORDER BY {sortingField.Field} {order}";
         }
 
         public static string ConfigureFilter(

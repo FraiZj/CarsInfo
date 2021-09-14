@@ -1,4 +1,3 @@
-using CarsInfo.Application.BusinessLogic.AuthModels;
 using CarsInfo.Infrastructure.DependencyInjection;
 using CarsInfo.WebApi.Attributes;
 using CarsInfo.WebApi.StartupConfiguration;
@@ -12,7 +11,7 @@ namespace CarsInfo.WebApi
 {
     public class Startup
     {
-        private const string ConnectionStringName = "CarsInfoDb";
+        
         private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
@@ -22,28 +21,17 @@ namespace CarsInfo.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = _configuration.GetConnectionString(ConnectionStringName);
-            var apiAuthSettings = GetApiAuthSettings(services);
-
-            services.AddInfrastructure(connectionString);
-            services.AddJwtAuthentication(apiAuthSettings);
+            services.AddInfrastructure(_configuration);
+            services.AddJwtAuthentication(_configuration);
+            services.AddRedisCaching(_configuration);
             services.AddViewModelMapper();
             services.AddSwagger();
             services.AddCorsConfiguration();
-
             services.AddControllers(options =>
             {
                 options.InputFormatters.Insert(0, JsonPatchConfiguration.GetJsonPatchInputFormatter());
                 options.Filters.Add(typeof(ValidateModelAttribute));
             }).AddNewtonsoftJson();
-        }
-
-        private ApiAuthSetting GetApiAuthSettings(IServiceCollection services)
-        {
-            var authSettingsSection = _configuration.GetSection(nameof(ApiAuthSetting));
-            services.Configure<ApiAuthSetting>(authSettingsSection);
-
-            return authSettingsSection.Get<ApiAuthSetting>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
