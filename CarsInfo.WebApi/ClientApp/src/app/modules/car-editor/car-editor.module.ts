@@ -1,3 +1,7 @@
+import { EffectsModule } from '@ngrx/effects';
+import { reducer } from './store/reducers/car-editor.reducers';
+import { carEditorFeatureKey } from './store/states/car-editor.states';
+import { StoreModule } from '@ngrx/store';
 import { CarEditorFormModule } from './../car-editor-form/car-editor-form.module';
 import { BrandsModule } from './../brands/brands.module';
 import { CoreModule } from './../core/core.module';
@@ -12,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { CarsModule } from '../cars/cars.module';
 import { CarEditorComponent } from './components/car-editor/car-editor.component';
+import { CarEditorEffects } from './store/effects/car-editor.effects';
 
 @NgModule({
   declarations: [
@@ -26,6 +31,11 @@ import { CarEditorComponent } from './components/car-editor/car-editor.component
     MatIconModule,
     MatSelectModule,
     ReactiveFormsModule,
+    StoreModule.forFeature({
+      name: carEditorFeatureKey,
+      reducer: reducer
+    }),
+    EffectsModule.forFeature([CarEditorEffects]),
 
     // app modules
     CarEditorFormModule,

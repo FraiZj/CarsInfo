@@ -1,3 +1,6 @@
+import { fetchCarEditorById, updateCar } from './../../store/actions/car-editor.actions';
+import { selectCarEditor } from './../../store/selectors/car-editor.selectors';
+import { Store } from '@ngrx/store';
 import { Observable, Subscription, throwError } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarsService } from 'app/modules/cars/services/cars.service';
@@ -15,27 +18,26 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class CarEditorComponent implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   private id!: number;
-  public carEditor$!: Observable<CarEditor>;
+  public carEditor$: Observable<CarEditor | null> = this.store.select(selectCarEditor);
 
   constructor(
     private readonly carsService: CarsService,
     private readonly router: Router,
-    private readonly route: ActivatedRoute
+    private readonly route: ActivatedRoute,
+    private readonly store: Store
   ) { }
 
   public ngOnInit(): void {
-    this.carEditor$ = this.getIdFromRoute()
-    .pipe(
-      switchMap(id => this.carsService.getCarEditorById(id)),
-      catchError(err => {
-        if (err instanceof HttpErrorResponse) return throwError(err.error);
-        if (err instanceof Error) return throwError(err.message);
-        return throwError('An error occurred');
-      }),
-      tap({
-        error: () => this.router.navigateByUrl("not-found")
-      })
-    )
+    this.subscriptions.push(
+      this.getIdFromRoute().pipe(
+        tap({
+          next: id => this.id = id,
+          error: () => this.router.navigateByUrl("not-found")
+        })
+      ).subscribe(
+        id => this.store.dispatch(fetchCarEditorById({ id }))
+      )
+    );
   }
 
   public ngOnDestroy(): void {
@@ -43,6 +45,7 @@ export class CarEditorComponent implements OnInit, OnDestroy {
   }
 
   public onSubmit(car: CarEditor): void {
+    this.store.dispatch(updateCar({ id: this.id, carEditor: car }));
     this.subscriptions.push(
       this.carsService.updateCar(this.id, car)
         .subscribe(() => this.router.navigateByUrl(`/cars/${this.id}`))
