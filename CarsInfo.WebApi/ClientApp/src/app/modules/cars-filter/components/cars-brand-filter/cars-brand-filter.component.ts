@@ -1,11 +1,10 @@
 import { fetchFilterBrands } from './../../store/actions/cars-brand-filter.actions';
-import { selectBrandsFilter } from './../../store/selectors/cars-filter.selectors';
+import { selectFilteredBrands } from './../../store/selectors/cars-filter.selectors';
 import { Component, EventEmitter, OnInit, Output, OnDestroy, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Store } from '@ngrx/store';
 import { Brand } from 'app/modules/brands/interfaces/brand';
-import { BrandsService } from 'app/modules/brands/services/brands.service';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -20,31 +19,28 @@ export class CarsBrandFilterComponent implements OnInit, OnDestroy {
   @Output() public filterBrandEvent = new EventEmitter<string[]>();
   private static readonly FilterDebounceTime: number = 400;
   private readonly subscriptions: Subscription[] = [];
-  public selectable = true;
-  public removable = true;
   public brandFormControl: FormControl = new FormControl();
-  public brands$: Observable<Brand[]> = this.store.select(selectBrandsFilter);
-
+  public brands$: Observable<Brand[]> = this.store.select(selectFilteredBrands);
 
   constructor(
-    private readonly brandsService: BrandsService,
     private readonly store: Store
   ) { }
 
   public ngOnInit(): void {
-    this.store.dispatch(fetchFilterBrands({ }));
+    this.store.dispatch(fetchFilterBrands({}));
+
+    this.subscriptions.push(
+      this.brandFormControl.valueChanges.pipe(
+        debounceTime(CarsBrandFilterComponent.FilterDebounceTime),
+        distinctUntilChanged()
+      ).subscribe(
+        brandName => this.store.dispatch(fetchFilterBrands({ brandName }))
+      )
+    );
   }
 
   public ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
-  }
-
-  public onBrandInput(): void {
-    this.subscriptions.push(this.brandFormControl.valueChanges
-      .pipe(debounceTime(CarsBrandFilterComponent.FilterDebounceTime), distinctUntilChanged())
-      .subscribe(brandName => {
-        this.store.dispatch(fetchFilterBrands({ brandName }));
-      }));
   }
 
   public onBrandRemove(brand: string): void {
