@@ -41,14 +41,14 @@ export class CarDeleteConfirmDialogComponent implements OnInit {
       }),
       tap({
         error: (err: string) => this.openSnackBar(err)
-      }))
-      .subscribe({
-        next: () => {
-          this.openSnackBar('Car successfully deleted');
-          this.dialogRef.close();
-          this.router.navigateByUrl('/cars');
-        }
       })
+    ).subscribe({
+      next: () => {
+        this.openSnackBar('Car successfully deleted');
+        this.dialogRef.close();
+        this.router.navigateByUrl('/cars');
+      }
+    });
   }
 
   private openSnackBar(message: string) {

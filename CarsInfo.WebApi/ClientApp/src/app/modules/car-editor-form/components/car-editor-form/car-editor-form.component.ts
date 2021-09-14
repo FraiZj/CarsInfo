@@ -2,7 +2,7 @@ import { selectBrands } from './../../store/selectors/car-editor-form.selectors'
 import { fetchBrands, createBrand } from './../../store/actions/car-editor-form.actions';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { Brand } from '../../../brands/interfaces/brand';
+import { Brand } from '@brands/interfaces/brand';
 import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';

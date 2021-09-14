@@ -37,7 +37,7 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe(
-      (id) => this.store.dispatch(fetchCarById({ id: id as number }))
+      id => this.store.dispatch(fetchCarById({ id: id as number }))
     );
   }
 
