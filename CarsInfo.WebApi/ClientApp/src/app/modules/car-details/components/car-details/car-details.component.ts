@@ -1,12 +1,12 @@
+import { fetchCarById } from './../../store/actions/car-details.actions';
+import { selectCar } from './../../store/selectors/car-details.selectors';
+import { Store } from '@ngrx/store';
 import { CarDeleteConfirmDialogComponent } from './../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component';
-import { HttpErrorResponse } from '@angular/common/http';
-import { throwError } from 'rxjs';
-import { Observable } from 'rxjs';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Car } from 'app/modules/cars/interfaces/car';
-import { CarsService } from 'app/modules/cars/services/cars.service';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { map, takeUntil, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -15,32 +15,38 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./car-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CarDetailsComponent implements OnInit {
-  public car$!: Observable<Car>;
+export class CarDetailsComponent implements OnInit, OnDestroy {
+  public car$: Observable<Car | null> = this.store.select(selectCar).pipe(
+    tap({
+      error: () => this.router.navigateByUrl("not-found")
+    })
+  );
+  private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
-    private readonly carsService: CarsService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    public readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly store: Store
   ) { }
 
   public ngOnInit(): void {
-    this.car$ = this.getIdFromRoute()
-      .pipe(
-        switchMap(id => this.carsService.getCarById(id as number)),
-        catchError(err => {
-          if (err instanceof HttpErrorResponse) return throwError(err.error);
-          if (err instanceof Error) return throwError(err.message);
-          return throwError('An error occurred');
-        }),
-        tap({
-          error: () => this.router.navigateByUrl("not-found")
-        })
-      )
+    this.getIdFromRoute().pipe(
+      tap({
+        error: () => this.router.navigateByUrl("not-found")
+      }),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(
+      (id) => this.store.dispatch(fetchCarById({ id: id as number }))
+    );
   }
 
-  public onDelete() {
+  public ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
+  public onDelete(): void {
     this.dialog.open(CarDeleteConfirmDialogComponent, {
       data: {
         car$: this.car$
@@ -49,12 +55,14 @@ export class CarDetailsComponent implements OnInit {
   }
 
   private getIdFromRoute(): Observable<number | null> {
-    return this.route.params.pipe(map(params => {
-      if (params.id == null || Number.isNaN(+params.id)) {
-        throw new Error(`Invalid route param id=${params.id}`);
-      }
+    return this.route.params.pipe(
+      map(params => {
+        if (params.id == null || Number.isNaN(+params.id)) {
+          throw new Error(`Invalid route param id=${params.id}`);
+        }
 
-      return params.id as number;
-    }))
+        return params.id as number;
+      })
+    );
   }
 }

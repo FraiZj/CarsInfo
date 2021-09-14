@@ -1,3 +1,8 @@
+import { CarDetailsEffects } from './store/effects/car-details.effects';
+import { EffectsModule } from '@ngrx/effects';
+import { reducer } from './store/reducers/car-details.reducers';
+import { carDetailsFeatureKey } from './store/states/car-details.state';
+import { StoreModule } from '@ngrx/store';
 import { SharedModule } from './../shared/shared.module';
 import { CarsModule } from './../cars/cars.module';
 import { NgModule } from '@angular/core';
@@ -19,6 +24,11 @@ import { CarDeleteConfirmDialogModule } from '../car-delete-confirm-dialog/car-d
     MatButtonModule,
     CommonModule,
     NgbModule,
+    StoreModule.forFeature({
+      name: carDetailsFeatureKey,
+      reducer: reducer
+    }),
+    EffectsModule.forFeature([CarDetailsEffects]),
 
     // app modules
     CarsDetailsRoutingModule,
