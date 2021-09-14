@@ -1,13 +1,11 @@
 import { fetchCarEditorById, updateCar } from './../../store/actions/car-editor.actions';
 import { selectCarEditor } from './../../store/selectors/car-editor.selectors';
 import { Store } from '@ngrx/store';
-import { Observable, Subscription, throwError } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CarsService } from 'app/modules/cars/services/cars.service';
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'car-editor',
@@ -21,7 +19,6 @@ export class CarEditorComponent implements OnInit, OnDestroy {
   public carEditor$: Observable<CarEditor | null> = this.store.select(selectCarEditor);
 
   constructor(
-    private readonly carsService: CarsService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly store: Store
@@ -46,10 +43,6 @@ export class CarEditorComponent implements OnInit, OnDestroy {
 
   public onSubmit(car: CarEditor): void {
     this.store.dispatch(updateCar({ id: this.id, carEditor: car }));
-    this.subscriptions.push(
-      this.carsService.updateCar(this.id, car)
-        .subscribe(() => this.router.navigateByUrl(`/cars/${this.id}`))
-    );
   }
 
   private getIdFromRoute(): Observable<number> {

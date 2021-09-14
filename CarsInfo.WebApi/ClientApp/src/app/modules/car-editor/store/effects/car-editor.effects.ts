@@ -35,7 +35,7 @@ export class CarEditorEffects {
       exhaustMap(({ id, car }) =>
         this.carsService.updateCar(id, car).pipe(
           map(() => {
-            this.router.navigate(['cars', { id }])
+            this.router.navigateByUrl(`/cars/${id}`);
             return updateCarSuccess();
           })
         )
