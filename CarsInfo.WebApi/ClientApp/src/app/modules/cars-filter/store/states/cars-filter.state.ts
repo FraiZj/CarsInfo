@@ -6,7 +6,3 @@ export interface FilterState {
   carsFilter: Filter | null;
   favoriteCarsFilter: Filter | null;
 }
-
-export interface State {
-  [filterFeatureKey]: FilterState;
-}

@@ -1,8 +1,12 @@
+import { CarsFilterState, carsFilterFeatureKey } from './../states/index';
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { FilterState } from './../states/cars-filter.state';
-import * as fromFilter from './../states/cars-filter.state';
 
-export const selectFilterState = createFeatureSelector<FilterState>(fromFilter.filterFeatureKey);
+export const selectCarsFilterState = createFeatureSelector<CarsFilterState>(carsFilterFeatureKey);
+
+export const selectFilterState = createSelector(
+  selectCarsFilterState,
+  (state) => state.filter
+);
 
 export const selectCarsFilter = createSelector(
   selectFilterState,
@@ -12,4 +16,14 @@ export const selectCarsFilter = createSelector(
 export const selectFavoriteCarsFilter = createSelector(
   selectFilterState,
   (state) => state.favoriteCarsFilter
+);
+
+export const selectBrandsFilterState = createSelector(
+  selectCarsFilterState,
+  (state) => state.brandFilter
+);
+
+export const selectBrandsFilter = createSelector(
+  selectBrandsFilterState,
+  (state) => state.brands
 );
