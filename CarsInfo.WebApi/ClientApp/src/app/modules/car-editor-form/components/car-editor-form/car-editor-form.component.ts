@@ -1,8 +1,10 @@
+import { selectBrands } from './../../store/selectors/car-editor-form.selectors';
+import { fetchBrands, createBrand } from './../../store/actions/car-editor-form.actions';
+import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { Brand } from '../../../brands/interfaces/brand';
 import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { BrandsService } from 'app/modules/brands/services/brands.service';
 import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
 
 @Component({
@@ -15,7 +17,7 @@ export class CarEditorFormComponent implements OnInit, OnDestroy {
   @Input() public carEditor: CarEditor | null = null;
   @Output() public carEditorSubmit: EventEmitter<CarEditor> = new EventEmitter<CarEditor>();
   private readonly subscriptions: Subscription[] = [];
-  public brands$!: Observable<Brand[]>;
+  public brands$: Observable<Brand[]> = this.store.select(selectBrands);
   public brandEditorForm: FormGroup = this.formBuilder.group({
     brand: ['', [Validators.required]]
   });
@@ -32,11 +34,11 @@ export class CarEditorFormComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly brandsService: BrandsService,
+    private readonly store: Store
   ) { }
 
   public ngOnInit(): void {
-    this.brands$ = this.brandsService.getBrands();
+    this.store.dispatch(fetchBrands());
     this.canAddCarPicture = this.carPicturesUrls.length < 3;
 
     if (this.carEditor != null) {
@@ -100,12 +102,8 @@ export class CarEditorFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.subscriptions.push(
-      this.brandsService.addBrand(this.brand.value)
-        .subscribe(() => this.brands$ = this.brandsService.getBrands())
-    );
-
-    this.carEditorForm.controls['brand'].setValue('');
+    this.store.dispatch(createBrand({ brand: this.brand.value }));
+    this.brandEditorForm.controls['brand'].setValue('');
   }
 
   public onSubmit(): void {
