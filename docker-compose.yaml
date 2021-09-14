@@ -1,0 +1,23 @@
+version: '3.5'
+
+services: 
+  ms-sql-server:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment: 
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin123
+      - TCP_PORT=1433
+    ports: 
+      - "1400:1433"
+
+  cars-info-api:
+    build: ./
+    environment: 
+      DBServer: "ms-sql-server"
+    restart: always
+    ports: 
+      - "8080:80"
+    depends_on: 
+      - ms-sql-server
+
+  
