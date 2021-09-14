@@ -11,7 +11,7 @@ export class CarsBrandFilterEffects {
     private readonly brandsService: BrandsService,
   ) { }
 
-  fecthFilterCars$ = createEffect(() =>
+  fecthFilterBrands$ = createEffect(() =>
     this.actions$.pipe(
       ofType(fetchFilterBrands),
       map(action => action.brandName),
