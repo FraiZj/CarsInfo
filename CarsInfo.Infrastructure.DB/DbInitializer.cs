@@ -10,7 +10,6 @@ namespace CarsInfo.Infrastructure.DB
     public static class DbInitializer
     {
         private const string CreateTablesPath = @"/SQL/CreateTables.sql";
-        private const string CreateProceduresPath = @"/SQL/CreateProcedures.sql";
         private const string SeedDataPath = @"/SQL/SeedData.sql";
         private static readonly string Directory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         private static SqlConnectionStringBuilder _connectionStringBuilder;

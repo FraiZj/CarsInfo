@@ -2,6 +2,7 @@
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.WebApi.Caching;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Car;
@@ -27,6 +28,7 @@ namespace CarsInfo.WebApi.Controllers
         
         [HttpGet]
         [AllowAnonymous]
+        [Cached(300)]
         public async Task<IActionResult> Get([FromQuery] FilterDto filter)
         {
             var operation = await _carsService.GetAllAsync(filter);
@@ -70,6 +72,7 @@ namespace CarsInfo.WebApi.Controllers
 
         [HttpGet("{id:int}")]
         [AllowAnonymous]
+        [Cached(300)]
         public async Task<IActionResult> Get(int id)
         {
             var operation = await _carsService.GetByIdAsync(id);
