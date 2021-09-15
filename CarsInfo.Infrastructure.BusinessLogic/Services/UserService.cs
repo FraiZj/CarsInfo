@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
-using CarsInfo.Application.BusinessLogic.Exceptions;
 using CarsInfo.Application.BusinessLogic.OperationResult;
 using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
@@ -73,7 +72,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             var role = await _roleRepository.GetAsync(new List<FiltrationField>
             {
-                new("Name", Roles.User)
+                new("Name", roleName)
             });
 
             ValidationHelper.ThrowIfNull(role);

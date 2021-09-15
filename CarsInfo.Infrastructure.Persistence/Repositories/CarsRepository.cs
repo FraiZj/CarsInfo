@@ -125,7 +125,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return GroupSet(cars).FirstOrDefault();
         }
 
-        private IEnumerable<Car> GroupSet(IEnumerable<Car> cars)
+        private static IEnumerable<Car> GroupSet(IEnumerable<Car> cars)
         {
             return cars.GroupBy(c => c.Id).Select(g =>
             {
