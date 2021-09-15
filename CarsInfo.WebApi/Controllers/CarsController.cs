@@ -4,9 +4,11 @@ using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Caching;
+using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Car;
+using CarsInfo.WebApi.ViewModels.Error;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CarsInfo.WebApi.Controllers
 {
     [Route("cars")]
-    public class CarsController : ControllerBase
+    [Produces("application/json")]
+    public class CarsController : AppController
     {
         private readonly ICarsService _carsService;
         private readonly CarsControllerMapper _mapper;
@@ -37,7 +40,7 @@ namespace CarsInfo.WebApi.Controllers
         [AllowAnonymous]
         [Cached(300)]
         [ProducesResponseType(typeof(IEnumerable<CarDto>), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
         public async Task<IActionResult> Get([FromQuery] FilterDto filter)
         {
             var operation = await _carsService.GetAllAsync(filter);
@@ -114,6 +117,8 @@ namespace CarsInfo.WebApi.Controllers
 
         [HttpPost]
         [Authorize(Roles = Roles.Admin)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(typeof(ErrorResponse), 400)]
         public async Task<IActionResult> Create([FromBody] CarEditorViewModel car)
         {
             var operation = await _carsService.AddAsync(_mapper.MapToCarEditorDto(car));

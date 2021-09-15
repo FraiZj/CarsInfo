@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Auth;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarsInfo.WebApi.Controllers
 {
-    public class AuthorizationController : ControllerBase
+    public class AuthorizationController : AppController
     {
         private readonly IUserService _userService;
         private readonly AuthorizationControllerMapper _mapper;

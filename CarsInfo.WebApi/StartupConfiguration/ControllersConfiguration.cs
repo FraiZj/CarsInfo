@@ -12,7 +12,7 @@ namespace CarsInfo.WebApi.StartupConfiguration
                 .AddControllers(options =>
                 {
                     options.InputFormatters.Insert(0, JsonPatchConfiguration.GetJsonPatchInputFormatter());
-                    options.Filters.Add(typeof(ValidateModelAttribute));
+                    options.Filters.Add<ValidateModelAttribute>();
                 })
                 .AddNewtonsoftJson()
                 .AddFluentValidation(
