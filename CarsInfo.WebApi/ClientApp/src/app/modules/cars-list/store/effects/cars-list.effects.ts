@@ -1,28 +1,33 @@
-import { loginSuccess } from './../../../auth/store/actions/auth.actions';
+import { ItemsSkipPerLoad } from './../../consts/filter-consts';
+import { selectCarsFilterWithOrderBy } from '@cars-filter/store/selectors/cars-filter.selectors';
+import { loginSuccess } from '@auth/store/actions/auth.actions';
 import { CarsService } from '@cars/services/cars.service';
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as CarsListActions from './../actions/cars-list.actions'
 import { exhaustMap, map } from 'rxjs/operators';
 import { ItemsTakePerLoad } from '@cars-list/consts/filter-consts';
-import { FilterWithPaginator } from '@cars-list/interfaces/filterWithPaginator';
-import { OrderBy } from '@cars/enums/order-by';
+import { Store } from '@ngrx/store';
 
 @Injectable()
 export class CarsListEffects {
   constructor(
     private readonly actions$: Actions,
     private readonly carsService: CarsService,
+    private readonly store: Store
   ) { }
 
   loginFetchCars$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loginSuccess),
-      map(() => CarsListActions.fetchCars({
-        filter: FilterWithPaginator.CreateDefault(),
-        orderBy: OrderBy.BrandNameAsc
-      }))
-    ))
+      exhaustMap(() => this.store.select(selectCarsFilterWithOrderBy).pipe(
+        map(({ filter, orderBy }) => CarsListActions.fetchCars({
+          filter: { ...filter, skip: ItemsSkipPerLoad, take: ItemsTakePerLoad },
+          orderBy: orderBy
+        }))
+      ))
+    )
+  );
 
   fetchCars$ = createEffect(() =>
     this.actions$.pipe(
