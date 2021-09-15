@@ -38,3 +38,30 @@ export const selectFilteredBrands = createSelector(
   selectSelectedBrands,
   (brands, selectedBrands) => brands.filter(brand => !selectedBrands?.includes(brand.name))
 );
+
+export const selectCarsSortingState = createSelector(
+  selectCarsFilterState,
+  (state) => state.carsSorting
+);
+
+export const selectCarsListOrderBy = createSelector(
+  selectCarsSortingState,
+  (state) => state.carsListOrderBy
+);
+
+export const selectFavoriteCarsListOrderBy = createSelector(
+  selectCarsSortingState,
+  (state) => state.favoriteCarsListOrderBy
+);
+
+export const selectCarsFilterWithOrderBy = createSelector(
+  selectCarsFilter,
+  selectCarsListOrderBy,
+  (filter, orderBy) => ({ filter, orderBy })
+);
+
+export const selectFavoriteCarsFilterWithOrderBy = createSelector(
+  selectFavoriteCarsFilter,
+  selectFavoriteCarsListOrderBy,
+  (filter, orderBy) => ({ filter, orderBy })
+);
