@@ -1,4 +1,5 @@
-﻿using CarsInfo.WebApi.ViewModels.Car;
+﻿using CarsInfo.WebApi.Validators.Extensions;
+using CarsInfo.WebApi.ViewModels.Car;
 using FluentValidation;
 
 namespace CarsInfo.WebApi.Validators.Car
@@ -19,6 +20,10 @@ namespace CarsInfo.WebApi.Validators.Car
 
             RuleFor(x => x.CarPicturesUrls)
                 .NotEmpty();
+
+            RuleForEach(x => x.CarPicturesUrls)
+                .Url()
+                .WithMessage("Invalid URI specified"); ;
         }
     }
 }
