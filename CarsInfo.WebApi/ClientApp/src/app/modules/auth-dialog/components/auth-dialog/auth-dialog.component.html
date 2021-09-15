@@ -1,4 +1,4 @@
 <base-dialog [title]="title$.value">
-  <login *ngIf="title$.value == 'Login'" (switchToRegisterEvent)="switchToRegister()" (onLoginEvent)="onLogin()"></login>
-  <register *ngIf="title$.value == 'Register'" (switchToLoginEvent)="switchToLogin()" (onLoginEvent)="onLogin()"></register>
+  <login *ngIf="title$.value === 'Login'" (switchToRegisterEvent)="switchToRegister()" (onLoginEvent)="onLogin()"></login>
+  <register *ngIf="title$.value === 'Register'" (switchToLoginEvent)="switchToLogin()" (onLoginEvent)="onLogin()"></register>
 </base-dialog>

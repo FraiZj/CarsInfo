@@ -18,7 +18,7 @@ import { filter } from 'rxjs/operators';
 export class RegisterComponent implements OnInit, OnDestroy {
   public static readonly PasswordMaxLength: number = 6;
   @Output() public switchToLoginEvent = new EventEmitter();
-  @Output() public onLoginEvent = new EventEmitter();
+  @Output() public loginEvent = new EventEmitter();
   private readonly subscriptions: Subscription[] = [];
   public registerForm = this.formBuilder.group({
     firstName: ['', Validators.required],
@@ -71,7 +71,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.store.select(AuthSelectors.selectLoggedIn).pipe(
       filter(loggedIn => loggedIn)
     ).subscribe(
-      () => this.onLoginEvent.emit()
+      () => this.loginEvent.emit()
     );
   }
 
