@@ -16,7 +16,7 @@ import { filter } from 'rxjs/operators';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   @Output() public switchToRegisterEvent = new EventEmitter();
-  @Output() public onLoginEvent = new EventEmitter();
+  @Output() public loginEvent = new EventEmitter();
   private readonly subscriptions: Subscription[] = [];
   public loginForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.store.select(AuthSelectors.selectLoggedIn).pipe(
       filter(loggedIn => loggedIn)
     ).subscribe(
-      () => this.onLoginEvent.emit()
+      () => this.loginEvent.emit()
     );
   }
 
