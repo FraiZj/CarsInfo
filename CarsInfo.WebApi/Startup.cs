@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using CarsInfo.Infrastructure.DependencyInjection;
-using CarsInfo.WebApi.Attributes;
 using CarsInfo.WebApi.StartupConfiguration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,11 +27,7 @@ namespace CarsInfo.WebApi
             services.AddViewModelMapper();
             services.AddSwagger();
             services.AddCorsConfiguration();
-            services.AddControllers(options =>
-            {
-                options.InputFormatters.Insert(0, JsonPatchConfiguration.GetJsonPatchInputFormatter());
-                options.Filters.Add(typeof(ValidateModelAttribute));
-            }).AddNewtonsoftJson();
+            services.AddControllersConfiguration();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

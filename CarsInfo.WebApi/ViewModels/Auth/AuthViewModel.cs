@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace CarsInfo.WebApi.ViewModels.Auth
+﻿namespace CarsInfo.WebApi.ViewModels.Auth
 {
     public class AuthViewModel
     {
@@ -9,11 +7,9 @@ namespace CarsInfo.WebApi.ViewModels.Auth
             AccessToken = accessToken;
             RefreshToken = refreshToken;
         }
-        
-        [Required]
+
         public string AccessToken { get; set; }
-        
-        [Required]
+
         public string RefreshToken { get; set; }
     }
 }
