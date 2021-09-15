@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
@@ -25,10 +26,18 @@ namespace CarsInfo.WebApi.Controllers
             _carsService = carsService;
             _mapper = mapper;
         }
-        
+
+        /// <summary>
+        /// Returns a list of cars by the specified filter
+        /// </summary>
+        /// <param name="filter">Filter for cars list</param>
+        /// <response code="200">Returns cars</response>
+        /// <response code="400">Unable to return cars</response>
         [HttpGet]
         [AllowAnonymous]
         [Cached(300)]
+        [ProducesResponseType(typeof(IEnumerable<CarDto>), 200)]
+        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> Get([FromQuery] FilterDto filter)
         {
             var operation = await _carsService.GetAllAsync(filter);

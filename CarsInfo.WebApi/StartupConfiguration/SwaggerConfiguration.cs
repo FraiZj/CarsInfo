@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace CarsInfo.WebApi.StartupConfiguration
 {
@@ -36,7 +39,15 @@ namespace CarsInfo.WebApi.StartupConfiguration
                 {
                     { jwtSecurityScheme, Array.Empty<string>() }
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+
+                options.ExampleFilters();
             });
+
+            services.AddSwaggerExamplesFromAssemblyOf<Startup>();
         }
     }
 }

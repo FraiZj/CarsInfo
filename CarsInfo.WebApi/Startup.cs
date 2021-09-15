@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using CarsInfo.Infrastructure.DependencyInjection;
 using CarsInfo.WebApi.Attributes;
 using CarsInfo.WebApi.StartupConfiguration;
@@ -56,6 +57,10 @@ namespace CarsInfo.WebApi
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/", async context =>
+                {
+                    await Task.Run(() => context.Response.Redirect("/swagger"));
+                });
                 endpoints.MapControllers();
             });
         }
