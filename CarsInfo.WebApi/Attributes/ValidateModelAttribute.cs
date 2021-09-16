@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
+using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.ViewModels.Error;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -14,19 +14,7 @@ namespace CarsInfo.WebApi.Attributes
         {
             if (!context.ModelState.IsValid)
             {
-                var errors = context.ModelState
-                    .Where(x => x.Value.Errors.Any())
-                    .ToDictionary(
-                        x => x.Key,
-                        x => x.Value.Errors.Select(e => e.ErrorMessage))
-                    .ToArray()
-                    .SelectMany(modelStateError  => modelStateError.Value
-                        .Select(value => new ErrorModel
-                        {
-                            Field = modelStateError.Key,
-                            Error = value
-                        }));
-
+                var errors = context.ModelState.GetErrorModels();
                 context.Result = new BadRequestObjectResult(new ErrorResponse(errors));
                 return;
             }
