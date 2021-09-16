@@ -14,15 +14,18 @@ namespace CarsInfo.WebApi.Controllers
 {
     public class AuthorizationController : AppController
     {
+        private readonly IAuthenticationService _authenticationService;
         private readonly IUserService _userService;
         private readonly AuthorizationControllerMapper _mapper;
         private readonly ITokenService _tokenService;
 
         public AuthorizationController(
+            IAuthenticationService authenticationService,
             IUserService userService,
             AuthorizationControllerMapper mapper,
             ITokenService tokenService)
         {
+            _authenticationService = authenticationService;
             _userService = userService;
             _mapper = mapper;
             _tokenService = tokenService;
@@ -59,7 +62,7 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("login/google")]
         public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleAuthViewModel googleAuth)
         {
-            var operation = await _userService.LoginWithGoogle(googleAuth.Token);
+            var operation = await _authenticationService.LoginWithGoogleAsync(googleAuth.Token);
             return operation.Success ?
                 await AuthorizeAsync(operation.Result, true) :
                 BadRequest(operation.FailureMessage);
@@ -153,8 +156,8 @@ namespace CarsInfo.WebApi.Controllers
         private async Task<IActionResult> AuthorizeAsync(UserDto user, bool externalUser = false)
         {
             var getClaimsOperation = externalUser ?
-                await _userService.GetExternalUserClaimsAsync(user.Email) :
-                await _userService.GetInternalUserClaimsAsync(user);
+                await _authenticationService.AuthenticateExternalUserAsync(user.Email) :
+                await _authenticationService.AuthenticateInternalUserAsync(user);
 
             if (!getClaimsOperation.Success)
             {

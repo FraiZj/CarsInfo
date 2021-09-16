@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
-using CarsInfo.Application.BusinessLogic.External.Auth.Google;
-using CarsInfo.Application.BusinessLogic.External.Auth.Google.Models;
 using CarsInfo.Application.BusinessLogic.OperationResult;
-using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
@@ -25,7 +20,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         private readonly IGenericRepository<Role> _roleRepository;
         private readonly ILogger<UserService> _logger;
         private readonly UserServiceMapper _mapper;
-        private readonly IGoogleAuthService _googleAuthService;
+        private readonly IRoleService _roleService;
 
         public UserService(
             IUsersRepository usersRepository,
@@ -33,13 +28,13 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             IGenericRepository<Role> roleRepository,
             ILogger<UserService> logger,
             UserServiceMapper mapper,
-            IGoogleAuthService googleAuthService)
+            IRoleService roleService)
         {
             _usersRepository = usersRepository;
             _userRoleRepository = userRoleRepository;
             _roleRepository = roleRepository;
             _mapper = mapper;
-            _googleAuthService = googleAuthService;
+            _roleService = roleService;
             _logger = logger;
         }
 
@@ -57,7 +52,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 var user = _mapper.MapToUser(entity);
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 var userId = await _usersRepository.AddAsync(user);
-                var roleId = await GetRoleIdAsync(Roles.User);
+                var roleId = await _roleService.GetRoleIdAsync(Roles.User);
                 await _userRoleRepository.AddAsync(new UserRole
                 {
                     UserId = userId,
@@ -71,78 +66,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 _logger.LogError(e, "An error occurred while creating user");
                 return OperationResult<int>.ExceptionResult();
             }
-        }
-        
-        private async Task<int> GetRoleIdAsync(string roleName)
-        {
-            var role = await _roleRepository.GetAsync(new List<FiltrationField>
-            {
-                new("Name", roleName)
-            });
-
-            ValidationHelper.ThrowIfNull(role);
-            
-            return role.Id;
-        }
-
-        public async Task<OperationResult<ICollection<Claim>>> GetExternalUserClaimsAsync(string email)
-        {
-            try
-            {
-                var user = await _usersRepository.GetByEmailAsync(email);
-
-                if (user is null || !user.IsExternal)
-                {
-                    return OperationResult<ICollection<Claim>>.FailureResult(
-                        $"User with email '{email}' does not exist");
-                }
-
-                var claims = GetClaims(user);
-                return OperationResult<ICollection<Claim>>.SuccessResult(claims);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"An error occurred while authorizing user with email={email}");
-                return OperationResult<ICollection<Claim>>.ExceptionResult();
-            }
-        }
-
-        public async Task<OperationResult<ICollection<Claim>>> GetInternalUserClaimsAsync(UserDto entity)
-        {
-            try
-            {
-                var user = await _usersRepository.GetByEmailAsync(entity.Email);
-
-                if (user is null || user.IsExternal)
-                {
-                    return OperationResult<ICollection<Claim>>.FailureResult(
-                        $"User with email'{entity.Email}' does not exist");
-                }
-
-                if (!BCrypt.Net.BCrypt.Verify(entity.Password, user.Password))
-                {
-                    return OperationResult<ICollection<Claim>>.FailureResult(
-                        $"Incorrect password for user with email='{entity.Email}'");
-                }
-
-                var claims = GetClaims(user);
-                return OperationResult<ICollection<Claim>>.SuccessResult(claims);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, $"An error occurred while authorizing user with email={entity.Email}");
-                return OperationResult<ICollection<Claim>>.ExceptionResult();
-            }
-        }
-
-        private static ICollection<Claim> GetClaims(User user)
-        {
-            var claims = user.Roles.Select(
-                userRole => new Claim(ClaimTypes.Role, userRole.Name)).ToList();
-            claims.Add(new Claim(ClaimTypes.Email, user.Email));
-            claims.Add(new Claim("Id", user.Id.ToString()));
-
-            return claims;
         }
 
         public async Task<OperationResult<bool>> ContainsUserWithEmailAsync(string email)
@@ -164,51 +87,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 _logger.LogError(e, $"An error occurred while fetching user with email={email}");
                 return OperationResult<bool>.ExceptionResult();
             }
-        }
-
-        public async Task<OperationResult<UserDto>> LoginWithGoogle(string token)
-        {
-            try
-            {
-                var operation = await _googleAuthService.AuthenticateAsync(token);
-
-                if (!operation.Success)
-                {
-                    return OperationResult<UserDto>.FailureResult(operation.FailureMessage);
-                }
-
-                var user = await _usersRepository.GetByEmailAsync(operation.Result.Email);
-
-                if (user is null)
-                {
-                    await CreateUserFromGoogle(operation.Result);
-                    user = await _usersRepository.GetByEmailAsync(operation.Result.Email);
-                }
-
-                return OperationResult<UserDto>.SuccessResult(_mapper.MapToUserDto(user));
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while user authentication with google");
-                return OperationResult<UserDto>.ExceptionResult();
-            }
-        }
-
-        private async Task CreateUserFromGoogle(GoogleAuthResult googleAuth)
-        {
-            var userId = await _usersRepository.AddAsync(new User
-            {
-                FirstName = googleAuth.FirstName,
-                LastName = googleAuth.LastName,
-                Email = googleAuth.Email,
-                IsExternal = true
-            });
-            var roleId = await GetRoleIdAsync(Roles.User);
-            await _userRoleRepository.AddAsync(new UserRole
-            {
-                UserId = userId,
-                RoleId = roleId
-            });
         }
 
         public async Task<OperationResult> DeleteByIdAsync(int id)
