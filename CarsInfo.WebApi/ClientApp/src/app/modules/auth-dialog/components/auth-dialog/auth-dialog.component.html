@@ -1,4 +1,17 @@
 <base-dialog [title]="title$.value">
-  <login *ngIf="title$.value === 'Login'" (switchToRegisterEvent)="switchToRegister()" (onLoginEvent)="onLogin()"></login>
-  <register *ngIf="title$.value === 'Register'" (switchToLoginEvent)="switchToLogin()" (onLoginEvent)="onLogin()"></register>
+  <login *ngIf="title$.value === 'Login'" (switchToRegisterEvent)="switchToRegister()" (loginEvent)="onLogin()"></login>
+  <register *ngIf="title$.value === 'Register'" (switchToLoginEvent)="switchToLogin()" (loginEvent)="onLogin()">
+  </register>
+  <div class="external-logins">
+    <a class="external-login" mat-stroked-button (click)="loginWithGoogle()" role="button">
+      <img alt="Google login"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+      Google
+    </a>
+    <a disabled class="external-login" mat-stroked-button role="button">
+      <img alt="Facebook login"
+        src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" />
+      Facebook
+    </a>
+  </div>
 </base-dialog>

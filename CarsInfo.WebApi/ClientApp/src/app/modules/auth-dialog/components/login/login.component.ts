@@ -37,7 +37,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         if (error != null) {
           this.openSnackBar(error);
         }
-      })
+      }),
+
+      this.store.select(AuthSelectors.selectLoggedIn).pipe(
+        filter(loggedIn => loggedIn)
+      ).subscribe(
+        () => this.loginEvent.emit()
+      )
     );
   }
 
@@ -60,11 +66,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     const userLogin = this.loginForm.value as UserLogin;
     this.store.dispatch(AuthActions.login({ userLogin }));
-    this.store.select(AuthSelectors.selectLoggedIn).pipe(
-      filter(loggedIn => loggedIn)
-    ).subscribe(
-      () => this.loginEvent.emit()
-    );
   }
 
   public switchToRegister(): void {

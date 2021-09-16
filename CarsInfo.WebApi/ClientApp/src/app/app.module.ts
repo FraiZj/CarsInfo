@@ -15,6 +15,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StoreModule } from '@ngrx/store';
 import { AuthEffects } from '@auth/store/effects/auth.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
       autoPause: true
     }),
     EffectsModule.forRoot([AuthEffects]),
+    SocialLoginModule,
 
     // app modules
     CoreModule
@@ -42,7 +44,19 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
   providers: [
     AsyncPipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: "BASE_API_URL", useValue: environment.baseApiUrl }
+    { provide: "BASE_API_URL", useValue: environment.baseApiUrl },
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: true,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(environment.googleClientId)
+          }
+        ]
+      } as SocialAuthServiceConfig
+    }
   ],
   bootstrap: [AppComponent]
 })
