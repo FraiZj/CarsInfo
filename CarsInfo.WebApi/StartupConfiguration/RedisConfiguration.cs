@@ -1,6 +1,7 @@
 ﻿using CarsInfo.WebApi.Caching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace CarsInfo.WebApi.StartupConfiguration
 {
@@ -17,6 +18,8 @@ namespace CarsInfo.WebApi.StartupConfiguration
                 return;
             }
 
+            services.AddSingleton<IConnectionMultiplexer>(_ =>
+                ConnectionMultiplexer.Connect(redisSettings.ConnectionString));
             services.AddStackExchangeRedisCache(options => options.Configuration = redisSettings.ConnectionString);
             services.AddSingleton<IResponseCaching, ResponseCaching>();
         }

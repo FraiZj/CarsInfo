@@ -27,6 +27,7 @@ namespace CarsInfo.WebApi
             services.AddViewModelMapper();
             services.AddSwagger();
             services.AddCorsConfiguration();
+            services.AddHealthChecksConfiguration(_configuration);
             services.AddControllersConfiguration();
         }
 
@@ -44,9 +45,11 @@ namespace CarsInfo.WebApi
             });
 
             app.UseHttpsRedirection();
+            app.UseCustomHealthChecks("/health");
 
             app.UseRouting();
             app.UseCors(CorsConfiguration.CarsInfoPolicy);
+
             app.UseAuthentication();
             app.UseAuthorization();
 
