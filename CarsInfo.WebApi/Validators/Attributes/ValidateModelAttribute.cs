@@ -5,7 +5,7 @@ using CarsInfo.WebApi.ViewModels.Error;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace CarsInfo.WebApi.Attributes
+namespace CarsInfo.WebApi.Validators.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class ValidateModelAttribute : Attribute, IAsyncActionFilter

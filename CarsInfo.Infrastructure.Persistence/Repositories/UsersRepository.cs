@@ -12,7 +12,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             : base(context)
         { }
 
-        public async Task<IEnumerable<User>> GetAllWithRolesAsync()
+        public override async Task<IEnumerable<User>> GetAllAsync()
         {
             var sql = @$"SELECT * FROM {TableName} user
                          INNER JOIN UserRole
@@ -30,7 +30,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return GroupSet(users);
         }
 
-        public async Task<User> GetWithRolesAsync(string email)
+        public async Task<User> GetByEmailAsync(string email)
         {
             var sql = @$"SELECT u.*, Role.* FROM [{TableName}] u
                          INNER JOIN UserRole 
@@ -49,7 +49,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return users.Count == 0 ? null : GroupSet(users).FirstOrDefault();
         }
 
-        private IEnumerable<User> GroupSet(IEnumerable<User> users)
+        private static IEnumerable<User> GroupSet(IEnumerable<User> users)
         {
             return users.GroupBy(u => u.Id).Select(g =>
             {

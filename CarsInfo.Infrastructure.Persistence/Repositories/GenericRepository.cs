@@ -14,8 +14,6 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        private const string IdName = "Id";
-
         protected readonly IDbContext Context;
         protected readonly string TableName;
 

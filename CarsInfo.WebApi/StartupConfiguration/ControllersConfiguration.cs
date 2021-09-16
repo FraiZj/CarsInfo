@@ -1,4 +1,4 @@
-﻿using CarsInfo.WebApi.Attributes;
+﻿using CarsInfo.WebApi.Validators.Attributes;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 

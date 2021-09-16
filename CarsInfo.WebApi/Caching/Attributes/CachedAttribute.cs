@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CarsInfo.WebApi.Caching
+namespace CarsInfo.WebApi.Caching.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class CachedAttribute: Attribute, IAsyncActionFilter

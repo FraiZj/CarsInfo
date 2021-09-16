@@ -56,13 +56,7 @@ namespace CarsInfo.Infrastructure.Persistence.Parsers
                 _values = new Dictionary<string, object>();
             }
 
-            internal IEnumerable<string> IdNames => _ids.Keys;
-
             internal IEnumerable<string> ValueNames => _values.Keys;
-
-            internal IEnumerable<string> AllNames => _ids.Keys.Union(_values.Keys);
-
-            internal IDictionary<string, object> IdPairs => _ids;
 
             internal IDictionary<string, object> ValuePairs => _values;
 

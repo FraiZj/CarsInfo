@@ -6,7 +6,6 @@ using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.Application.BusinessLogic.OperationResult;
-using CarsInfo.Application.BusinessLogic.Validators;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
@@ -73,7 +72,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var car = await _carsRepository.GetByIdAsync(carId);
+                var car = await _carsRepository.GetAsync(carId);
                 if (car is null)
                 {
                     return OperationResult<ToggleFavoriteStatus>.FailureResult($"Car with id={carId} does not exist");
@@ -132,7 +131,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var car = await _carsRepository.GetByIdAsync(id);
+                var car = await _carsRepository.GetAsync(id);
                 if (car is null)
                 {
                     return OperationResult.FailureResult($"Car with id={id} does not exist");
@@ -152,7 +151,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var cars = await _carsRepository.GetAsync();
+                var cars = await _carsRepository.GetAllAsync();
                 return OperationResult<IEnumerable<CarDto>>.SuccessResult(_mapper.MapToCarsDtos(cars));
             }
             catch (Exception e)
@@ -172,7 +171,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 }
 
                 var filter = _filterService.ConfigureCarFilter(filterDto);
-                var cars = await _carsRepository.GetAsync(filter);
+                var cars = await _carsRepository.GetAllAsync(filter);
                 return OperationResult<IEnumerable<CarDto>>.SuccessResult(_mapper.MapToCarsDtos(cars));
             }
             catch (Exception e)
@@ -231,7 +230,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var car = await _carsRepository.GetByIdAsync(id);
+                var car = await _carsRepository.GetAsync(id);
                 return OperationResult<CarDto>.SuccessResult(_mapper.MapToCarDto(car));
             }
             catch (Exception e)
@@ -245,7 +244,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var car = await _carsRepository.GetByIdAsync(id);
+                var car = await _carsRepository.GetAsync(id);
                 return OperationResult<CarEditorDto>.SuccessResult(_mapper.MapToCarEditorDto(car));
             }
             catch (Exception e)
@@ -264,7 +263,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                     return OperationResult.FailureResult("Car should have at least one picture");
                 }
                 
-                var car = await _carsRepository.GetByIdAsync(entity.Id);
+                var car = await _carsRepository.GetAsync(entity.Id);
                 if (car is null)
                 {
                     return OperationResult.FailureResult($"Car with id={entity.Id} does not exist");
