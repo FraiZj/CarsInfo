@@ -1,4 +1,4 @@
-import { UserRegister } from './../../../auth/interfaces/user-register';
+import { UserRegister } from '@auth/interfaces/user-register';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import * as AuthSelectors from '@auth/store/selectors/auth.selectors';
 import { Component, EventEmitter, Output, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
@@ -41,7 +41,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
         if (error != null) {
           this.openSnackBar(error);
         }
-      })
+      }),
+      this.store.select(AuthSelectors.selectLoggedIn).pipe(
+        filter(loggedIn => loggedIn)
+      ).subscribe(
+        () => this.loginEvent.emit()
+      )
     );
   }
 
@@ -68,11 +73,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   public onSubmit(): void {
     const userRegister = this.registerForm.value as UserRegister;
     this.store.dispatch(AuthActions.register({ userRegister }));
-    this.store.select(AuthSelectors.selectLoggedIn).pipe(
-      filter(loggedIn => loggedIn)
-    ).subscribe(
-      () => this.loginEvent.emit()
-    );
   }
 
   private openSnackBar(message: string): void {

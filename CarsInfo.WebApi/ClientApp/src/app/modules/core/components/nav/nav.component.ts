@@ -13,18 +13,13 @@ import * as AuthActions from '@auth/store/actions/auth.actions';
   styleUrls: ['./nav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavComponent implements OnDestroy {
-  private readonly subscriptions: Subscription[] = [];
+export class NavComponent {
   public mobileMenuOpened: boolean = false;
 
   constructor(
     public readonly dialog: MatDialog,
     public readonly store: Store
   ) { }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
-  }
 
   public toggleMobileMenu(): void {
     this.mobileMenuOpened = !this.mobileMenuOpened;

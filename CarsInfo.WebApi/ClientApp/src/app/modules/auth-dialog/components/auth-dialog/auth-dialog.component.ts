@@ -1,6 +1,5 @@
-import { switchMap, tap } from 'rxjs/operators';
-import { AuthService } from '@auth/services/auth.service';
-import { selectLoggedIn } from './../../../auth/store/selectors/auth.selectors';
+import { tap } from 'rxjs/operators';
+import { selectLoggedIn } from '@auth/store/selectors/auth.selectors';
 import { BehaviorSubject, from, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import * as AuthActions from '@auth/store/actions/auth.actions';
@@ -66,13 +65,15 @@ export class AuthDialogComponent implements OnInit, OnDestroy {
   }
 
   public loginWithGoogle(): void {
-    from(this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID)).pipe(
-      tap((user) => this.store.dispatch(AuthActions.loginWithGoogle({ token: user.idToken })))
-    ).subscribe(
-      () => {
-        this.closeDialog();
-        this.router.navigateByUrl(this.returnUrl);
-      }
+    this.subscriptions.push(
+      from(this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID)).pipe(
+        tap(user => this.store.dispatch(AuthActions.loginWithGoogle({ token: user.idToken })))
+      ).subscribe(
+        () => {
+          this.closeDialog();
+          this.router.navigateByUrl(this.returnUrl);
+        }
+      )
     );
   }
 

@@ -13,10 +13,9 @@ import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
   styleUrls: ['./car-editor-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CarEditorFormComponent implements OnInit, OnDestroy {
+export class CarEditorFormComponent implements OnInit {
   @Input() public carEditor: CarEditor | null = null;
   @Output() public carEditorSubmit: EventEmitter<CarEditor> = new EventEmitter<CarEditor>();
-  private readonly subscriptions: Subscription[] = [];
   public brands$: Observable<Brand[]> = this.store.select(selectBrands);
   public brandEditorForm: FormGroup = this.formBuilder.group({
     brand: ['', [Validators.required]]
@@ -49,10 +48,6 @@ export class CarEditorFormComponent implements OnInit, OnDestroy {
     }
 
     this.canAddCarPicture = this.carPicturesUrls.length < 3;
-  }
-
-  public ngOnDestroy(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   public get brandId(): FormControl {

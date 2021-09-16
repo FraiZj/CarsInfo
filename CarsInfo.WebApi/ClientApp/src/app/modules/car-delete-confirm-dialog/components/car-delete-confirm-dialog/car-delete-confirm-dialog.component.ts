@@ -1,14 +1,14 @@
 import { CarDeleteConfirmationData } from './../../interfaces/car-delele-confirmation-data';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, Inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Input, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
-import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { Observable, throwError, Subject } from 'rxjs';
+import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'car-delete-confirm-dialog',
@@ -16,7 +16,8 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
   styleUrls: ['./car-delete-confirm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CarDeleteConfirmDialogComponent implements OnInit {
+export class CarDeleteConfirmDialogComponent implements OnInit, OnDestroy {
+  private readonly unsubscribe$: Subject<void> = new Subject<void>();
   private car$!: Observable<Car>;
 
   constructor(
@@ -31,6 +32,11 @@ export class CarDeleteConfirmDialogComponent implements OnInit {
     this.car$ = this.data.car$;
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   public onDelete(): void {
     this.car$.pipe(
       switchMap(car => this.carsService.deleteCar(car.id)),
@@ -41,7 +47,8 @@ export class CarDeleteConfirmDialogComponent implements OnInit {
       }),
       tap({
         error: (err: string) => this.openSnackBar(err)
-      })
+      }),
+      takeUntil(this.unsubscribe$)
     ).subscribe({
       next: () => {
         this.openSnackBar('Car successfully deleted');
