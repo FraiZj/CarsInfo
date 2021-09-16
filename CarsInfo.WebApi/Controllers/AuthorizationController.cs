@@ -56,6 +56,15 @@ namespace CarsInfo.WebApi.Controllers
             return await AuthorizeAsync(user);
         }
 
+        [HttpPost("login/google")]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleAuthViewModel googleAuth)
+        {
+            var operation = await _userService.LoginWithGoogle(googleAuth.Token);
+            return operation.Success ?
+                await AuthorizeAsync(operation.Result, true) :
+                BadRequest(operation.FailureMessage);
+        }
+
         [HttpGet("emailAvailable/{email}")]
         public async Task<IActionResult> IsEmailAvailable(string email)
         {
@@ -141,9 +150,11 @@ namespace CarsInfo.WebApi.Controllers
         }
 
         [NonAction]
-        private async Task<IActionResult> AuthorizeAsync(UserDto user)
+        private async Task<IActionResult> AuthorizeAsync(UserDto user, bool externalUser = false)
         {
-            var getClaimsOperation = await _userService.GetUserClaimsAsync(user);
+            var getClaimsOperation = externalUser ?
+                await _userService.GetExternalUserClaimsAsync(user.Email) :
+                await _userService.GetInternalUserClaimsAsync(user);
 
             if (!getClaimsOperation.Success)
             {
