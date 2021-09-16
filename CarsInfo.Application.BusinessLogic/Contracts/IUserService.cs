@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
@@ -19,8 +18,12 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 
         Task<OperationResult.OperationResult> DeleteByIdAsync(int id);
         
-        Task<OperationResult<ICollection<Claim>>> GetUserClaimsAsync(UserDto entity);
+        Task<OperationResult<ICollection<Claim>>> GetInternalUserClaimsAsync(UserDto entity);
+
+        Task<OperationResult<ICollection<Claim>>> GetExternalUserClaimsAsync(string email);
 
         Task<OperationResult<bool>> ContainsUserWithEmailAsync(string email);
+
+        Task<OperationResult<UserDto>> LoginWithGoogle(string token);
     }
 }
