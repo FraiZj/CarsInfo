@@ -1,4 +1,6 @@
 ﻿using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.External.Auth.Google;
+using CarsInfo.Infrastructure.BusinessLogic.External.Auth.Google;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;
 using CarsInfo.Infrastructure.BusinessLogic.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +25,9 @@ namespace CarsInfo.Infrastructure.DependencyInjection
             services.AddSingleton<UserServiceMapper>();
             services.AddSingleton<CommentServiceMapper>();
             services.AddSingleton<TokenServiceMapper>();
+
+            // External services
+            services.AddTransient<IGoogleAuthService, GoogleAuthService>();
         }
     }
 }
