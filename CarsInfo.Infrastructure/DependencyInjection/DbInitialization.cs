@@ -1,4 +1,5 @@
 ﻿using CarsInfo.Infrastructure.DB;
+using CarsInfo.Infrastructure.DB.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CarsInfo.Infrastructure.DependencyInjection
@@ -10,6 +11,7 @@ namespace CarsInfo.Infrastructure.DependencyInjection
             string connectionString)
         {
             DbInitializer.Initialize(connectionString);
+            services.AddTransient(_ => new DatabaseHealthCheck(connectionString));
         }
     }
 }
