@@ -16,6 +16,8 @@ namespace CarsInfo.Domain.Entities
         
         public string Password { get; set; }
 
+        public bool IsExternal { get; set; }
+
         public UserRefreshToken UserRefreshToken { get; set; }
         
         public ICollection<Role> Roles { get; set; } = new List<Role>();

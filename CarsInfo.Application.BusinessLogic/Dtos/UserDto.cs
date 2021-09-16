@@ -15,6 +15,8 @@ namespace CarsInfo.Application.BusinessLogic.Dtos
         
         public string Password { get; set; }
 
+        public bool IsExternal { get; set; }
+
         public ICollection<string> Roles { get; set; }
     }
 }

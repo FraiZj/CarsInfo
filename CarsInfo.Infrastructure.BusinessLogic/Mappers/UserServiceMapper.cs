@@ -20,6 +20,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                IsExternal = user.IsExternal,
                 Roles = user.Roles.Select(r => r.Name).ToList()
             };
         }
@@ -42,6 +43,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                IsExternal = user.IsExternal,
                 Password = user.Password
             };
         }
