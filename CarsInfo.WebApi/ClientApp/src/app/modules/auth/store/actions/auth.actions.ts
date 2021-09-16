@@ -41,3 +41,8 @@ export const logout = createAction('[Auth] Logout');
 export const logoutSuccess = createAction('[Auth] Logout Success');
 
 export const clearLoginError = createAction('[Auth] Reset login error');
+
+export const loginWithGoogle = createAction(
+  '[Auth] Login With Google',
+  props<{ token: string }>()
+);

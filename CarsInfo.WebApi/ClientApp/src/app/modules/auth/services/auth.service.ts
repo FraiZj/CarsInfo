@@ -115,6 +115,14 @@ export class AuthService {
       }));
   }
 
+  public loginWithGoogle(token: string): Observable<AuthTokens> {
+    return this.http.post<AuthTokens>(`${this.url}/login/google`, { token })
+      .pipe(tap({
+        next: this.authenticationSuccededHandler,
+        error: this.authenticationErrorHandler
+      }));
+  }
+
   public refreshToken(): Observable<AuthTokens> {
     const tokens = this.getTokensFromLocalStorage();
 
@@ -138,8 +146,8 @@ export class AuthService {
     this.startRefreshTokenTimer();
   }
 
-  private authenticationErrorHandler = (response: HttpErrorResponse) => {
-    return throwError(response.error as string);
+  private authenticationErrorHandler = (response: { applicationError: string }) => {
+    return throwError(response.applicationError);
   }
 
   public logout(): Observable<string> {

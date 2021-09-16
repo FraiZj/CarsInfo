@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
@@ -14,7 +15,8 @@ export class AuthEffects implements OnInitEffects {
   constructor(
     private readonly actions$: Actions,
     private readonly authService: AuthService,
-    private readonly dialog: MatDialog
+    private readonly dialog: MatDialog,
+    private readonly router: Router
   ) { }
 
   ngrxOnInitEffects(): Action {
@@ -79,9 +81,25 @@ export class AuthEffects implements OnInitEffects {
     this.actions$.pipe(
       ofType(AuthActions.logout),
       exhaustMap(() => this.authService.logout().pipe(
-        map(() => AuthActions.logoutSuccess()))
+        map(() => {
+          this.router.navigate(['cars']);
+          return AuthActions.logoutSuccess()
+        }))
       ))
   );
+
+  loginWithGoogle$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(AuthActions.loginWithGoogle),
+    map(action => action.token),
+    exhaustMap(token =>
+      this.authService.loginWithGoogle(token).pipe(
+        map(tokens => AuthActions.loginSuccess({ tokens })),
+        catchError(error => this.handleCatchError(error))
+      )
+    )
+  )
+);
 
   private handleCatchError(error: any) {
     if (error instanceof HttpErrorResponse) return of(AuthActions.loginFailure({ error: error.error }));
