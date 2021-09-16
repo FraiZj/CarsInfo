@@ -23,6 +23,7 @@ namespace CarsInfo.WebApi
         {
             services.AddInfrastructure(_configuration);
             services.AddJwtAuthentication(_configuration);
+            services.AddGoogleAuth(_configuration);
             services.AddRedisCaching(_configuration);
             services.AddViewModelMapper();
             services.AddSwagger();
