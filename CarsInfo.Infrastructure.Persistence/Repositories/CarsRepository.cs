@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.Persistence.Contracts;
@@ -15,7 +14,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             : base(context)
         { }
 
-        public async Task<IEnumerable<Car>> GetAsync(FilterModel filter)
+        public override async Task<IEnumerable<Car>> GetAllAsync(FilterModel filter)
         {
             filter ??= new FilterModel();
             
@@ -95,9 +94,9 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return GroupSet(cars);
         }
         
-        public async Task<Car> GetByIdAsync(int id, bool includeDeleted = false)
+        public override async Task<Car> GetAsync(int id, bool includeDeleted = false)
         {
-            var sql = @$"SELECT * FROM Car
+            var sql = @"SELECT * FROM Car
                          LEFT JOIN Brand
                          ON Car.BrandId = Brand.Id
                          LEFT JOIN CarPicture

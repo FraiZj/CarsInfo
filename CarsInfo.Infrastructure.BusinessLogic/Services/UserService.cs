@@ -88,7 +88,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 ValidationHelper.ThrowIfStringNullOrWhiteSpace(entity.Email);
                 ValidationHelper.ThrowIfStringNullOrWhiteSpace(entity.Password);
 
-                var user = await _usersRepository.GetWithRolesAsync(entity.Email);
+                var user = await _usersRepository.GetByEmailAsync(entity.Email);
 
                 if (user is null)
                 {
@@ -174,7 +174,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var user = await _usersRepository.GetWithRolesAsync(email);
+                var user = await _usersRepository.GetByEmailAsync(email);
                 return user is null ? 
                     OperationResult<UserDto>.FailureResult($"User with email='{email}' does not exist") : 
                     OperationResult<UserDto>.SuccessResult(_mapper.MapToUserDto(user));

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
-using CarsInfo.WebApi.Caching;
+using CarsInfo.WebApi.Caching.Attributes;
 using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
