@@ -16,7 +16,7 @@ namespace CarsInfo.WebApi.PerfomanceTest.Scenarios
             BaseUrl = baseUrl;
             return ScenarioBuilder
                 .CreateScenario("brands_controller_scenario",
-                    BrandsGetAllStep())
+                    BrandsGetAllStep(), BrandsGetByIdStep())
                 .WithWarmUpDuration(TimeSpan.FromSeconds(10))
                 .WithLoadSimulations(Simulation.InjectPerSec(rate: 100, during: TimeSpan.FromSeconds(30)));
         }
