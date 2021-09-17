@@ -1,4 +1,6 @@
-﻿namespace CarsInfo.WebApi.ViewModels.Comment
+﻿using Newtonsoft.Json;
+
+namespace CarsInfo.WebApi.ViewModels.Comment
 {
     public class CommentEditorViewModel
     {

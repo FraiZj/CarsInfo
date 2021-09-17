@@ -14,4 +14,9 @@
     </div>
     <p class="car-details-description">{{ car.description }}</p>
   </div>
+  <div>
+    <h2>Comments</h2>
+    <comment-form access-control [carId]="car.id"></comment-form>
+    <comments-list [carId]="car.id"></comments-list>
+  </div>
 </div>

@@ -1,0 +1,38 @@
+$input-color: #cdd9e5;
+$placeholder-color: #76828b;
+
+.comment-text {
+  float: left;
+}
+
+.submit-block {
+  float: left;
+}
+
+.clearBoth {
+  clear: both;
+}
+
+::placeholder {
+  color: $placeholder-color;
+}
+
+::ng-deep .mat-form-field {
+  color: $input-color;
+}
+
+::ng-deep .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep .mat-focused .mat-form-field-label {
+  color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-underline {
+  background-color: $input-color !important;
+}
+
+::ng-deep.mat-form-field-ripple {
+  background-color: $input-color !important;
+}

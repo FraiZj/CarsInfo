@@ -1,4 +1,3 @@
-import { CarsListEffects } from './modules/cars-list/store/effects/cars-list.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { environment } from './../environments/environment.prod';
 import { CoreModule } from './modules/core/core.module';

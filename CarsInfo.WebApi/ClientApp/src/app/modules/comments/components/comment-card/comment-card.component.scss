@@ -1,0 +1,28 @@
+.comment-card {
+  display: grid;
+  grid-template-columns: 1fr 5fr 1fr;
+  color: black;
+  margin-bottom: 15px;
+}
+
+.comment-name {
+  background-color: white;
+  padding: 15px;
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
+}
+
+.comment-content {
+  background-color: white;
+  padding: 15px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.comment-date {
+  background-color: white;
+  padding: 15px;
+  text-align: right;
+  border-top-right-radius: 5%;
+  border-bottom-right-radius: 5%;
+}

@@ -10,7 +10,7 @@ CREATE TABLE [User] (
 	Id int PRIMARY KEY IDENTITY(1,1),
 	IsDeleted bit DEFAULT 0,
 	FirstName nvarchar(50) NOT NULL,
-	LastName nvarchar(50) NOT NULL,
+	LastName nvarchar(50),
 	Email nvarchar(50) NOT NULL UNIQUE,
 	[Password] nvarchar(500),
 	IsExternal bit DEFAULT 0

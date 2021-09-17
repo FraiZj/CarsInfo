@@ -1,0 +1,9 @@
+<div class="comments-block" *ngIf="comments$ | async as comments">
+  <ng-container *ngIf="comments.length > 0">
+    <comment-card *ngFor="let comment of comments; trackBy: trackBy;" [comment]="comment">
+    </comment-card>
+  </ng-container>
+  <ng-container *ngIf="comments.length === 0">
+    <p>No comment yet</p>
+  </ng-container>
+</div>
