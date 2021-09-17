@@ -1,3 +1,4 @@
+import { CommentsModule } from './../comments/comments.module';
 import { CarDetailsEffects } from './store/effects/car-details.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { reducer } from './store/reducers/car-details.reducers';
@@ -31,13 +32,11 @@ import { CarDeleteConfirmDialogModule } from '../car-delete-confirm-dialog/car-d
     EffectsModule.forFeature([CarDetailsEffects]),
 
     // app modules
+    CommentsModule,
     CarsDetailsRoutingModule,
     CarDeleteConfirmDialogModule,
     CarsModule,
-    SharedModule
-  ],
-  exports: [
-    CarsDetailsRoutingModule
+    SharedModule,
   ]
 })
 export class CarDetailsModule { }

@@ -39,7 +39,7 @@ namespace CarsInfo.WebApi.Controllers
         }
         
         [HttpPost, Authorize(Roles = Roles.User)]
-        public async Task<IActionResult> Create(int carId, CommentEditorViewModel comment)
+        public async Task<IActionResult> Create(int carId, [FromBody] CommentEditorViewModel comment)
         {
             var userId = User.GetUserId();
 
@@ -54,7 +54,7 @@ namespace CarsInfo.WebApi.Controllers
             var operation = await _commentService.AddAsync(commentDto);
             
             return operation.Success ?
-                Ok("Comment added") :
+                CreatedAtAction(nameof(Get), comment, new { carId }) :
                 BadRequest(operation.FailureMessage);
         }
     }
