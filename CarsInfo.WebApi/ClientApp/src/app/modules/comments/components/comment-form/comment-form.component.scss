@@ -1,16 +1,18 @@
 $input-color: #cdd9e5;
 $placeholder-color: #76828b;
 
+.comment-form {
+  display: block;
+  margin-bottom: 30px;
+  padding: 10px;
+}
+
 .comment-text {
-  float: left;
+  width: 100%;
 }
 
 .submit-block {
-  float: left;
-}
-
-.clearBoth {
-  clear: both;
+  float: right;
 }
 
 ::placeholder {
@@ -30,9 +32,9 @@ $placeholder-color: #76828b;
 }
 
 ::ng-deep.mat-form-field-underline {
-  background-color: $input-color !important;
+  background-color: $placeholder-color !important;
 }
 
-::ng-deep.mat-form-field-ripple {
-  background-color: $input-color !important;
+::ng-deep.mat-button-disabled {
+  background-color: gray !important;
 }

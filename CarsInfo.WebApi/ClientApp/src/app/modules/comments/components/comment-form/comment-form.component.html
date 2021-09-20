@@ -1,11 +1,11 @@
-<form [formGroup]="commentFormGroup">
+<form [formGroup]="commentFormGroup" class="comment-form">
   <mat-form-field class="comment-text" appearance="fill">
     <mat-label>Leave a comment</mat-label>
     <input matInput formControlName="text" type="text" placeholder="Enter your comment">
   </mat-form-field>
   <div class="submit-block">
-    <button mat-raised-button type="submit" [disabled]="!commentFormGroup.valid" (click)="submit()">Leave
-      comment</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="!commentFormGroup.valid"
+      (click)="submit()">Comment</button>
   </div>
   <br class="clearBoth" />
 </form>
