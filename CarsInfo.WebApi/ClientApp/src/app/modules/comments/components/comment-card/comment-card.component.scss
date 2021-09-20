@@ -26,3 +26,17 @@
   border-top-right-radius: 5%;
   border-bottom-right-radius: 5%;
 }
+
+.comment-block {
+  padding: 15px;
+  border-bottom: 1px solid #16181c;
+
+  .comment-block-header {
+    padding-bottom: 5px;
+  }
+
+  .comment-block-date {
+    color: darkgrey;
+    padding-left: 10px;
+  }
+}
