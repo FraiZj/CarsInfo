@@ -42,7 +42,8 @@ namespace CarsInfo.Infrastructure.DB
             }
 
             var createTablesScript = File.ReadAllText(Directory + CreateTablesPath);
-            ExecuteNonQuery(_connectionStringBuilder.ConnectionString, createTablesScript);
+            ExecuteNonQuery(_connectionStringBuilder.ConnectionString,
+                $"USE {_connectionStringBuilder.InitialCatalog};" + createTablesScript);
         }
 
         private static void ApplySeedData()
@@ -55,7 +56,8 @@ namespace CarsInfo.Infrastructure.DB
             }
 
             var seedDataScript = File.ReadAllText(Directory + SeedDataPath);
-            ExecuteNonQuery(_connectionStringBuilder.ConnectionString, seedDataScript);
+            ExecuteNonQuery(_connectionStringBuilder.ConnectionString, 
+                $"USE {_connectionStringBuilder.InitialCatalog};" + seedDataScript);
         }
 
         private static void ExecuteNonQuery(string connectionString, string commandText)
