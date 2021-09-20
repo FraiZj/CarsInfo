@@ -1,5 +1,3 @@
-USE CarsInfo
-
 CREATE TABLE Brand (
 	Id int PRIMARY KEY IDENTITY(1,1),
 	IsDeleted bit DEFAULT 0,

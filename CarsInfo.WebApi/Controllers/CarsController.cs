@@ -112,7 +112,7 @@ namespace CarsInfo.WebApi.Controllers
 
             return operation.Result is null ?
                 NotFound() :
-                Ok(operation.Result);
+                Ok(_mapper.MapToCarEditorViewModel(operation.Result));
         }
 
         [HttpPost]

@@ -1,6 +1,4 @@
-﻿USE CarsInfo
-
-INSERT INTO [Role] ([Name])
+﻿INSERT INTO [Role] ([Name])
 VALUES 
 ('User'),
 ('Admin');
