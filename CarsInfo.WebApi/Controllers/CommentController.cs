@@ -54,7 +54,7 @@ namespace CarsInfo.WebApi.Controllers
             var operation = await _commentService.AddAsync(commentDto);
             
             return operation.Success ?
-                CreatedAtAction(nameof(Get), comment, new { carId }) :
+                Created("/cars/{carId}/comments", comment) :
                 BadRequest(operation.FailureMessage);
         }
     }
