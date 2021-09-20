@@ -161,16 +161,16 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public async Task<OperationResult<IEnumerable<CarDto>>> GetAllAsync(FilterDto filterDto)
+        public async Task<OperationResult<IEnumerable<CarDto>>> GetAllAsync(CarFilterDto carFilterDto)
         {
             try
             {
-                if (filterDto is null)
+                if (carFilterDto is null)
                 {
                     return await GetAllAsync();
                 }
 
-                var filter = _filterService.ConfigureCarFilter(filterDto);
+                var filter = _filterService.ConfigureCarFilter(carFilterDto);
                 var cars = await _carsRepository.GetAllAsync(filter);
                 return OperationResult<IEnumerable<CarDto>>.SuccessResult(_mapper.MapToCarsDtos(cars));
             }
@@ -181,7 +181,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public async Task<OperationResult<IEnumerable<CarDto>>> GetUserFavoriteCarsAsync(int userId, FilterDto filter)
+        public async Task<OperationResult<IEnumerable<CarDto>>> GetUserFavoriteCarsAsync(int userId, CarFilterDto carFilter)
         {
             try
             {
@@ -191,7 +191,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                     return OperationResult<IEnumerable<CarDto>>.FailureResult($"User with id={userId} does not exist");
                 }
 
-                var filterModel = _filterService.ConfigureCarFilter(filter);
+                var filterModel = _filterService.ConfigureCarFilter(carFilter);
                 filterModel.Filters.Add(new FiltrationField("UserCar.IsDeleted", 0));
                 var cars = await _carsRepository.GetUserFavoriteCarsAsync(userId, filterModel);
 

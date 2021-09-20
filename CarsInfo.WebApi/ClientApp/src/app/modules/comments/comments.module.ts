@@ -12,6 +12,8 @@ import { CommentsEffects } from './store/effects/comments.effects';
 import { CommentCardComponent } from './components/comment-card/comment-card.component';
 import { CommentFormComponent } from './components/comment-form/comment-form.component';
 import { MatInputModule } from '@angular/material/input';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { MatInputModule } from '@angular/material/input';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    InfiniteScrollModule,
+    NgxSpinnerModule
   ],
   exports: [
     CommentsListComponent,

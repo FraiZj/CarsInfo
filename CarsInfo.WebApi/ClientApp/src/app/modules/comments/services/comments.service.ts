@@ -1,3 +1,5 @@
+import { CommentOrderBy } from './../enums/comment-order-by';
+import { CommentFilter } from './../interfaces/comment-filter';
 import { ErrorResponse } from '@core/interfaces/error-response';
 import { CommentEditor } from './../interfaces/comment-editor';
 import { HttpClient } from "@angular/common/http";
@@ -15,12 +17,23 @@ export class CommentsService {
     private readonly http: HttpClient
   ) { }
 
-  public getComments(carId: number): Observable<CommentViewModel[]> {
-    return this.http.get<CommentViewModel[]>(`${this.url}/cars/${carId}/comments`).pipe(
+  public getComments(carId: number, filter?: CommentFilter): Observable<CommentViewModel[]> {
+    const params = this.configureParams(filter);
+    return this.http.get<CommentViewModel[]>(`${this.url}/cars/${carId}/comments`, {
+      params: params
+    }).pipe(
       tap({
         error: (error: ErrorResponse) => console.error(error)
       })
     );
+  }
+
+  private configureParams(filter?: CommentFilter) {
+    return {
+      skip: filter?.skip ?? 0,
+      take: filter?.take ?? 10,
+      orderBy: filter?.orderBy ?? CommentOrderBy.PublishDateDesc
+    };
   }
 
   public addComment(carId: number, comment: CommentEditor): Observable<CommentEditor> {

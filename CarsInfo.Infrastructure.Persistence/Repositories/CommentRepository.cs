@@ -18,12 +18,21 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             var filters = SqlQueryConfigurator.ConfigureFilter(
                 TableName, filterModel.Filters, filterModel.IncludeDeleted);
             var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filterModel.OrderBy);
-            var sql = $@"SELECT * FROM [{TableName}]
-                         INNER JOIN [User]
-                         ON [User].Id = [{TableName}].UserId
-                        { filters }
-	                    { orderBy }";
-            
+            // var sql = $@"SELECT * FROM [{TableName}]
+            //              INNER JOIN [User]
+            //              ON [User].Id = [{TableName}].UserId
+            //             { filters }
+	           //          { orderBy }";
+
+            var sql = $@"SELECT * FROM Comment
+	                LEFT JOIN [User]
+	                ON Comment.UserId = [User].Id
+                    { filters }
+	                { orderBy }
+	                OFFSET { filterModel.Skip } ROWS
+	                FETCH NEXT { filterModel.Take } ROWS ONLY";
+
+
             return await Context.QueryAsync<Comment, User>(sql, (comment, user) =>
             {
                 comment.User = user;

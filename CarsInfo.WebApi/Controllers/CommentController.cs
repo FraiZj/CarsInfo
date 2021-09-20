@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
@@ -25,9 +26,9 @@ namespace CarsInfo.WebApi.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> Get(int carId)
+        public async Task<IActionResult> Get([FromRoute] int carId, [FromQuery] CommentFilterDto filter)
         {
-            var operation = await _commentService.GetByCarIdAsync(carId);
+            var operation = await _commentService.GetByCarIdAsync(carId, filter);
 
             if (!operation.Success)
             {
@@ -39,7 +40,7 @@ namespace CarsInfo.WebApi.Controllers
         }
         
         [HttpPost, Authorize(Roles = Roles.User)]
-        public async Task<IActionResult> Create(int carId, [FromBody] CommentEditorViewModel comment)
+        public async Task<IActionResult> Create([FromRoute] int carId, [FromBody] CommentEditorViewModel comment)
         {
             var userId = User.GetUserId();
 
@@ -50,7 +51,7 @@ namespace CarsInfo.WebApi.Controllers
             
             var commentDto = _mapper.MapToCommentEditorDto(comment);
             commentDto.CarId = carId;
-            commentDto.UserId = User.GetUserId()!.Value;
+            commentDto.UserId = userId.Value;
             var operation = await _commentService.AddAsync(commentDto);
             
             return operation.Success ?
