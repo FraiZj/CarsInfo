@@ -3,7 +3,7 @@ using CarsInfo.Application.Persistence.Filters;
 
 namespace CarsInfo.Application.BusinessLogic.Enums
 {
-    public static class OrderBy
+    public static class CarOrderBy
     {
         public const string BrandNameAsc = "BrandNameAsc";
 

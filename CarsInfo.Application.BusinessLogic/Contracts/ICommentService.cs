@@ -9,6 +9,6 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
     {
         Task<OperationResult.OperationResult> AddAsync(CommentEditorDto commentDto);
         
-        Task<OperationResult<IEnumerable<CommentDto>>> GetByCarIdAsync(int carId);
+        Task<OperationResult<IEnumerable<CommentDto>>> GetByCarIdAsync(int carId, CommentFilterDto filterDto);
     }
 }

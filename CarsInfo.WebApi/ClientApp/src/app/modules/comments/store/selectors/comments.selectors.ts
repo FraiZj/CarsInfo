@@ -7,3 +7,13 @@ export const selectComments = createSelector(
   selectCommentsState,
   (state) => state.comments
 );
+
+export const selectCanLoadNextComments = createSelector(
+  selectCommentsState,
+  (state) => state.canLoadNext
+);
+
+export const selectCommentFilter = createSelector(
+  selectCommentsState,
+  (state) => state.filter
+);

@@ -33,7 +33,7 @@ namespace CarsInfo.WebApi.Controllers
         /// <summary>
         /// Returns a list of cars by the specified filter
         /// </summary>
-        /// <param name="filter">Filter for cars list</param>
+        /// <param name="carFilter">Filter for cars list</param>
         /// <response code="200">Returns cars</response>
         /// <response code="400">Unable to return cars</response>
         [HttpGet]
@@ -41,16 +41,16 @@ namespace CarsInfo.WebApi.Controllers
         [Cached(300)]
         [ProducesResponseType(typeof(IEnumerable<CarDto>), 200)]
         [ProducesResponseType(typeof(ErrorResponse), 400)]
-        public async Task<IActionResult> Get([FromQuery] FilterDto filter)
+        public async Task<IActionResult> Get([FromQuery] CarFilterDto carFilter)
         {
-            var operation = await _carsService.GetAllAsync(filter);
+            var operation = await _carsService.GetAllAsync(carFilter);
             return operation.Success ?
                 Ok(operation.Result) :
                 BadRequest(operation.FailureMessage);
         }
 
         [HttpGet("favorite"), Authorize(Roles = Roles.User)]
-        public async Task<IActionResult> Favorite(FilterDto filter)
+        public async Task<IActionResult> Favorite(CarFilterDto carFilter)
         {
             var userId = User.GetUserId();
 
@@ -59,7 +59,7 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest("User is not authorized");
             }
 
-            var operation = await _carsService.GetUserFavoriteCarsAsync(userId.Value, filter);
+            var operation = await _carsService.GetUserFavoriteCarsAsync(userId.Value, carFilter);
             return operation.Success ?
                 Ok(operation.Result) :
                 BadRequest(operation.FailureMessage);
