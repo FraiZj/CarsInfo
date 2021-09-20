@@ -30,7 +30,7 @@ export class CommentsEffects {
       map(action => ({ carId: action.carId, comment: action.comment })),
       exhaustMap(({ carId, comment }) =>
         this.commentsService.addComment(carId, comment).pipe(
-          map(() => addCommentSuccess())
+          map(() => fetchComments({ carId }))
         )
       )
     )
