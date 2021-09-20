@@ -29,11 +29,26 @@ $content-color: #cdd9e5;
     width: 100%;
     margin-bottom: 10px;
     text-transform: none;
-    background-color: white;
+    color: $content-color;
 
     img {
       width: 20px;
       margin-bottom:2px;
+      margin-right: 5px;
+    }
+  }
+
+  .external-login:hover {
+    background-color: #282C34;
+  }
+
+  .external-login[disabled] {
+    background-color: #2d333b;
+    border: 1px solid #282d34;
+
+    img {
+      -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+      filter: grayscale(100%);
     }
   }
 }
