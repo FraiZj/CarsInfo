@@ -1,15 +1,16 @@
 <mat-card class="car-card">
   <a [routerLink]="['/cars', car.id]" class="car-card-image-wrapper">
-    <img class="car-card-image" *ngIf='car.carPicturesUrls.length > 0' [src]="car.carPicturesUrls[0]" />
+    <img class="car-card-image" [src]="car.carPicturesUrls[0]" (error)="setDefaultPicture()" alt="Car picture"/>
   </a>
   <mat-card-content class="car-card-content">
     <div class="car-info">
       <mat-card-title class="car-title">
-      <a [routerLink]="['/cars', car.id]">{{ car.brand }} {{ car.model }}</a>
+        <a [routerLink]="['/cars', car.id]">{{ car.brand }} {{ car.model }}</a>
       </mat-card-title>
     </div>
     <div access-control class="car-card-star-block">
-      <img class="car-card--star clickable" [src]="currentImage" alt="Default star image" (click)="onStarClick()">
+      <img class="car-card--star clickable" [src]="currentImage" alt="Star image"
+           (click)="onStarClick()">
     </div>
   </mat-card-content>
 </mat-card>
