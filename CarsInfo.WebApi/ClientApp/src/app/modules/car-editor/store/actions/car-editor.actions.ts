@@ -1,5 +1,6 @@
 import { CarEditor } from '@cars/interfaces/car-editor';
 import { createAction, props } from "@ngrx/store";
+import {ValidationError} from "@core/interfaces/error";
 
 export const fetchCarEditorById = createAction(
   '[Car Editor] Fetch Car Editor By Id',
@@ -7,7 +8,7 @@ export const fetchCarEditorById = createAction(
 );
 
 export const fetchCarEditorByIdSuccess = createAction(
-  '[Car Editor] Fetch Car Editor By Id Succcess',
+  '[Car Editor] Fetch Car Editor By Id Success',
   props<{ carEditor: CarEditor }>()
 );
 
@@ -18,4 +19,9 @@ export const updateCar = createAction(
 
 export const updateCarSuccess = createAction(
   '[Car Editor] Update Car Success'
+);
+
+export const addCarEditorValidationErrors = createAction(
+  '[Car Editor] Add Validation Errors',
+  props<{ validationErrors: ValidationError[] }>()
 );

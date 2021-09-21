@@ -74,6 +74,9 @@
           <div *ngIf="carPicture.errors?.required">
             Car picture is required.
           </div>
+          <div *ngIf="carPicture.errors?.serverError">
+            {{ carPicture.errors?.serverError }}
+          </div>
         </div>
       </div>
     </div>

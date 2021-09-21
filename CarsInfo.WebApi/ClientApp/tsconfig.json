@@ -33,6 +33,7 @@
       "@car-editor/*": ["app/modules/car-editor/*"],
       "@car-editor-form/*": ["app/modules/car-editor-form/*"],
       "@cars/*": ["app/modules/cars/*"],
+      "@comments/*": ["app/modules/comments/*"]
     }
   },
   "angularCompilerOptions": {
