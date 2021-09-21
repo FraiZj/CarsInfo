@@ -1,13 +1,13 @@
-import { Router } from '@angular/router';
-import { Injectable } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { AuthService } from "@auth/services/auth.service";
-import { Actions, createEffect, ofType, OnInitEffects } from "@ngrx/effects";
-import { of } from "rxjs";
-import { map, exhaustMap, catchError, tap } from "rxjs/operators";
+import {Router} from '@angular/router';
+import {Injectable} from "@angular/core";
+import {MatDialog} from "@angular/material/dialog";
+import {AuthService} from "@auth/services/auth.service";
+import {Actions, createEffect, ofType, OnInitEffects} from "@ngrx/effects";
+import {of} from "rxjs";
+import {map, exhaustMap, catchError, tap} from "rxjs/operators";
 import * as AuthActions from '../actions/auth.actions';
-import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
-import { Action } from '@ngrx/store';
+import {AuthDialogComponent} from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
+import {Action} from '@ngrx/store';
 import {addApplicationError} from "@core/store/actions/core.actions";
 import {ErrorResponse} from "@core/interfaces/error-response";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -19,7 +19,8 @@ export class AuthEffects implements OnInitEffects {
     private readonly authService: AuthService,
     private readonly dialog: MatDialog,
     private readonly router: Router
-  ) { }
+  ) {
+  }
 
   ngrxOnInitEffects(): Action {
     return AuthActions.init();
@@ -30,7 +31,10 @@ export class AuthEffects implements OnInitEffects {
       ofType(AuthActions.init),
       exhaustMap(() =>
         this.authService.refreshToken().pipe(
-          map(tokens => AuthActions.loginSuccess({ tokens }))
+          map(tokens => AuthActions.loginSuccess({tokens})),
+          catchError(() => {
+            return of(AuthActions.authTokenExpired());
+          })
         )
       )
     )
@@ -42,7 +46,7 @@ export class AuthEffects implements OnInitEffects {
       map(action => action.userRegister),
       exhaustMap(userRegister =>
         this.authService.register(userRegister).pipe(
-          map(tokens => AuthActions.loginSuccess({ tokens })),
+          map(tokens => AuthActions.loginSuccess({tokens})),
           catchError(error => this.handleCatchError(error))
         )
       )
@@ -55,7 +59,7 @@ export class AuthEffects implements OnInitEffects {
       map(action => action.userLogin),
       exhaustMap(userLogin =>
         this.authService.login(userLogin).pipe(
-          map(tokens => AuthActions.loginSuccess({ tokens })),
+          map(tokens => AuthActions.loginSuccess({tokens})),
           catchError(error => this.handleCatchError(error))
         )
       )
@@ -63,19 +67,19 @@ export class AuthEffects implements OnInitEffects {
   );
 
   loginRedirect$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AuthActions.loginRedirect),
-      map(action => action.returnUrl),
-      tap((returnUrl) => {
-        this.dialog.open(AuthDialogComponent, {
-          data: {
-            form: 'Login',
-            returnUrl: returnUrl
-          }
-        });
-      })
-    ),
-    { dispatch: false }
+      this.actions$.pipe(
+        ofType(AuthActions.loginRedirect),
+        map(action => action.returnUrl),
+        tap((returnUrl) => {
+          this.dialog.open(AuthDialogComponent, {
+            data: {
+              form: 'Login',
+              returnUrl: returnUrl
+            }
+          });
+        })
+      ),
+    {dispatch: false}
   );
 
   logout$ = createEffect(() =>
@@ -90,29 +94,29 @@ export class AuthEffects implements OnInitEffects {
   );
 
   loginWithGoogle$ = createEffect(() =>
-  this.actions$.pipe(
-    ofType(AuthActions.loginWithGoogle),
-    map(action => action.token),
-    exhaustMap(token =>
-      this.authService.loginWithGoogle(token).pipe(
-        map(tokens => AuthActions.loginSuccess({ tokens })),
-        catchError(error => this.handleCatchError(error))
+    this.actions$.pipe(
+      ofType(AuthActions.loginWithGoogle),
+      map(action => action.token),
+      exhaustMap(token =>
+        this.authService.loginWithGoogle(token).pipe(
+          map(tokens => AuthActions.loginSuccess({tokens})),
+          catchError(error => this.handleCatchError(error))
+        )
       )
     )
-  )
-);
+  );
 
   private handleCatchError(errorResponse: HttpErrorResponse | Error) {
     if (errorResponse instanceof HttpErrorResponse) {
       const error = errorResponse.error as ErrorResponse;
 
       if (error.applicationError != null) {
-        return of(addApplicationError({ applicationError: error.applicationError }));
+        return of(addApplicationError({applicationError: error.applicationError}));
       }
 
-      return of(AuthActions.loginFailure({ errors: error.validationErrors.map(e => `${e.field} ${e.error}`) }));
+      return of(AuthActions.addAuthValidationErrors({validationErrors: error.validationErrors}));
     }
 
-    return of(addApplicationError({ applicationError: errorResponse.message }));
+    return of(addApplicationError({applicationError: errorResponse.message}));
   }
 }

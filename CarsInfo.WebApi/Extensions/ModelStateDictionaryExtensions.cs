@@ -18,7 +18,7 @@ namespace CarsInfo.WebApi.Extensions
                 .SelectMany(modelStateError => modelStateError.Value
                     .Select(value => new ErrorModel
                     {
-                        Field = modelStateError.Key,
+                        Field = modelStateError.Key.ToLower(),
                         Error = value
                     }));
         }

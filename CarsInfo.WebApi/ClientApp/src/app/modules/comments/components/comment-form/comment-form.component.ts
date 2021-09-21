@@ -41,7 +41,6 @@ export class CommentFormComponent implements OnChanges, OnDestroy {
   }
 
   private configureValidationErrors() {
-
     this.validationErrors$.pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe(
@@ -54,7 +53,6 @@ export class CommentFormComponent implements OnChanges, OnDestroy {
             });
           }
         });
-        console.log(this.text.errors?.serverError)
         this.cdr.detectChanges();
       }
     );

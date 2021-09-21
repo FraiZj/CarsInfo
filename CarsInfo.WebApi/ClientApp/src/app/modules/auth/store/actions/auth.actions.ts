@@ -3,12 +3,17 @@ import { UserRegister } from '@auth/interfaces/user-register';
 import { UserLogin } from 'app/modules/auth/interfaces/user-login';
 import { createAction, props } from '@ngrx/store';
 import { AuthTokens } from '@auth/interfaces/auth-tokens';
+import {ValidationError} from "@core/interfaces/error";
 
 export const init = createAction('[Auth] Init');
 
 export const initLogin = createAction(
   '[Auth] Init Login',
   props<{ userLogin: UserLogin }>()
+);
+
+export const authTokenExpired = createAction(
+  '[Auth] Auth Token Expired'
 );
 
 export const register = createAction(
@@ -26,11 +31,6 @@ export const loginSuccess = createAction(
   props<{ tokens: AuthTokens }>()
 );
 
-export const loginFailure = createAction(
-  '[Auth] Login Failure',
-  props<{ errors: string[] }>()
-);
-
 export const loginRedirect = createAction(
   '[Auth] Login Redirect',
   props<{ returnUrl: string }>()
@@ -45,4 +45,9 @@ export const clearLoginError = createAction('[Auth] Reset login error');
 export const loginWithGoogle = createAction(
   '[Auth] Login With Google',
   props<{ token: string }>()
+);
+
+export const addAuthValidationErrors = createAction(
+  '[Auth] Add Auth Validation Errors',
+  props<{ validationErrors: ValidationError[] }>()
 );

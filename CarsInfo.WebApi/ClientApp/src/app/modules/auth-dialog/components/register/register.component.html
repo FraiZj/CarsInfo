@@ -10,6 +10,9 @@
       <div *ngIf="firstName.errors?.required">
         First name is required.
       </div>
+      <div *ngIf="firstName.errors?.serverError">
+        {{ firstName.errors?.serverError }}
+      </div>
     </div>
   </div>
 
@@ -22,6 +25,9 @@
     <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert-danger validation-alert">
       <div *ngIf="lastName.errors?.required">
         Last name is required.
+      </div>
+      <div *ngIf="lastName.errors?.serverError">
+        {{ lastName.errors?.serverError }}
       </div>
     </div>
   </div>
@@ -42,6 +48,9 @@
       <div *ngIf="email.errors?.forbidden">
         Email is not available.
       </div>
+      <div *ngIf="email.errors?.serverError">
+        {{ email.errors?.serverError }}
+      </div>
     </div>
   </div>
 
@@ -57,6 +66,9 @@
       </div>
       <div *ngIf="password.errors?.minlength">
         Password min length is 6
+      </div>
+      <div *ngIf="password.errors?.serverError">
+        {{ password.errors?.serverError }}
       </div>
     </div>
   </div>

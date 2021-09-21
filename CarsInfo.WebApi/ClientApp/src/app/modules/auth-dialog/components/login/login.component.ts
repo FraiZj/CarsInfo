@@ -2,11 +2,20 @@ import {UserLogin} from '@auth/interfaces/user-login';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import * as AuthSelectors from '@auth/store/selectors/auth.selectors';
 import {Store} from '@ngrx/store';
-import {Component, Output, EventEmitter, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 import {FormBuilder, Validators, FormControl} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {filter} from 'rxjs/operators';
+import {ValidationError} from "@core/interfaces/error";
 
 @Component({
   selector: 'login',
@@ -22,27 +31,41 @@ export class LoginComponent implements OnInit, OnDestroy {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
-  public validationErrors: string[] = [];
-  public error$ = this.store.select(AuthSelectors.selectAuthError);
+  public validationErrors$: Observable<ValidationError[]> = this.store.select(AuthSelectors.selectAuthValidationErrors);
 
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly _snackBar: MatSnackBar,
-    private readonly store: Store
-  ) { }
+    private readonly store: Store,
+    private readonly cdr: ChangeDetectorRef
+  ) {
+  }
 
   public ngOnInit(): void {
+    this.configureValidationErrors();
     this.subscriptions.push(
-      this.error$.subscribe((errors) => {
-        if (errors != null && errors?.length !== 0) {
-          errors.forEach(error => setTimeout(() => this.openSnackBar(error), 5000));
-        }
-      }),
-
       this.store.select(AuthSelectors.selectLoggedIn).pipe(
         filter(loggedIn => loggedIn)
       ).subscribe(
         () => this.loginEvent.emit()
+      )
+    );
+  }
+
+  private configureValidationErrors() {
+    this.subscriptions.push(
+      this.validationErrors$.subscribe(
+        errors => {
+          errors.forEach(({field, error}) => {
+            let formControl = this.loginForm.get(field);
+            if (formControl) {
+              formControl.setErrors({
+                serverError: error
+              });
+            }
+          });
+          this.cdr.detectChanges();
+        }
       )
     );
   }
