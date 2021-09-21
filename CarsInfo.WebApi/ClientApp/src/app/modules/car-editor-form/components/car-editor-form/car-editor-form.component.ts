@@ -10,7 +10,7 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-  OnChanges, SimpleChanges
+  OnChanges, SimpleChanges, ChangeDetectorRef
 } from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import {CarEditor} from 'app/modules/cars/interfaces/car-editor';
