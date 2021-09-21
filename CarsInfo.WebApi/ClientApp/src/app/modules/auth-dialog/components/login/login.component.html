@@ -13,6 +13,9 @@
       <div *ngIf="email.errors?.email">
         Email format is invalid.
       </div>
+      <div *ngIf="email.errors?.serverError">
+        {{ email.errors?.serverError }}
+      </div>
     </div>
   </div>
 
@@ -25,6 +28,9 @@
     <div *ngIf="password.invalid && (password.dirty || password.touched)" class="alert-danger validation-alert">
       <div *ngIf="password.errors?.required">
         Password is required.
+      </div>
+      <div *ngIf="password.errors?.serverError">
+        {{ password.errors?.serverError }}
       </div>
     </div>
   </div>

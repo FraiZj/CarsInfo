@@ -14,9 +14,9 @@ export const selectAuthTokens = createSelector(
   (state) => state.tokens
 );
 
-export const selectAuthError = createSelector(
+export const selectAuthValidationErrors = createSelector(
   selectAuthState,
-  (state) => state.errors
+  (state) => state.validationErrors
 );
 
 export const selectUserClaims = createSelector(
