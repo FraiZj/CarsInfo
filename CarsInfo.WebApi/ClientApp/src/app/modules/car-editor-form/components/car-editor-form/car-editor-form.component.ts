@@ -1,11 +1,20 @@
-import { selectBrands } from './../../store/selectors/car-editor-form.selectors';
-import { fetchBrands, createBrand } from './../../store/actions/car-editor-form.actions';
-import { Store } from '@ngrx/store';
-import { Observable, Subscription } from 'rxjs';
-import { Brand } from '@brands/interfaces/brand';
-import { Component, Input, OnDestroy, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
+import {selectBrands} from './../../store/selectors/car-editor-form.selectors';
+import {fetchBrands, createBrand} from './../../store/actions/car-editor-form.actions';
+import {Store} from '@ngrx/store';
+import {Observable} from 'rxjs';
+import {Brand} from '@brands/interfaces/brand';
+import {
+  Component,
+  Input,
+  OnInit,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  OnChanges, SimpleChanges
+} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
+import {CarEditor} from 'app/modules/cars/interfaces/car-editor';
+import {ValidationError} from "@core/interfaces/error";
 
 @Component({
   selector: 'car-editor-form',
@@ -13,8 +22,9 @@ import { CarEditor } from 'app/modules/cars/interfaces/car-editor';
   styleUrls: ['./car-editor-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CarEditorFormComponent implements OnInit {
+export class CarEditorFormComponent implements OnInit, OnChanges {
   @Input() public carEditor: CarEditor | null = null;
+  @Input() public validationErrors!: ValidationError[] | null;
   @Output() public carEditorSubmit: EventEmitter<CarEditor> = new EventEmitter<CarEditor>();
   public brands$: Observable<Brand[]> = this.store.select(selectBrands);
   public brandEditorForm: FormGroup = this.formBuilder.group({
@@ -34,11 +44,13 @@ export class CarEditorFormComponent implements OnInit {
   constructor(
     private readonly formBuilder: FormBuilder,
     private readonly store: Store
-  ) { }
+  ) {
+  }
 
   public ngOnInit(): void {
     this.store.dispatch(fetchBrands());
     this.canAddCarPicture = this.carPicturesUrls.length < 3;
+    this.configureValidationErrors();
 
     if (this.carEditor != null) {
       this.carEditorForm.patchValue(this.carEditor);
@@ -48,6 +60,30 @@ export class CarEditorFormComponent implements OnInit {
     }
 
     this.canAddCarPicture = this.carPicturesUrls.length < 3;
+  }
+
+  public ngOnChanges(changes: SimpleChanges): void {
+    this.configureValidationErrors();
+  }
+
+  private configureValidationErrors() {
+    if (this.validationErrors != null) {
+      this.validationErrors.forEach(({field, error}) => {
+        let formControl = this.carEditorForm.get(field);
+
+        if (field.includes('[')) {
+          const carPictureIndex: string = field.substring(field.indexOf('[') + 1, field.indexOf(']'));
+          formControl = this.carPicturesUrls.get(carPictureIndex);
+
+        }
+
+        if (formControl) {
+          formControl.setErrors({
+            serverError: error
+          });
+        }
+      });
+    }
   }
 
   public get brandId(): FormControl {
@@ -97,7 +133,7 @@ export class CarEditorFormComponent implements OnInit {
       return;
     }
 
-    this.store.dispatch(createBrand({ brand: this.brand.value }));
+    this.store.dispatch(createBrand({brand: this.brand.value}));
     this.brandEditorForm.controls['brand'].setValue('');
   }
 
