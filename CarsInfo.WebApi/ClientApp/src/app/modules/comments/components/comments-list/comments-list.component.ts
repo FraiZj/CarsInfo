@@ -3,7 +3,7 @@ import { CommentFilter } from './../../interfaces/comment-filter';
 import { Observable } from 'rxjs';
 import { selectComments, selectCanLoadNextComments } from './../../store/selectors/comments.selectors';
 import { Store } from '@ngrx/store';
-import { Component, Input, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import { fetchComments } from '../../store/actions/comments.actions';
 import { CommentViewModel } from '../../interfaces/comment';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -12,13 +12,13 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'comments-list',
   templateUrl: './comments-list.component.html',
-  styleUrls: ['./comments-list.component.scss']
+  styleUrls: ['./comments-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommentsListComponent implements OnInit {
   @Input() public carId!: number;
   public comments$: Observable<CommentViewModel[]> = this.store.select(selectComments);
   public filter!: CommentFilter;
-  public canLoadNext = true;
   public notscrolly = true;
 
   constructor(

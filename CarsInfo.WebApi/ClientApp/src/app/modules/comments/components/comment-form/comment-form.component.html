@@ -1,7 +1,7 @@
 <form [formGroup]="commentFormGroup" class="comment-form">
   <mat-form-field class="comment-text" appearance="fill">
     <mat-label>Leave a comment</mat-label>
-    <input matInput formControlName="comment" type="text" placeholder="Enter your comment">
+    <input matInput formControlName="text" type="text" placeholder="Enter your comment">
   </mat-form-field>
 
   <div class="submit-block">
@@ -10,13 +10,16 @@
     </button>
   </div>
 
-  <div *ngIf="comment.invalid && (comment.dirty || comment.touched)" class="alert-danger w-40">
-    <div *ngIf="comment.errors?.required">
+  <div *ngIf="text.invalid && text.touched" class="alert-danger w-40">
+    <div *ngIf="text.errors?.required">
       Comment text is required
     </div>
-    <div *ngIf="comment.errors?.maxlength !== undefined
-      && comment.errors?.maxlength.requiredLength < comment.errors?.maxlength.actualLength">
-      Comment max length is {{ comment.errors?.maxlength.requiredLength }} characters
+    <div *ngIf="text.errors?.maxlength !== undefined
+      && text.errors?.maxlength.requiredLength < text.errors?.maxlength.actualLength">
+      Comment max length is {{ text.errors?.maxlength.requiredLength }} characters
+    </div>
+    <div *ngIf="text.errors?.serverError">
+      {{ text.errors?.serverError }}
     </div>
   </div>
   <br class="clearBoth"/>
