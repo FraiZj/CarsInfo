@@ -1,7 +1,7 @@
-import { CommentOrderBy } from './../enums/comment-order-by';
-import { CommentFilter } from './../interfaces/comment-filter';
+import { CommentOrderBy } from '../enums/comment-order-by';
+import { CommentFilter } from '../interfaces/comment-filter';
 import { ErrorResponse } from '@core/interfaces/error-response';
-import { CommentEditor } from './../interfaces/comment-editor';
+import { CommentEditor } from '../interfaces/comment-editor';
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
@@ -18,7 +18,7 @@ export class CommentsService {
   ) { }
 
   public getComments(carId: number, filter?: CommentFilter): Observable<CommentViewModel[]> {
-    const params = this.configureParams(filter);
+    const params = CommentsService.configureParams(filter);
     return this.http.get<CommentViewModel[]>(`${this.url}/cars/${carId}/comments`, {
       params: params
     }).pipe(
@@ -28,7 +28,7 @@ export class CommentsService {
     );
   }
 
-  private configureParams(filter?: CommentFilter) {
+  private static configureParams(filter?: CommentFilter) {
     return {
       skip: filter?.skip ?? 0,
       take: filter?.take ?? 10,

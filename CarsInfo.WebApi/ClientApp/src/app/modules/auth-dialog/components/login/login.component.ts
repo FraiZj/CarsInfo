@@ -1,12 +1,12 @@
-import { UserLogin } from '@auth/interfaces/user-login';
+import {UserLogin} from '@auth/interfaces/user-login';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import * as AuthSelectors from '@auth/store/selectors/auth.selectors';
-import { Store } from '@ngrx/store';
-import { Component, Output, EventEmitter, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, Validators, FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { filter } from 'rxjs/operators';
+import {Store} from '@ngrx/store';
+import {Component, Output, EventEmitter, OnDestroy, OnInit, ChangeDetectionStrategy} from '@angular/core';
+import {FormBuilder, Validators, FormControl} from '@angular/forms';
+import {Subscription} from 'rxjs';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'login',
@@ -33,9 +33,9 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.subscriptions.push(
-      this.error$.subscribe((error) => {
-        if (error != null) {
-          this.openSnackBar(error);
+      this.error$.subscribe((errors) => {
+        if (errors != null && errors?.length !== 0) {
+          errors.forEach(error => setTimeout(() => this.openSnackBar(error), 5000));
         }
       }),
 
@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     const userLogin = this.loginForm.value as UserLogin;
-    this.store.dispatch(AuthActions.login({ userLogin }));
+    this.store.dispatch(AuthActions.login({userLogin}));
   }
 
   public switchToRegister(): void {

@@ -1,15 +1,12 @@
-import { CommentFilter } from './../../interfaces/comment-filter';
+import { CommentFilter } from '../../interfaces/comment-filter';
 import { CommentViewModel } from "../../interfaces/comment";
 
+export const commentsListFeatureKey = 'commentsList';
 
-export const commentsFeatureKey = 'comments';
-
-export interface CommentsState {
+export interface CommentsListState {
   comments: CommentViewModel[],
   canLoadNext: boolean,
   filter: CommentFilter
 }
 
-export interface State {
-  [commentsFeatureKey]: CommentsState;
-}
+

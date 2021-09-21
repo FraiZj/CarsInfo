@@ -1,11 +1,11 @@
-import { AuthTokens } from './../../interfaces/auth-tokens';
-import { ClaimTypes } from "@auth/enums/claim-types";
-import { JwtPayload } from "@auth/interfaces/jwt-payload";
-import { UserClaims } from "@auth/interfaces/user-claims";
-import { createFeatureSelector, createSelector } from "@ngrx/store";
+import {AuthTokens} from '@auth/interfaces/auth-tokens';
+import {ClaimTypes} from "@auth/enums/claim-types";
+import {JwtPayload} from "@auth/interfaces/jwt-payload";
+import {UserClaims} from "@auth/interfaces/user-claims";
+import {createFeatureSelector, createSelector} from "@ngrx/store";
 import jwtDecode from "jwt-decode";
 import * as fromAuth from './../states/auth.state';
-import { AuthState } from './../states/auth.state';
+import {AuthState} from './../states/auth.state';
 
 export const selectAuthState = createFeatureSelector<AuthState>(fromAuth.authFeatureKey);
 
@@ -16,7 +16,7 @@ export const selectAuthTokens = createSelector(
 
 export const selectAuthError = createSelector(
   selectAuthState,
-  (state) => state.error
+  (state) => state.errors
 );
 
 export const selectUserClaims = createSelector(
@@ -32,14 +32,12 @@ function getCurrentUserClaims(tokens: AuthTokens | null): UserClaims | null {
   }
 
   const jwtPayload = jwtDecode<JwtPayload>(tokens.accessToken);
-  const userClaims: UserClaims = {
+  return {
     roles: getRoles(jwtPayload),
     id: +jwtPayload.Id,
     email: jwtPayload[ClaimTypes.Email],
     token: tokens.accessToken
   };
-
-  return userClaims;
 }
 
 function getRoles(jwtPayload: JwtPayload) {

@@ -37,9 +37,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.subscriptions.push(
-      this.error$.subscribe((error) => {
-        if (error != null) {
-          this.openSnackBar(error);
+      this.error$.subscribe((errors) => {
+        if (errors != null && errors?.length !== 0) {
+          errors.forEach(error => setTimeout(() => this.openSnackBar(error), 5000));
         }
       }),
       this.store.select(AuthSelectors.selectLoggedIn).pipe(

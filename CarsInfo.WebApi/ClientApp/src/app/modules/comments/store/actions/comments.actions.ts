@@ -1,5 +1,4 @@
-import { CommentFilter } from './../../interfaces/comment-filter';
-import { CommentEditor } from './../../interfaces/comment-editor';
+import { CommentFilter } from '../../interfaces/comment-filter';
 import { createAction, props } from "@ngrx/store";
 import { CommentViewModel } from '../../interfaces/comment';
 
@@ -21,16 +20,6 @@ export const loadNextComments = createAction(
 export const loadNextCommentsSuccess = createAction(
   '[Comments] Load Next Comments Success',
   props<{ comments: CommentViewModel[] }>()
-);
-
-export const addComment = createAction(
-  '[Comments] Add Comment',
-  props<{ carId: number, comment: CommentEditor }>()
-);
-
-export const addCommentSuccess = createAction(
-  '[Comments] Add Comment Success',
-  props<{ carId: number }>()
 );
 
 export const canLoadNextComments = createAction(

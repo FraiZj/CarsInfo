@@ -2,8 +2,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ReactiveFormsModule } from '@angular/forms';
 import { EffectsModule } from '@ngrx/effects';
-import { reducer } from './store/reducers/comments.reducers';
-import { commentsFeatureKey } from './store/states/comments.state';
 import { StoreModule } from '@ngrx/store';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -14,6 +12,8 @@ import { CommentFormComponent } from './components/comment-form/comment-form.com
 import { MatInputModule } from '@angular/material/input';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import {commentsFeatureKey} from "./store/states";
+import {reducers} from "./store/reducers";
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     CommonModule,
     StoreModule.forFeature({
       name: commentsFeatureKey,
-      reducer: reducer
+      reducer: reducers
     }),
     EffectsModule.forFeature([CommentsEffects]),
     ReactiveFormsModule,
