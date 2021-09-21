@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.WebApi.IntegrationTest.Configuration;
 using CarsInfo.WebApi.ViewModels.Car;
 using CarsInfo.WebApi.ViewModels.Error;
 using FluentAssertions;
@@ -37,7 +38,8 @@ namespace CarsInfo.WebApi.IntegrationTest
                 .Should()
                 .Be(HttpStatusCode.OK);
             (await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>())
-                .Should().OnlyContain(car => car.Brand == "BMW");
+                .Should()
+                .OnlyContain(car => car.Brand == "BMW");
         }
 
         [Fact]
@@ -210,11 +212,54 @@ namespace CarsInfo.WebApi.IntegrationTest
                 .Should()
                 .Be(HttpStatusCode.NoContent);
         }
-        
+
+        [Fact]
+        public async Task Patch_ReturnsErrorResponse_WhenCarNotExist()
+        {
+            await AuthenticateAdminAsync();
+
+            var response = await TestClient.PatchAsync("/cars/0", JsonContent.Create(new List<object>
+            {
+                new
+                {
+                    path = "/model",
+                    op = "replace",
+                    value = "X7"
+                }
+            }));
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.BadRequest);
+            (await response.Content.ReadFromJsonAsync<ErrorResponse>())
+                .Should()
+                .Match(error => !string.IsNullOrWhiteSpace((error as ErrorResponse).ApplicationError));
+        }
+
+        [Fact]
+        public async Task Patch_ReturnsNoContent_WhenDataIsValid()
+        {
+            await AuthenticateAdminAsync();
+
+            var response = await TestClient.PatchAsync("/cars/1", JsonContent.Create(new List<object>
+            {
+                new
+                {
+                    path = "/model",
+                    op = "replace",
+                    value = "X7"
+                }
+            }));
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.NoContent);
+        }
+
         [Fact]
         public async Task Favorite_ReturnsEmptyResponse_WhenFavoriteCarsNotExist()
         {
-            await AuthenticateAdminAsync();
+            await AuthenticateNewUserAsync();
 
             var response = await TestClient.GetAsync("/cars/favorite");
 
@@ -224,6 +269,111 @@ namespace CarsInfo.WebApi.IntegrationTest
             (await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>())
                 .Should()
                 .BeEmpty();
+        }
+
+        [Fact]
+        public async Task Favorite_ReturnsFavoriteCars_WhenFavoriteCarsExist()
+        {
+            await AuthenticateAdminAsync();
+            await AddCarToFavoriteAsync(1);
+
+            var response = await TestClient.GetAsync("/cars/favorite");
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+            (await response.Content.ReadFromJsonAsync<IEnumerable<CarDto>>())
+                .Should()
+                .NotBeNullOrEmpty()
+                .And
+                .AllBeOfType<CarDto>();
+        }
+
+        [Fact]
+        public async Task FavoriteCarsIds_ReturnsEmptyResponse_WhenFavoriteCarsNotExist()
+        {
+            await AuthenticateNewUserAsync();
+
+            var response = await TestClient.GetAsync("/cars/favorite/ids");
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+            (await response.Content.ReadFromJsonAsync<IEnumerable<int>>())
+                .Should()
+                .BeEmpty();
+        }
+
+        [Fact]
+        public async Task FavoriteCarsIds_ReturnsFavoriteCarsIds_WhenFavoriteCarsExist()
+        {
+            await AuthenticateAdminAsync();
+            await AddCarToFavoriteAsync(1);
+
+            var response = await TestClient.GetAsync("/cars/favorite/ids");
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
+            (await response.Content.ReadFromJsonAsync<IEnumerable<int>>())
+                .Should()
+                .NotBeNullOrEmpty()
+                .And
+                .AllBeOfType<int>();
+        }
+
+        [Fact]
+        public async Task Delete_ReturnsErrorResponse_WhenCarNotExist()
+        {
+            await AuthenticateAdminAsync(TestClient);
+
+            var response = await TestClient.DeleteAsync("/cars/0");
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.BadRequest);
+            (await response.Content.ReadFromJsonAsync<ErrorResponse>())
+                .Should()
+                .Match(error => !string.IsNullOrWhiteSpace((error as ErrorResponse).ApplicationError));
+        }
+
+        [Fact]
+        public async Task Delete_ReturnsNoContent_WhenCarExists()
+        {
+            await AuthenticateAdminAsync(TestClient);
+           
+            var response = await TestClient.DeleteAsync("/cars/2");
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.NoContent);
+        }
+
+        [Fact]
+        public async Task ToggleFavorite_ReturnsErrorResponse_WhenCarNotExist()
+        {
+            await AuthenticateAdminAsync();
+
+            var response = await TestClient.PutAsJsonAsync("/cars/0/favorite", new {});
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.BadRequest);
+            (await response.Content.ReadFromJsonAsync<ErrorResponse>())
+                .Should()
+                .Match(error => !string.IsNullOrWhiteSpace((error as ErrorResponse).ApplicationError));
+        }
+
+        [Fact]
+        public async Task ToggleFavorite_ReturnsNoContent_WhenCarExists()
+        {
+            await AuthenticateAdminAsync();
+
+            var response = await TestClient.PutAsJsonAsync("/cars/1/favorite", new { });
+
+            response.StatusCode
+                .Should()
+                .Be(HttpStatusCode.OK);
         }
     }
 }

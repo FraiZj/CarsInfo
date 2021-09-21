@@ -40,7 +40,12 @@ namespace CarsInfo.WebApi.Controllers
             {
                 return BadRequest(containsOperation.FailureMessage);
             }
-            
+
+            if (containsOperation.Result)
+            {
+                return BadRequest("That email already in use. Try to login.");
+            }
+
             var user = _mapper.MapToUserDto(model);
             var registerUserResult = await _userService.AddAsync(user);
             

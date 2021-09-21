@@ -1,80 +1,71 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.WebApi.IntegrationTest.Configuration;
+using CarsInfo.WebApi.IntegrationTest.Configuration.Database;
 using CarsInfo.WebApi.ViewModels.Auth;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 
 namespace CarsInfo.WebApi.IntegrationTest
 {
-    public abstract class AbstractIntegrationTest
+    public abstract class AbstractIntegrationTest : IDisposable
     {
-        private const string ConnectionString =
-            "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=TestDb;Integrated Security=True;";
+        private readonly TempHttpClientWrapper _tempHttpClientWrapper;
 
-        protected readonly HttpClient TestClient;
-        
         protected AbstractIntegrationTest()
         {
-            var applicationFactory = new WebApplicationFactory<Startup>()
-                .WithWebHostBuilder(builder =>
-                {
-                    builder.ConfigureAppConfiguration((_, configBuilder) =>
-                    {
-                        configBuilder.AddInMemoryCollection(
-                            new Dictionary<string, string>
-                            {
-                                ["ConnectionStrings:CarsInfoDb"] = ConnectionString
-                            });
-                    });
-                });
-            TestClient = applicationFactory.CreateClient();
+            _tempHttpClientWrapper = TempHttpClientWrapper.Create(TestDatabaseConfiguration.GetTempTestDbConnectionString());
         }
 
-        public virtual async Task<ToggleFavoriteStatus> AddCarToFavoriteAsync(int carId)
+        protected HttpClient TestClient => _tempHttpClientWrapper.HttpClient;
+
+        public virtual async Task AddCarToFavoriteAsync(int carId, HttpClient httpClient = null)
         {
-            var response = await TestClient.PostAsJsonAsync($"{carId}/favorite", new {});
-            return await response.Content.ReadFromJsonAsync<ToggleFavoriteStatus>();
+            httpClient ??= TestClient;
+            ToggleFavoriteStatus result;
+            do
+            {
+                var response = await httpClient.PutAsJsonAsync($"/cars/{carId}/favorite", new { });
+                result = await response.Content.ReadFromJsonAsync<ToggleFavoriteStatus>();
+            } while (result == ToggleFavoriteStatus.DeleteFromFavorite);
         }
 
-        public virtual async Task AuthenticateAdminAsync()
+        public virtual async Task AuthenticateAdminAsync(HttpClient httpClient = null)
         {
-            var response = await TestClient.PostAsJsonAsync("/login", new LoginViewModel
+            httpClient ??= TestClient;
+            var response = await httpClient.PostAsJsonAsync("/login", new LoginViewModel
             {
                 Email = "admin@email.com",
                 Password = "admin@email.com"
             });
 
             var loginResponse = await response.Content.ReadFromJsonAsync<AuthViewModel>();
-            TestClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "bearer", loginResponse?.AccessToken);
         }
 
-        public virtual async Task AuthenticateUserAsync()
+        public virtual async Task AuthenticateNewUserAsync(HttpClient httpClient = null)
         {
-            var response = await TestClient.PostAsJsonAsync("/login", new LoginViewModel
+            httpClient ??= TestClient;
+            var randomString = RandomStringGenerator.GenerateRandom(15);
+            var response = await httpClient.PostAsJsonAsync("/register", new RegisterViewModel
             {
-                Email = "integration@test.com",
-                Password = "integration@test.com"
+                FirstName = "Integration",
+                LastName = "Test",
+                Email = $"{randomString}@test.com",
+                Password = randomString
             });
 
-            if (!response.IsSuccessStatusCode)
-            {
-                response = await TestClient.PostAsJsonAsync("/register", new RegisterViewModel
-                {
-                    FirstName = "Integration",
-                    LastName = "Test",
-                    Email = "integration@test.com",
-                    Password = "integration@test.com"
-                });
-            }
-
             var registrationResponse = await response.Content.ReadFromJsonAsync<AuthViewModel>();
-            TestClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "bearer", registrationResponse?.AccessToken);
+        }
+
+        public void Dispose()
+        {
+            _tempHttpClientWrapper?.Dispose();
         }
     }
 }

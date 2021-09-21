@@ -100,7 +100,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                         SELECT
                           CASE WHEN EXISTS 
                           (
-                                SELECT * FROM {GetTableName(typeof(T))} {filter}
+                            SELECT * FROM [{GetTableName(typeof(T))}] {filter}
                           )
                           THEN 1
                           ELSE 0
