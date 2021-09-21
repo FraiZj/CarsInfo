@@ -36,7 +36,7 @@ namespace CarsInfo.Infrastructure.Persistence.Configurators
 
             if (!includeDeleted)
             {
-                result.Append($"{tableName}.IsDeleted = 0 ");
+                result.Append($"[{tableName}].IsDeleted = 0 ");
 
                 if (filters.Any())
                 {

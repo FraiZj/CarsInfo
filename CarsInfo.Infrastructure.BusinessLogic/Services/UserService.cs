@@ -42,7 +42,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var filter = new FilterModel(new FiltrationField("User.Email", entity.Email));
+                var filter = new FilterModel(new FiltrationField("[User].Email", entity.Email));
                 var userAlreadyExist = await _usersRepository.ContainsAsync(filter.Filters);
                 if (userAlreadyExist ?? true)
                 {
@@ -72,7 +72,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             try
             {
-                var filter = new FilterModel(new FiltrationField("User.Email", email));
+                var filter = new FilterModel(new FiltrationField("[User].Email", email));
                 var contains = await _usersRepository.ContainsAsync(filter.Filters);
 
                 if (contains is null)
