@@ -15,6 +15,7 @@ import { selectLoggedIn } from '@auth/store/selectors/auth.selectors';
 })
 export class CarCardComponent implements OnInit, OnDestroy {
   @Input() public car!: Car;
+  private static readonly DefaultCarImage = '../../../../../assets/images/default-car.png';
   private readonly subscriptions: Subscription[] = [];
   public static readonly DefaultStarImagePath: string = '../../../../../assets/images/star-default.png';
   public static readonly SelectedStarImagePath: string = '../../../../../assets/images/star-selected.png';
@@ -46,5 +47,10 @@ export class CarCardComponent implements OnInit, OnDestroy {
 
   public onStarClick(): void {
     this.store.dispatch(CarsListActions.toggleFavoriteCar({ id: this.car.id }));
+  }
+
+  public setDefaultPicture() {
+    this.car = { ...this.car, carPicturesUrls: [CarCardComponent.DefaultCarImage] };
+    this.cdr.detectChanges();
   }
 }

@@ -1,20 +1,20 @@
-import { OrderBy } from './../enums/order-by';
-import { ToggleFavoriteStatus } from './../enums/toggle-favorite-status';
-import { CarsModule } from './../cars.module';
-import { CarEditor } from '../interfaces/car-editor';
-import { HttpClient } from "@angular/common/http";
-import { Inject, Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { Car } from "../interfaces/car";
-import { FilterWithPaginator } from '../../cars-list/interfaces/filterWithPaginator';
-import { map } from 'rxjs/operators';
+import {OrderBy} from '../enums/order-by';
+import {ToggleFavoriteStatus} from '../enums/toggle-favorite-status';
+import {CarsModule} from '../cars.module';
+import {CarEditor} from '../interfaces/car-editor';
+import {HttpClient} from "@angular/common/http";
+import {Inject, Injectable} from "@angular/core";
+import {Observable} from "rxjs";
+import {Car} from "../interfaces/car";
+import {FilterWithPaginator} from '@cars-list/interfaces/filterWithPaginator';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: CarsModule
 })
 export class CarsService {
   constructor(
-    @Inject("BASE_API_URL") private url: string,
+    @Inject("BASE_API_URL") private readonly url: string,
     private readonly http: HttpClient) {
     this.url += "/cars";
   }
@@ -77,7 +77,7 @@ export class CarsService {
   }
 
   public addCar(car: CarEditor): Observable<string | null> {
-    return this.http.post<any>(this.url, car, { observe: 'response' }).pipe(
+    return this.http.post<any>(this.url, car, {observe: 'response'}).pipe(
       map(response => {
         return response.headers.get('location');
       })
@@ -89,7 +89,7 @@ export class CarsService {
   }
 
   public deleteCar(id: number): Observable<string> {
-    return this.http.delete(`${this.url}/${id}`, { responseType: 'text' });
+    return this.http.delete(`${this.url}/${id}`, {responseType: 'text'});
   }
 
   public toggleFavorite(carId: number): Observable<ToggleFavoriteStatus> {
