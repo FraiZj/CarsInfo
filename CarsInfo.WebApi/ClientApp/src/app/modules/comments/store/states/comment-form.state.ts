@@ -1,6 +1,7 @@
 import {ValidationError} from "@core/interfaces/error";
 
-export interface ErrorResponse {
-  applicationError: string | null;
+export const commentFormFeatureKey = 'commentForm';
+
+export interface CommentFormState {
   validationErrors: ValidationError[];
 }

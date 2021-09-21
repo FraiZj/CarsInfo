@@ -75,3 +75,21 @@ a:hover {
 .white-text {
   color: #cdd9e5;
 }
+
+.w {
+  &-30 {
+    width: 30%;
+  }
+
+  &-40 {
+    width: 40%;
+  }
+
+  &-50 {
+    width: 50%;
+  }
+
+  &-60 {
+    width: 60%;
+  }
+}

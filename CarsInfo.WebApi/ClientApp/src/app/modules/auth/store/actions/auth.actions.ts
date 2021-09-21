@@ -1,4 +1,4 @@
-import { UserRegister } from './../../interfaces/user-register';
+import { UserRegister } from '@auth/interfaces/user-register';
 
 import { UserLogin } from 'app/modules/auth/interfaces/user-login';
 import { createAction, props } from '@ngrx/store';
@@ -28,7 +28,7 @@ export const loginSuccess = createAction(
 
 export const loginFailure = createAction(
   '[Auth] Login Failure',
-  props<{ error: any }>()
+  props<{ errors: string[] }>()
 );
 
 export const loginRedirect = createAction(

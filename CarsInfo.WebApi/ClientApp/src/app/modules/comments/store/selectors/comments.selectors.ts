@@ -1,19 +1,36 @@
-import { CommentsState, commentsFeatureKey } from './../states/comments.state';
-import { createFeatureSelector, createSelector } from "@ngrx/store";
+import {commentsListFeatureKey} from '../states/comments.state';
+import {createFeatureSelector, createSelector} from "@ngrx/store";
+import {commentFormFeatureKey } from "../states/comment-form.state";
+import {commentsFeatureKey, CommentsState} from "../states";
 
 export const selectCommentsState = createFeatureSelector<CommentsState>(commentsFeatureKey);
 
-export const selectComments = createSelector(
+export const selectCommentsListState = createSelector(
   selectCommentsState,
+  (state) => state[commentsListFeatureKey]
+);
+
+export const selectComments = createSelector(
+  selectCommentsListState,
   (state) => state.comments
 );
 
 export const selectCanLoadNextComments = createSelector(
-  selectCommentsState,
+  selectCommentsListState,
   (state) => state.canLoadNext
 );
 
 export const selectCommentFilter = createSelector(
-  selectCommentsState,
+  selectCommentsListState,
   (state) => state.filter
+);
+
+export const selectCommentFormState = createSelector(
+  selectCommentsState,
+  (state) => state[commentFormFeatureKey]
+);
+
+export const selectCommentFormValidationErrors = createSelector(
+  selectCommentFormState,
+  (state) => state.validationErrors
 );

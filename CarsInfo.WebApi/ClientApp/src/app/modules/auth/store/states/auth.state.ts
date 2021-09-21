@@ -4,7 +4,7 @@ export const authFeatureKey = 'auth';
 
 export interface AuthState {
   tokens: AuthTokens | null;
-  error: string | null;
+  errors: string[];
 }
 
 export interface State {

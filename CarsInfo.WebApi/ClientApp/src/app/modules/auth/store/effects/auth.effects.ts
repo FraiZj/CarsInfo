@@ -1,5 +1,4 @@
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { AuthService } from "@auth/services/auth.service";
@@ -9,6 +8,9 @@ import { map, exhaustMap, catchError, tap } from "rxjs/operators";
 import * as AuthActions from '../actions/auth.actions';
 import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 import { Action } from '@ngrx/store';
+import {addApplicationError} from "@core/store/actions/core.actions";
+import {ErrorResponse} from "@core/interfaces/error-response";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Injectable()
 export class AuthEffects implements OnInitEffects {
@@ -28,8 +30,7 @@ export class AuthEffects implements OnInitEffects {
       ofType(AuthActions.init),
       exhaustMap(() =>
         this.authService.refreshToken().pipe(
-          map(tokens => AuthActions.loginSuccess({ tokens })),
-          catchError(error => this.handleCatchError(error))
+          map(tokens => AuthActions.loginSuccess({ tokens }))
         )
       )
     )
@@ -101,9 +102,17 @@ export class AuthEffects implements OnInitEffects {
   )
 );
 
-  private handleCatchError(error: any) {
-    if (error instanceof HttpErrorResponse) return of(AuthActions.loginFailure({ error: error.error }));
-    if (error instanceof Error) return of(AuthActions.loginFailure({ error: error.message }));
-    return of(AuthActions.loginFailure({ error: 'An error occurred' }));
+  private handleCatchError(errorResponse: HttpErrorResponse | Error) {
+    if (errorResponse instanceof HttpErrorResponse) {
+      const error = errorResponse.error as ErrorResponse;
+
+      if (error.applicationError != null) {
+        return of(addApplicationError({ applicationError: error.applicationError }));
+      }
+
+      return of(AuthActions.loginFailure({ errors: error.validationErrors.map(e => `${e.field} ${e.error}`) }));
+    }
+
+    return of(addApplicationError({ applicationError: errorResponse.message }));
   }
 }

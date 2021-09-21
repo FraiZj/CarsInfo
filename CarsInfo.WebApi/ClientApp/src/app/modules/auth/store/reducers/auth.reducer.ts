@@ -4,13 +4,13 @@ import { AuthState } from '../states/auth.state';
 
 export const initialState: AuthState = {
   tokens: null,
-  error: null
+  errors: []
 };
 
 export const reducer = createReducer(
   initialState,
-  on(AuthActions.loginSuccess, (state, { tokens }) => ({ ...state, tokens, error: null })),
-  on(AuthActions.loginFailure, (state, { error }) => ({ ...state, tokens: null, error })),
-  on(AuthActions.logoutSuccess, (state) => ({ ...state, tokens: null, error: null })),
-  on(AuthActions.clearLoginError, (state) => ({ ...state, error: null }))
+  on(AuthActions.loginSuccess, (state, { tokens }) => ({ ...state, tokens, errors: [] })),
+  on(AuthActions.loginFailure, (state, { errors }) => ({ ...state, tokens: null, errors })),
+  on(AuthActions.logoutSuccess, (state) => ({ ...state, tokens: null, errors: [] })),
+  on(AuthActions.clearLoginError, (state) => ({ ...state, errors: [] }))
 );
