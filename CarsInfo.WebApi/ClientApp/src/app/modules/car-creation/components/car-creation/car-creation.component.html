@@ -1,4 +1,5 @@
 <div class="car-editor-block">
   <h2 class="title white-text">Create new car</h2>
-  <car-editor-form (carEditorSubmit)="onSubmit($event)"></car-editor-form>
+  <car-editor-form (carEditorSubmit)="onSubmit($event)"
+                   [validationErrors]="validationErrors$ | async"></car-editor-form>
 </div>

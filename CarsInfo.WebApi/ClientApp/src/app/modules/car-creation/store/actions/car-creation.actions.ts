@@ -1,5 +1,6 @@
-import { CarEditor } from './../../../cars/interfaces/car-editor';
+import { CarEditor } from '@cars/interfaces/car-editor';
 import { createAction, props } from "@ngrx/store";
+import {ValidationError} from "@core/interfaces/error";
 
 export const createCar = createAction(
   '[Car Creation] Create Car',
@@ -10,6 +11,7 @@ export const createCarSuccess = createAction(
   '[Car Creation] Create Car Success'
 );
 
-export const createCarFailed = createAction(
-  '[Car Creation] Create Car Failed'
+export const addCarCreationValidationErrors = createAction(
+  '[Car Creation] Add Validation Errors',
+  props<{ validationErrors: ValidationError[] }>()
 );
