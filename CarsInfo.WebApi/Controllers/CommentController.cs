@@ -19,16 +19,13 @@ namespace CarsInfo.WebApi.Controllers
     {
         private readonly ICommentService _commentService;
         private readonly CommentControllerMapper _mapper;
-        private readonly IEmailSender _emailSender;
 
         public CommentController(
             ICommentService commentService, 
-            CommentControllerMapper mapper,
-            IEmailSender emailSender)
+            CommentControllerMapper mapper)
         {
             _commentService = commentService;
             _mapper = mapper;
-            _emailSender = emailSender;
         }
         
         [HttpGet]
@@ -59,13 +56,6 @@ namespace CarsInfo.WebApi.Controllers
             commentDto.CarId = carId;
             commentDto.UserId = userId.Value;
             var operation = await _commentService.AddAsync(commentDto);
-
-            await _emailSender.SendEmailAsync(new EmailModel
-            {
-                Email = "dania.moom@gmail.com",
-                Subject = "Test",
-                Message = "Test"
-            }, "Test");
             
             return operation.Success ?
                 Created("/cars/{carId}/comments", comment) :

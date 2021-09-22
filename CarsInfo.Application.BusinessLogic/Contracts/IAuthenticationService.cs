@@ -12,5 +12,7 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
         Task<OperationResult.OperationResult<ICollection<Claim>>> AuthenticateExternalUserAsync(string email);
 
         Task<OperationResult.OperationResult<UserDto>> LoginWithGoogleAsync(string token);
+        
+        Task<OperationResult.OperationResult<bool>> VerifyEmailAsync(string email);
     }
 }

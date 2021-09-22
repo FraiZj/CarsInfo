@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.WebApi.Account;
+using CarsInfo.WebApi.Account.Models;
 using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
@@ -18,17 +20,20 @@ namespace CarsInfo.WebApi.Controllers
         private readonly IUserService _userService;
         private readonly AuthorizationControllerMapper _mapper;
         private readonly ITokenService _tokenService;
+        private readonly IAccountService _accountService;
 
         public AuthorizationController(
             IAuthenticationService authenticationService,
             IUserService userService,
             AuthorizationControllerMapper mapper,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IAccountService accountService)
         {
             _authenticationService = authenticationService;
             _userService = userService;
             _mapper = mapper;
             _tokenService = tokenService;
+            _accountService = accountService;
         }
 
         [HttpPost("register")]
@@ -53,6 +58,13 @@ namespace CarsInfo.WebApi.Controllers
             {
                 return BadRequest(containsOperation.FailureMessage);
             }
+
+            await _accountService.SendEmailVerificationAsync(new EmailVerificationModel
+            {
+                Email = model.Email,
+                FirstName = "Test",
+                LastName = "Test"
+            });
             
             return await AuthorizeAsync(user);
         }

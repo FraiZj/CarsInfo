@@ -11,6 +11,15 @@ export class SnackBarService {
   ) {
   }
 
+  public success(message: string) {
+    this._snackBar.open(message, 'X', {
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      duration: 5000,
+      panelClass: ['success-snackbar']
+    });
+  }
+
   public openSnackBar(message: string) {
     this._snackBar.open(message, 'X', {
       horizontalPosition: 'right',
