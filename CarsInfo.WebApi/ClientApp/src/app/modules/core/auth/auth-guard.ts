@@ -1,7 +1,7 @@
-import { selectUserClaims } from './../../auth/store/selectors/auth.selectors';
+import { selectUserClaims } from '@auth/store/selectors/auth.selectors';
 import * as fromAuth from './../../auth/store/actions/auth.actions';
 import { Observable } from 'rxjs';
-import { UserClaims } from '../../auth/interfaces/user-claims';
+import { UserClaims } from '@auth/interfaces/user-claims';
 import { CoreModule } from './../core.module';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot } from '@angular/router';

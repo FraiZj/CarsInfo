@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Security.Claims;
+using CarsInfo.Application.BusinessLogic.Enums;
 
 namespace CarsInfo.WebApi.Extensions
 {
@@ -7,7 +8,8 @@ namespace CarsInfo.WebApi.Extensions
     {
         public static int? GetUserId(this ClaimsPrincipal principal)
         {
-            return int.TryParse(principal?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value, out var id) ?
+            var idClaim = principal?.Claims.FirstOrDefault(c => c.Type == ApplicationClaims.Id);
+            return int.TryParse(idClaim?.Value, out var id) ?
                 id :
                 null;
         }

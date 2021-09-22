@@ -1,8 +1,8 @@
-import { Subscription, Observable } from 'rxjs';
+import {Subscription, Observable} from 'rxjs';
 import * as fromAuth from 'app/modules/auth/store/selectors/auth.selectors';
-import { Directive, ElementRef, Input, OnDestroy, OnInit } from "@angular/core";
-import { map } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
+import {Directive, ElementRef, Input, OnDestroy, OnInit} from "@angular/core";
+import {map} from 'rxjs/operators';
+import {Store} from '@ngrx/store';
 
 @Directive({
   selector: '[accessControl]'
@@ -16,7 +16,8 @@ export class AccessControlDirective implements OnInit, OnDestroy {
   constructor(
     private elementRef: ElementRef,
     private readonly store: Store
-  ) { }
+  ) {
+  }
 
   public ngOnInit(): void {
     this.defaultDisplay = this.elementRef.nativeElement.style.display;

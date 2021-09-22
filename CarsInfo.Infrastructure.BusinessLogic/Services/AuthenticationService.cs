@@ -168,8 +168,12 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             var claims = user.Roles.Select(
                 userRole => new Claim(ClaimTypes.Role, userRole.Name)).ToList();
-            claims.Add(new Claim(ClaimTypes.Email, user.Email));
-            claims.Add(new Claim("Id", user.Id.ToString()));
+            claims.AddRange(new List<Claim>()
+            {
+                new(ClaimTypes.Email, user.Email),
+                new(ApplicationClaims.Id, user.Id.ToString()),
+                new(ApplicationClaims.EmailVerified, user.EmailVerified.ToString())
+            });
 
             return claims;
         }

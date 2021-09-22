@@ -36,7 +36,7 @@ function getCurrentUserClaims(tokens: AuthTokens | null): UserClaims | null {
     roles: getRoles(jwtPayload),
     id: +jwtPayload.Id,
     email: jwtPayload[ClaimTypes.Email],
-    token: tokens.accessToken
+    emailVerified: jwtPayload.EmailVerified === 'true'
   };
 }
 
