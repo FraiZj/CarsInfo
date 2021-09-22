@@ -3,11 +3,14 @@ using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Controllers.Base;
+using CarsInfo.WebApi.EmailSender;
+using CarsInfo.WebApi.EmailSender.Models;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Comment;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SendGrid.Helpers.Mail;
 
 namespace CarsInfo.WebApi.Controllers
 {
@@ -16,13 +19,16 @@ namespace CarsInfo.WebApi.Controllers
     {
         private readonly ICommentService _commentService;
         private readonly CommentControllerMapper _mapper;
+        private readonly IEmailSender _emailSender;
 
         public CommentController(
             ICommentService commentService, 
-            CommentControllerMapper mapper)
+            CommentControllerMapper mapper,
+            IEmailSender emailSender)
         {
             _commentService = commentService;
             _mapper = mapper;
+            _emailSender = emailSender;
         }
         
         [HttpGet]
@@ -53,6 +59,13 @@ namespace CarsInfo.WebApi.Controllers
             commentDto.CarId = carId;
             commentDto.UserId = userId.Value;
             var operation = await _commentService.AddAsync(commentDto);
+
+            await _emailSender.SendEmailAsync(new EmailModel
+            {
+                Email = "dania.moom@gmail.com",
+                Subject = "Test",
+                Message = "Test"
+            }, "Test");
             
             return operation.Success ?
                 Created("/cars/{carId}/comments", comment) :
