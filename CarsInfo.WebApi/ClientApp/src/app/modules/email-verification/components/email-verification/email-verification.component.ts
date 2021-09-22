@@ -1,14 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AccountService} from "@account/services/account.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {map, switchMap, takeUntil, tap} from "rxjs/operators";
+import {map, switchMap, takeUntil} from "rxjs/operators";
 import {SnackBarService} from "@core/services/snackbar.service";
 import {Subject} from "rxjs";
 
 @Component({
   selector: 'email-verification',
-  templateUrl: './email-verification.component.html',
-  styleUrls: ['./email-verification.component.scss']
+  template: ''
 })
 export class EmailVerificationComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
@@ -24,24 +23,32 @@ export class EmailVerificationComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.route.queryParams.pipe(
       map(params => {
-        const email: string | undefined = params['email'];
+        const token: string | undefined = params['token'];
 
-        if (email == null) {
-          this.router.navigateByUrl('/cars');
+        if (token == null) {
+          this.navigateToMainPage();
         }
 
-        return email as string;
+        return token as string;
       }),
-      switchMap(email => this.accountService.verifyEmail(email)),
-      tap({
-        next: () => this.snackBar.success('Email successfully verified.'),
-        error: () => this.snackBar.openSnackBar('Unable to verify your email. Try again.')
-      }),
+      switchMap(token => this.accountService.verifyEmail(token)),
       takeUntil(this.unsubscribe$)
-    ).subscribe(
-      () => this.router.navigateByUrl('/cars')
-    );
+    ).subscribe({
+      next: () => {
+        this.navigateToMainPage();
+        this.snackBar.success('Email successfully verified.');
+      },
+      error: () => {
+        this.snackBar.openSnackBar('Unable to verify your email. Try again.');
+        this.navigateToMainPage();
+      }
+    });
   }
+
+  private navigateToMainPage() {
+    this.router.navigateByUrl('/cars');
+  }
+
 
   public ngOnDestroy(): void {
     this.unsubscribe$.next();

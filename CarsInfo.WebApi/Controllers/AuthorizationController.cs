@@ -62,8 +62,8 @@ namespace CarsInfo.WebApi.Controllers
             await _accountService.SendEmailVerificationAsync(new EmailVerificationModel
             {
                 Email = model.Email,
-                FirstName = "Test",
-                LastName = "Test"
+                FirstName = model.FirstName,
+                LastName = model.LastName
             });
             
             return await AuthorizeAsync(user);

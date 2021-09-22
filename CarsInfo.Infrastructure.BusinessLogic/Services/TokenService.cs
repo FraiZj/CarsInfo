@@ -38,6 +38,12 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             _authSetting = authSetting.Value;
         }
 
+        public JwtSecurityToken DecodeJwtToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            return tokenHandler.ReadJwtToken(token);
+        }
+
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSetting.Secret));

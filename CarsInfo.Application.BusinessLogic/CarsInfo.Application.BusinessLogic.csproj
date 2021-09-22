@@ -8,4 +8,8 @@
     <ProjectReference Include="..\CarsInfo.Application.Persistence\CarsInfo.Application.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
+  </ItemGroup>
+
 </Project>

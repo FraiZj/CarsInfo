@@ -12,10 +12,10 @@ export class AccountService {
     private readonly http: HttpClient
   ) { }
 
-  public verifyEmail(email: string): Observable<void> {
+  public verifyEmail(token: string): Observable<void> {
     return this.http.get<void>(`${this.url}/email/verify`, {
       params: {
-        email: email
+        token: token
       }
     });
   }
