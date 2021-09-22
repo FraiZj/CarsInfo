@@ -1,15 +1,11 @@
-import { ClaimTypes } from './../enums/claim-types';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse, HttpResponseBase } from "@angular/common/http";
-import { Inject, Injectable } from "@angular/core";
-import { JwtPayload } from "app/modules/auth/interfaces/jwt-payload";
-import { UserClaims } from "app/modules/auth/interfaces/user-claims";
-import { UserLogin } from "app/modules/auth/interfaces/user-login";
-import { UserRegister } from "app/modules/auth/interfaces/user-register";
-import jwtDecode from "jwt-decode";
-import { BehaviorSubject, Observable, throwError } from "rxjs";
-import { map, take, tap } from "rxjs/operators";
-import { AuthModule } from "../auth.module";
-import { AuthTokens } from '@auth/interfaces/auth-tokens';
+import {HttpClient} from "@angular/common/http";
+import {Inject, Injectable} from "@angular/core";
+import {UserLogin} from "app/modules/auth/interfaces/user-login";
+import {UserRegister} from "app/modules/auth/interfaces/user-register";
+import {BehaviorSubject, Observable, throwError} from "rxjs";
+import {take, tap} from "rxjs/operators";
+import {AuthModule} from "../auth.module";
+import {AuthTokens} from '@auth/interfaces/auth-tokens';
 
 @Injectable({
   providedIn: AuthModule
@@ -18,24 +14,6 @@ export class AuthService {
   private static readonly TokensName: string = 'tokens';
   private refreshTokenTimeout!: NodeJS.Timeout;
   private currentUserTokenSubject!: BehaviorSubject<AuthTokens | null>;
-
-  public get userClaims(): Observable<UserClaims | null> {
-    return this.currentUserTokenSubject.pipe(map(value => {
-      if (value == null) {
-        return null;
-      }
-
-      const jwtPayload = jwtDecode<JwtPayload>(value.accessToken);
-      const userClaims: UserClaims = {
-        roles: this.getRoles(jwtPayload),
-        id: +jwtPayload.Id,
-        email: jwtPayload[ClaimTypes.Email],
-        token: value.accessToken
-      };
-
-      return userClaims;
-    }));
-  }
 
   constructor(
     @Inject("BASE_API_URL") private url: string,
@@ -64,28 +42,6 @@ export class AuthService {
     this.currentUserTokenSubject = new BehaviorSubject<AuthTokens | null>(tokens);
   }
 
-  public getCurrentUserClaims(): UserClaims | null {
-    if (this.currentUserTokenSubject.value == null) {
-      return null;
-    }
-
-    const jwtPayload = jwtDecode<JwtPayload>(this.currentUserTokenSubject.value.accessToken);
-    const userClaims: UserClaims = {
-      roles: this.getRoles(jwtPayload),
-      id: +jwtPayload.Id,
-      email: jwtPayload[ClaimTypes.Email],
-      token: this.currentUserTokenSubject.value.accessToken
-    };
-
-    return userClaims;
-  }
-
-  private getRoles(jwtPayload: JwtPayload) {
-    return typeof jwtPayload[ClaimTypes.Role] == 'string' ?
-      [jwtPayload[ClaimTypes.Role] as string] :
-      jwtPayload[ClaimTypes.Role] as string[];
-  }
-
   public getTokensFromLocalStorage(): AuthTokens | null {
     const tokensString: string | null = localStorage.getItem(AuthService.TokensName);
 
@@ -94,9 +50,7 @@ export class AuthService {
       return null;
     }
 
-    const tokens: AuthTokens = JSON.parse(tokensString);
-
-    return tokens;
+    return JSON.parse(tokensString);
   }
 
   public register(userRegister: UserRegister): Observable<AuthTokens> {
@@ -116,7 +70,7 @@ export class AuthService {
   }
 
   public loginWithGoogle(token: string): Observable<AuthTokens> {
-    return this.http.post<AuthTokens>(`${this.url}/login/google`, { token })
+    return this.http.post<AuthTokens>(`${this.url}/login/google`, {token})
       .pipe(tap({
         next: this.authenticationSuccededHandler,
         error: this.authenticationErrorHandler
@@ -157,7 +111,7 @@ export class AuthService {
       this.stopRefreshTokenTimer();
     }
 
-    return this.http.post<string>(`${this.url}/revoke-token`, {}, { responseType: 'text' as 'json'})
+    return this.http.post<string>(`${this.url}/revoke-token`, {}, {responseType: 'text' as 'json'})
       .pipe(tap({
         next: logoutHandler,
         error: logoutHandler

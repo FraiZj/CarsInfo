@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
+using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.Account;
 using CarsInfo.WebApi.Account.Models;
 using CarsInfo.WebApi.Controllers.Base;
@@ -186,7 +187,7 @@ namespace CarsInfo.WebApi.Controllers
 ;
             var userRefreshToken = new UserRefreshTokenDto
             {
-                UserId = Convert.ToInt32(claims.First(c => c.Type == "Id").Value),
+                UserId = Convert.ToInt32(claims.First(c => c.Type == ApplicationClaims.Id).Value),
                 Token = refreshToken,
                 ExpiryTime = DateTimeOffset.Now.AddDays(7)
             };
