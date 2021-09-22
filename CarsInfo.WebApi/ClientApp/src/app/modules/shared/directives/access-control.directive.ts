@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 @Directive({
-  selector: '[access-control]'
+  selector: '[accessControl]'
 })
 export class AccessControlDirective implements OnInit, OnDestroy {
   @Input() public roles: string[] = [];

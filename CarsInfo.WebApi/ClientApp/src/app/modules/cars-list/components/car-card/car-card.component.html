@@ -8,7 +8,7 @@
         <a [routerLink]="['/cars', car.id]">{{ car.brand }} {{ car.model }}</a>
       </mat-card-title>
     </div>
-    <div access-control class="car-card-star-block">
+    <div accessControl class="car-card-star-block">
       <img class="car-card--star clickable" [src]="currentImage" alt="Star image"
            (click)="onStarClick()">
     </div>

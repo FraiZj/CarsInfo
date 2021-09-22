@@ -5,13 +5,13 @@
     </div>
     <div class="nav-links">
       <a nav-item [routerLink]="['/cars']">All Cars</a>
-      <a nav-item access-control [routerLink]="['/cars/favorite']">Favorite Cars</a>
-      <a nav-item access-control [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
-      <a nav-item access-control [authenticated]="false" class="nav-right clickable"
+      <a nav-item accessControl [routerLink]="['/cars/favorite']">Favorite Cars</a>
+      <a nav-item accessControl [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
+      <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
         (click)="openDialog('Login')">Login</a>
-      <a nav-item access-control [authenticated]="false" class="nav-right clickable"
+      <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
         (click)="openDialog('Register')">Register</a>
-      <a nav-item access-control class="nav-right clickable" (click)="onLogout()">Logout</a>
+      <a nav-item accessControl class="nav-right clickable" (click)="onLogout()">Logout</a>
     </div>
     <div class="nav-menu-button">
       <a class="nav-right clickable">
@@ -22,12 +22,12 @@
   </div>
   <div *ngIf="mobileMenuOpened" class="nav-links-vertical">
     <a nav-item [routerLink]="['/cars']">All Cars</a>
-    <a nav-item access-control [routerLink]="['/cars/favorite']">Favorite Cars</a>
-    <a nav-item access-control [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
-    <a nav-item access-control [authenticated]="false" class="nav-right clickable"
+    <a nav-item accessControl [routerLink]="['/cars/favorite']">Favorite Cars</a>
+    <a nav-item accessControl [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
+    <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
       (click)="openDialog('Login')">Login</a>
-    <a nav-item access-control [authenticated]="false" class="nav-right clickable"
+    <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
       (click)="openDialog('Register')">Register</a>
-    <a nav-item access-control class="nav-right clickable" (click)="onLogout()">Logout</a>
+    <a nav-item accessControl class="nav-right clickable" (click)="onLogout()">Logout</a>
   </div>
 </nav>

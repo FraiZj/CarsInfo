@@ -14,6 +14,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import {commentsFeatureKey} from "./store/states";
 import {reducers} from "./store/reducers";
+import {SharedModule} from "@shared/shared.module";
 
 @NgModule({
   declarations: [
@@ -21,20 +22,21 @@ import {reducers} from "./store/reducers";
     CommentCardComponent,
     CommentFormComponent
   ],
-  imports: [
-    CommonModule,
-    StoreModule.forFeature({
-      name: commentsFeatureKey,
-      reducer: reducers
-    }),
-    EffectsModule.forFeature([CommentsEffects]),
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    InfiniteScrollModule,
-    NgxSpinnerModule
-  ],
+    imports: [
+        CommonModule,
+        StoreModule.forFeature({
+            name: commentsFeatureKey,
+            reducer: reducers
+        }),
+        EffectsModule.forFeature([CommentsEffects]),
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        InfiniteScrollModule,
+        NgxSpinnerModule,
+        SharedModule
+    ],
   exports: [
     CommentsListComponent,
     CommentFormComponent
