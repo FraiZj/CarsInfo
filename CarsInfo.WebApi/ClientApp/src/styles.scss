@@ -72,6 +72,15 @@ a:hover {
   }
 }
 
+.success-snackbar {
+  background-color: #fff;
+  color: #2d333b;
+
+  .mat-button {
+    color: green;
+  }
+}
+
 .white-text {
   color: #cdd9e5;
 }

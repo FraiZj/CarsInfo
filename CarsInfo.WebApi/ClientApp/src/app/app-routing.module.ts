@@ -1,8 +1,8 @@
-import { NotFoundComponent } from '@core/components/not-found/not-found.component';
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { Roles } from '@auth/enums/roles';
-import { AuthGuard } from '@core/auth/auth-guard';
+import {NotFoundComponent} from '@core/components/not-found/not-found.component';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {Roles} from '@auth/enums/roles';
+import {AuthGuard} from '@core/auth/auth-guard';
 
 const routes: Routes = [
   {
@@ -39,6 +39,11 @@ const routes: Routes = [
     }
   },
   {
+    path: 'email/verify',
+    loadChildren: () => import('./modules/email-verification/email-verification.module')
+      .then(m => m.EmailVerificationModule)
+  },
+  {
     path: '**',
     component: NotFoundComponent
   }
@@ -48,4 +53,5 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

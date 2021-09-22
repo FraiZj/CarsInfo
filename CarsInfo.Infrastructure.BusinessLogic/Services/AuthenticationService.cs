@@ -119,6 +119,34 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
+        public async Task<OperationResult<bool>> VerifyEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _usersRepository.GetByEmailAsync(email);
+
+                if (user is null)
+                {
+                    return OperationResult<bool>.FailureResult($"User with email='{email}' does not exist");
+                }
+
+                if (user.EmailVerified)
+                {
+                    return OperationResult<bool>.SuccessResult(true);
+                }
+
+                user.EmailVerified = true;
+                await _usersRepository.UpdateAsync(user);
+                
+                return OperationResult<bool>.SuccessResult(true);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while verifying user email");
+                return OperationResult<bool>.ExceptionResult();
+            }
+        }
+
         private async Task CreateUserFromGoogle(GoogleAuthResult googleAuth)
         {
             var userId = await _usersRepository.AddAsync(new User

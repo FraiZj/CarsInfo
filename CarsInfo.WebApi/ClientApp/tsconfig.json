@@ -33,7 +33,9 @@
       "@car-editor/*": ["app/modules/car-editor/*"],
       "@car-editor-form/*": ["app/modules/car-editor-form/*"],
       "@cars/*": ["app/modules/cars/*"],
-      "@comments/*": ["app/modules/comments/*"]
+      "@comments/*": ["app/modules/comments/*"],
+      "@account/*": ["app/modules/account/*"],
+      "@email-verification": ["app/modules/email-verification/*"]
     }
   },
   "angularCompilerOptions": {

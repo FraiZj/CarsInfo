@@ -11,7 +11,8 @@ CREATE TABLE [User] (
 	LastName nvarchar(50),
 	Email nvarchar(50) NOT NULL UNIQUE,
 	[Password] nvarchar(500),
-	IsExternal bit DEFAULT 0
+	IsExternal bit DEFAULT 0 NOT NULL,
+    EmailVerified bit DEFAULT 0 NOT NULL,
 )
 
 CREATE TABLE UserRefreshToken (

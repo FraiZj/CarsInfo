@@ -21,11 +21,7 @@ export class CommentsService {
     const params = CommentsService.configureParams(filter);
     return this.http.get<CommentViewModel[]>(`${this.url}/cars/${carId}/comments`, {
       params: params
-    }).pipe(
-      tap({
-        error: (error: ErrorResponse) => console.error(error)
-      })
-    );
+    });
   }
 
   private static configureParams(filter?: CommentFilter) {
@@ -37,10 +33,6 @@ export class CommentsService {
   }
 
   public addComment(carId: number, comment: CommentEditor): Observable<CommentEditor> {
-    return this.http.post<CommentEditor>(`${this.url}/cars/${carId}/comments`, comment).pipe(
-      tap({
-        error: (error: ErrorResponse) => console.error(error)
-      })
-    );
+    return this.http.post<CommentEditor>(`${this.url}/cars/${carId}/comments`, comment);
   }
 }

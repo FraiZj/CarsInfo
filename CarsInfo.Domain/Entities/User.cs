@@ -17,6 +17,8 @@ namespace CarsInfo.Domain.Entities
         public string Password { get; set; }
 
         public bool IsExternal { get; set; }
+        
+        public bool EmailVerified { get; set; }
 
         public UserRefreshToken UserRefreshToken { get; set; }
         

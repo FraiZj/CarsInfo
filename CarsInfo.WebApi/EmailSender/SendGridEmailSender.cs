@@ -10,6 +10,7 @@ namespace CarsInfo.WebApi.EmailSender
     public class SendGridEmailSender : IEmailSender
     {
         private const string Sender = "daniil.khyzhniak@gmail.com";
+        private const string SenderName = "CarsInfo";
         private readonly SendGridOptions _sendGridOptions;
         
         public SendGridEmailSender(IOptions<SendGridOptions> sendGridOptions)
@@ -17,12 +18,12 @@ namespace CarsInfo.WebApi.EmailSender
             _sendGridOptions = sendGridOptions.Value;
         }
         
-        public Task SendEmailAsync(EmailModel emailModel, string senderName = Sender)
+        public Task SendEmailAsync(EmailModel emailModel)
         {
             var client = new SendGridClient(_sendGridOptions.SendGridKey);
             var msg = new SendGridMessage
             {
-                From = new EmailAddress(Sender, senderName),
+                From = new EmailAddress(Sender, SenderName),
                 Subject = emailModel.Subject,
                 PlainTextContent = emailModel.Message,
                 HtmlContent = emailModel.Message
