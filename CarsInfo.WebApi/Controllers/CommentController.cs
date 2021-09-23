@@ -2,6 +2,7 @@
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.Infrastructure.BusinessLogic.Extensions;
 using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.EmailSender;
 using CarsInfo.WebApi.EmailSender.Models;

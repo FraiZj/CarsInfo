@@ -15,7 +15,6 @@ import {AuthTokens} from "@auth/interfaces/auth-tokens";
 
 @Injectable()
 export class AuthEffects implements OnInitEffects {
-
   constructor(
     private readonly actions$: Actions,
     private readonly authService: AuthService,

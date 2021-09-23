@@ -4,11 +4,13 @@ import {AccountService} from "@account/services/account.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {of} from "rxjs";
 import {addApplicationError} from "@core/store/actions/core.actions";
-import {catchError, exhaustMap, map, tap} from "rxjs/operators";
+import {catchError, exhaustMap, filter, map, tap} from "rxjs/operators";
 import {verifyEmail, verifyEmailSuccess} from "../actions/email-verification.actions";
-import {init} from "@auth/store/actions/auth.actions";
+import {init, refreshToken} from "@auth/store/actions/auth.actions";
 import {SnackBarService} from "@core/services/snackbar.service";
 import {Router} from "@angular/router";
+import {Store} from "@ngrx/store";
+import {selectAuthTokens} from "@auth/store/selectors/auth.selectors";
 
 @Injectable()
 export class EmailVerificationEffects {
@@ -16,7 +18,8 @@ export class EmailVerificationEffects {
     private readonly actions$: Actions,
     private readonly accountService: AccountService,
     private readonly snackBar: SnackBarService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly store: Store
   ) {
   }
 
@@ -42,7 +45,10 @@ export class EmailVerificationEffects {
         this.snackBar.success('Email successfully verified.');
         this.router.navigateByUrl('/cars');
       }),
-      map(() => init())
+      exhaustMap(() => this.store.select(selectAuthTokens).pipe(
+        filter(tokens => tokens != null),
+        map(tokens => refreshToken({ tokens: tokens! }))
+      ))
     )
   );
 

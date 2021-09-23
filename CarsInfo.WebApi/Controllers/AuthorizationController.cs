@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.Infrastructure.BusinessLogic.Extensions;
+using CarsInfo.Infrastructure.BusinessLogic.Services;
 using CarsInfo.WebApi.Account;
 using CarsInfo.WebApi.Account.Models;
 using CarsInfo.WebApi.Controllers.Base;
@@ -99,37 +101,19 @@ namespace CarsInfo.WebApi.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> Refresh([FromBody] AuthViewModel authViewModel)
         {
-            var getPrincipalOperation = _tokenService.GetPrincipalFromExpiredToken(authViewModel.AccessToken);
+            var getUserClaimsOperation = await _authenticationService.GetUserClaimsByTokensAsync(
+                authViewModel.AccessToken, authViewModel.RefreshToken);
 
-            if (!getPrincipalOperation.Success)
+            if (!getUserClaimsOperation.Success)
             {
-                return BadRequest(getPrincipalOperation.FailureMessage);
-            }
-
-            var principal = getPrincipalOperation.Result;             
-            var userId = principal.GetUserId();
-
-            if (!userId.HasValue)
-            {
-                return BadRequest("Cannot authenticate user");
+                return BadRequest(getUserClaimsOperation.FailureMessage);
             }
             
-            var getRefreshTokenOperation = await _tokenService.GetUserRefreshTokenAsync(userId.Value);
-
-            if (!getRefreshTokenOperation.Success)
-            {
-                return BadRequest(getRefreshTokenOperation.FailureMessage);
-            }
-
-            if (!IsTokenValid(getRefreshTokenOperation.Result, authViewModel.RefreshToken))
-            {
-                return BadRequest("Invalid refresh token");
-            }
-
             var newRefreshToken = _tokenService.GenerateRefreshToken();
             var userRefreshToken = new UserRefreshTokenDto
             {
-                UserId = userId.Value,
+                UserId = Convert.ToInt32(getUserClaimsOperation.Result
+                    .First(c => c.Type == ApplicationClaims.Id).Value),
                 Token = newRefreshToken
             };
             var updateRefreshTokenOperation = await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
@@ -139,14 +123,8 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest(updateRefreshTokenOperation.FailureMessage);
             }
             
-            return Ok(new AuthViewModel(_tokenService.GenerateAccessToken(principal.Claims), newRefreshToken));
-        }
-
-        [NonAction]
-        private bool IsTokenValid(UserRefreshTokenDto userRefreshTokenDto, string refreshToken)
-        {
-            return userRefreshTokenDto is not null && userRefreshTokenDto.Token == refreshToken &&
-                   userRefreshTokenDto.ExpiryTime > DateTime.Now;
+            return Ok(new AuthViewModel(
+                _tokenService.GenerateAccessToken(getUserClaimsOperation.Result), newRefreshToken));
         }
         
         [Authorize, HttpPost("revoke-token")]

@@ -38,6 +38,12 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             _authSetting = authSetting.Value;
         }
 
+        public static bool IsTokenValid(UserRefreshTokenDto userRefreshTokenDto, string refreshToken)
+        {
+            return userRefreshTokenDto is not null && userRefreshTokenDto.Token == refreshToken &&
+                   userRefreshTokenDto.ExpiryTime > DateTime.Now;
+        }
+        
         public JwtSecurityToken DecodeJwtToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
