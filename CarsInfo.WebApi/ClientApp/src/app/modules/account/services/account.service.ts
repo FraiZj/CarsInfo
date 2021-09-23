@@ -13,7 +13,7 @@ export class AccountService {
   ) { }
 
   public verifyEmail(token: string): Observable<void> {
-    return this.http.get<void>(`${this.url}/email/verify`, {
+    return this.http.post<void>(`${this.url}/email/verify`, {
       params: {
         token: token
       }

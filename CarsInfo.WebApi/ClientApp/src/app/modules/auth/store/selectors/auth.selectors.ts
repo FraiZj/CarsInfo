@@ -24,6 +24,17 @@ export const selectUserClaims = createSelector(
   (tokens) => getCurrentUserClaims(tokens)
 );
 
+export const selectCurrentUserEmail = createSelector(
+  selectUserClaims,
+  claims => claims?.email
+);
+
+export const selectCurrentUserEmailVerified = createSelector(
+  selectUserClaims,
+  claims => claims?.emailVerified
+);
+
+
 export const selectLoggedIn = createSelector(selectAuthTokens, (tokens) => !!tokens);
 
 function getCurrentUserClaims(tokens: AuthTokens | null): UserClaims | null {
