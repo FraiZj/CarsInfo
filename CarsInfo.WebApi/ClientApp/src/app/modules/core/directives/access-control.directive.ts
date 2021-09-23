@@ -1,5 +1,5 @@
 import {Subscription, Observable} from 'rxjs';
-import * as fromAuth from 'app/modules/auth/store/selectors/auth.selectors';
+import * as fromAuth from '@auth/store/selectors/auth.selectors';
 import {Directive, ElementRef, Input, OnDestroy, OnInit} from "@angular/core";
 import {map} from 'rxjs/operators';
 import {Store} from '@ngrx/store';

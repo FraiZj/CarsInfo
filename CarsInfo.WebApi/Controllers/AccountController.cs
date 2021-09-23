@@ -21,7 +21,7 @@ namespace CarsInfo.WebApi.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpGet("email/verify"), VerifyToken]
+        [HttpPost("email/verify"), VerifyToken]
         public async Task<IActionResult> VerifyEmail([FromQuery] string token)
         {
             var jwt = _tokenService.DecodeJwtToken(token);
