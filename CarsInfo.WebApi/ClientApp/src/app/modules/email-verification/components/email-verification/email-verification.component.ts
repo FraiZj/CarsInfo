@@ -1,9 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AccountService} from "@account/services/account.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {map, switchMap, takeUntil} from "rxjs/operators";
-import {SnackBarService} from "@core/services/snackbar.service";
+import {ActivatedRoute, Params, Router} from "@angular/router";
+import {map, takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
+import {Store} from "@ngrx/store";
+import {verifyEmail} from "../../store/actions/email-verification.actions";
 
 @Component({
   selector: 'email-verification',
@@ -16,33 +17,27 @@ export class EmailVerificationComponent implements OnInit, OnDestroy {
     private readonly accountService: AccountService,
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly snackBar: SnackBarService
+    private readonly store: Store
   ) {
   }
 
   public ngOnInit(): void {
-    this.route.queryParams.pipe(
-      map(params => {
-        const token: string | undefined = params['token'];
+    const fetchToken = (params: Params): string => {
+      const token: string | undefined = params['token'];
 
-        if (token == null) {
-          this.navigateToMainPage();
-        }
-
-        return token as string;
-      }),
-      switchMap(token => this.accountService.verifyEmail(token)),
-      takeUntil(this.unsubscribe$)
-    ).subscribe({
-      next: () => {
-        this.navigateToMainPage();
-        this.snackBar.success('Email successfully verified.');
-      },
-      error: () => {
-        this.snackBar.openSnackBar('Unable to verify your email. Try again.');
+      if (token == null) {
         this.navigateToMainPage();
       }
-    });
+
+      return token as string;
+    }
+
+    this.route.queryParams.pipe(
+      map(params => fetchToken(params)),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(
+      token => this.store.dispatch(verifyEmail({ token }))
+    );
   }
 
   private navigateToMainPage() {

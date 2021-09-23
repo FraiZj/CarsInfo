@@ -31,7 +31,7 @@ namespace CarsInfo.WebApi.Controllers
             _userService = userService;
         }
 
-        [HttpHead("verify-email"), VerifyToken]
+        [HttpGet("verify-email"), VerifyToken]
         public async Task<IActionResult> VerifyEmail([FromQuery] string token)
         {
             var jwt = _tokenService.DecodeJwtToken(token);

@@ -6,6 +6,5 @@ export const verifyEmail = createAction(
 );
 
 export const verifyEmailSuccess = createAction(
-  '[Email Verification] Verify Email Success',
-  props<{ emailVerified: boolean }>()
+  '[Email Verification] Verify Email Success'
 );

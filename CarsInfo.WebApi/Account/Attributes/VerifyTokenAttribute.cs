@@ -29,7 +29,7 @@ namespace CarsInfo.WebApi.Account.Attributes
 
             var jwt = tokenService.DecodeJwtToken(token);
 
-            if (DateTime.Now > jwt.ValidTo)
+            if (DateTime.UtcNow > jwt.ValidTo)
             {
                 context.Result = new BadRequestObjectResult(new ErrorResponse
                 {

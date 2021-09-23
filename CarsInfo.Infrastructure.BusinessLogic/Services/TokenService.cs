@@ -48,7 +48,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSetting.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
                 _authSetting.Issuer,
                 notBefore: now,
