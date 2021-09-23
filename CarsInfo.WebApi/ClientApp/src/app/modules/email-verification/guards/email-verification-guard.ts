@@ -1,4 +1,4 @@
-import {selectUserClaims} from '@auth/store/selectors/auth.selectors';
+import {selectCurrentUserEmailVerified} from '@auth/store/selectors/auth.selectors';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
@@ -14,8 +14,8 @@ export class EmailVerificationGuard implements CanActivate {
   }
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.store.select(selectUserClaims).pipe(
-      map(claims => claims == null || !claims.emailVerified)
+    return this.store.select(selectCurrentUserEmailVerified).pipe(
+      map(emailVerified => emailVerified == null || !emailVerified)
     );
   }
 }

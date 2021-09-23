@@ -1,6 +1,6 @@
 import { EffectsModule } from '@ngrx/effects';
-import { environment } from './../environments/environment.prod';
-import { CoreModule } from './modules/core/core.module';
+import { environment } from '../environments/environment.prod';
+import { CoreModule } from '@core/core.module';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,6 +15,7 @@ import { StoreModule } from '@ngrx/store';
 import { AuthEffects } from '@auth/store/effects/auth.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
+import {EmailVerificationModule} from "./modules/email-verification/email-verification.module";
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 
     SocialLoginModule,
 
     // app modules
-    CoreModule
+    CoreModule,
+    EmailVerificationModule
   ],
   providers: [
     AsyncPipe,

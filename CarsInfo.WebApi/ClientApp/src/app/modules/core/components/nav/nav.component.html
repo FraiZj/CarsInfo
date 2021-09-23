@@ -7,11 +7,16 @@
       <a nav-item [routerLink]="['/cars']">All Cars</a>
       <a nav-item accessControl [routerLink]="['/cars/favorite']">Favorite Cars</a>
       <a nav-item accessControl [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
+      <a *ngIf="emailVerified$ | async" nav-item defaultColor="#539bf5" accessControl class="nav-right clickable"
+         (click)="sendVerificationEmail()">
+        Verify Email
+      </a>
       <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
-        (click)="openDialog('Login')">Login</a>
+         (click)="openDialog('Login')">Login</a>
       <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
-        (click)="openDialog('Register')">Register</a>
-      <a nav-item accessControl class="nav-right clickable" (click)="onLogout()">Logout</a>
+         (click)="openDialog('Register')">Register</a>
+      <a nav-item accessControl class="nav-right clickable"
+         (click)="onLogout()">Logout</a>
     </div>
     <div class="nav-menu-button">
       <a class="nav-right clickable">
@@ -25,9 +30,13 @@
     <a nav-item accessControl [routerLink]="['/cars/favorite']">Favorite Cars</a>
     <a nav-item accessControl [roles]="['Admin']" [routerLink]="['/add-car']">Add car</a>
     <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
-      (click)="openDialog('Login')">Login</a>
+       (click)="openDialog('Login')">Login</a>
     <a nav-item accessControl [authenticated]="false" class="nav-right clickable"
-      (click)="openDialog('Register')">Register</a>
+       (click)="openDialog('Register')">Register</a>
     <a nav-item accessControl class="nav-right clickable" (click)="onLogout()">Logout</a>
+    <a *ngIf="emailVerified$ | async" nav-item defaultColor="#539bf5" accessControl class="nav-right clickable"
+       (click)="sendVerificationEmail()">
+      Verify Email
+    </a>
   </div>
 </nav>

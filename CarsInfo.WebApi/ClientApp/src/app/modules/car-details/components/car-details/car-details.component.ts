@@ -1,13 +1,13 @@
-import { fetchCarById } from './../../store/actions/car-details.actions';
-import { selectCar } from './../../store/selectors/car-details.selectors';
-import { Store } from '@ngrx/store';
-import { CarDeleteConfirmDialogComponent } from './../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component';
-import { Observable, Subject } from 'rxjs';
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Car } from 'app/modules/cars/interfaces/car';
-import { map, takeUntil, tap } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
+import {fetchCarById} from '../../store/actions/car-details.actions';
+import {selectCar} from '../../store/selectors/car-details.selectors';
+import {Store} from '@ngrx/store';
+import {CarDeleteConfirmDialogComponent} from '../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component';
+import {Observable, Subject} from 'rxjs';
+import {ChangeDetectionStrategy, Component, OnInit, OnDestroy} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Car} from 'app/modules/cars/interfaces/car';
+import {map, takeUntil, tap} from 'rxjs/operators';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'card-details',
@@ -28,7 +28,8 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly dialog: MatDialog,
     private readonly store: Store
-  ) { }
+  ) {
+  }
 
   public ngOnInit(): void {
     this.getIdFromRoute().pipe(
@@ -37,7 +38,7 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe(
-      id => this.store.dispatch(fetchCarById({ id: id as number }))
+      id => this.store.dispatch(fetchCarById({id: id as number}))
     );
   }
 

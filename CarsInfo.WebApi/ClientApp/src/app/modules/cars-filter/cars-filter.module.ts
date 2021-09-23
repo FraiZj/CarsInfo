@@ -1,8 +1,8 @@
 import { carsFilterFeatureKey } from './store/states/index';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
-import { CarsModule } from './../cars/cars.module';
-import { BrandsModule } from './../brands/brands.module';
+import { CarsModule } from '@cars/cars.module';
+import { BrandsModule } from '@brands/brands.module';
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
@@ -10,7 +10,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
-import { SharedModule } from "../shared/shared.module";
 import { CarsBrandFilterComponent } from "./components/cars-brand-filter/cars-brand-filter.component";
 import { CarsFilterComponent } from "./components/cars-filter/cars-filter.component";
 import { CarsModelFilterComponent } from './components/cars-model-filter/cars-model-filter.component';
@@ -53,7 +52,6 @@ import { CarsBrandFilterEffects } from './store/effects/cars-brand-filter.effect
 
     // app modules
     CarsModule,
-    SharedModule,
     BrandsModule,
     CarsFilterRoutingModule
   ],
