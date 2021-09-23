@@ -13,18 +13,14 @@ export class AccountService {
   ) { }
 
   public verifyEmail(token: string): Observable<void> {
-    return this.http.post<void>(`${this.url}/email/verify`, {
+    return this.http.head<void>(`${this.url}/verify-email`, {
       params: {
         token: token
       }
     });
   }
 
-  public sendVerificationEmail(email: string): Observable<void> {
-    return this.http.post<void>(`${this.url}/email/verify/send`, {
-      params: {
-        email: email
-      }
-    });
+  public sendVerificationEmail(): Observable<void> {
+    return this.http.post<void>(`${this.url}/send-verification-email`, {});
   }
 }

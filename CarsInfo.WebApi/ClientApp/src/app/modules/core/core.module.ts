@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NavItemDirective } from './components/nav/directives/nav-item.directive';
 import { AuthDialogModule } from '@auth-dialog/auth-dialog.module';
 import { RouterModule } from '@angular/router';
-import { SharedModule } from '@shared/shared.module';
 import { NgModule } from "@angular/core";
 import { NotFoundComponent } from "./components/not-found/not-found.component";
 import { MatListModule } from "@angular/material/list";
@@ -11,12 +10,17 @@ import { NavComponent } from './components/nav/nav.component';
 import { MatIconModule } from '@angular/material/icon';
 import {coreFeatureKey} from "@core/store/states/core.state";
 import {reducer} from "@core/store/reducers/core.reducers";
+import {AccessControlDirective} from "@core/directives/access-control.directive";
+import {EffectsModule} from "@ngrx/effects";
+import {CoreEffects} from "@core/store/effects/core.effects";
+import {AccountModule} from "@account/account.module";
 
 @NgModule({
   declarations: [
     NotFoundComponent,
     NavComponent,
-    NavItemDirective
+    NavItemDirective,
+    AccessControlDirective
   ],
   imports: [
     // library modules
@@ -28,13 +32,15 @@ import {reducer} from "@core/store/reducers/core.reducers";
       name: coreFeatureKey,
       reducer: reducer
     }),
+    EffectsModule.forFeature([CoreEffects]),
 
     // app modules
     AuthDialogModule,
-    SharedModule
+    AccountModule
   ],
   exports: [
-    NavComponent
+    NavComponent,
+    AccessControlDirective
   ]
 })
 export class CoreModule { }

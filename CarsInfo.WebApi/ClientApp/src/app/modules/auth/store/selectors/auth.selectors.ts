@@ -47,7 +47,7 @@ function getCurrentUserClaims(tokens: AuthTokens | null): UserClaims | null {
     roles: getRoles(jwtPayload),
     id: +jwtPayload.Id,
     email: jwtPayload[ClaimTypes.Email],
-    emailVerified: jwtPayload.EmailVerified === 'true'
+    emailVerified: jwtPayload.EmailVerified != null
   };
 }
 

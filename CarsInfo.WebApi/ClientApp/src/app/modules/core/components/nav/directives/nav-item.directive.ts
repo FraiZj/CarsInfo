@@ -1,28 +1,34 @@
-import { Directive, ElementRef, HostListener, OnInit, Renderer2 } from "@angular/core";
+import {Directive, ElementRef, HostListener, Input, OnInit, Renderer2} from "@angular/core";
 
 @Directive({
   selector: '[nav-item]'
 })
 export class NavItemDirective implements OnInit {
-  constructor(private readonly el: ElementRef, private readonly renderer: Renderer2) {}
+  @Input() defaultColor: string = '#cdd9e5';
+  @Input() hoverColor: string = '#76828b';
+
+  constructor(private readonly el: ElementRef, private readonly renderer: Renderer2) {
+  }
 
   public ngOnInit(): void {
-    this.removeUnderline();
+    this.mouseLeave();
   }
 
-  @HostListener('mouseenter') public onMouseEnter(): void {
-    this.addUnderline();
+  @HostListener('mouseenter')
+  public onMouseEnter(): void {
+    this.mouseEnter();
   }
 
-  @HostListener('mouseleave') public onMouseLeave(): void {
-    this.removeUnderline();
+  @HostListener('mouseleave')
+  public onMouseLeave(): void {
+    this.mouseLeave();
   }
 
-  private addUnderline(): void {
-    this.renderer.setStyle(this.el.nativeElement, 'color', '#76828b');
+  private mouseEnter(): void {
+    this.renderer.setStyle(this.el.nativeElement, 'color', this.hoverColor);
   }
 
-  private removeUnderline(): void {
-    this.renderer.setStyle(this.el.nativeElement, 'color', '#cdd9e5');
+  private mouseLeave(): void {
+    this.renderer.setStyle(this.el.nativeElement, 'color', this.defaultColor);
   }
 }

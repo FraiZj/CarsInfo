@@ -1,9 +1,8 @@
 import {Injectable} from "@angular/core";
-import {CoreModule} from "@core/core.module";
 import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Injectable({
-  providedIn: CoreModule
+  providedIn: 'root'
 })
 export class SnackBarService {
   constructor(

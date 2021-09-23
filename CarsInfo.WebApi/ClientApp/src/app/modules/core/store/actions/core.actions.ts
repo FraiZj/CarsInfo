@@ -8,3 +8,11 @@ export const addApplicationError = createAction(
 export const resetApplicationError = createAction(
   '[Core] Reset Application Error'
 );
+
+export const sendVerificationEmail = createAction(
+  '[Core] Send Email Verification'
+);
+
+export const sendVerificationEmailSuccess = createAction(
+  '[Core] Send Email Verification Success'
+);

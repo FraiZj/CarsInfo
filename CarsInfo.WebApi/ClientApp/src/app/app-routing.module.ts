@@ -3,6 +3,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Roles} from '@auth/enums/roles';
 import {AuthGuard} from '@core/auth/auth-guard';
+import {EmailVerificationGuard} from "./modules/email-verification/guards/email-verification-guard";
 
 const routes: Routes = [
   {
@@ -41,7 +42,8 @@ const routes: Routes = [
   {
     path: 'email/verify',
     loadChildren: () => import('./modules/email-verification/email-verification.module')
-      .then(m => m.EmailVerificationModule)
+      .then(m => m.EmailVerificationModule),
+    canActivate: [EmailVerificationGuard]
   },
   {
     path: '**',
