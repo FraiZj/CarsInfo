@@ -11,9 +11,11 @@ import {Action} from '@ngrx/store';
 import {addApplicationError} from "@core/store/actions/core.actions";
 import {ErrorResponse} from "@core/interfaces/error-response";
 import {HttpErrorResponse} from "@angular/common/http";
+import {AuthTokens} from "@auth/interfaces/auth-tokens";
 
 @Injectable()
 export class AuthEffects implements OnInitEffects {
+
   constructor(
     private readonly actions$: Actions,
     private readonly authService: AuthService,
@@ -29,13 +31,21 @@ export class AuthEffects implements OnInitEffects {
   initLogin$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.init),
-      exhaustMap(() =>
-        this.authService.refreshToken().pipe(
-          map(tokens => AuthActions.loginSuccess({tokens})),
-          catchError(() => {
+      exhaustMap(() => {
+          const oldTokens: AuthTokens | null = this.authService.getTokensFromLocalStorage();
+
+          if (oldTokens == null) {
             return of(AuthActions.authTokenExpired());
-          })
-        )
+          }
+
+          return this.authService.refreshToken(oldTokens).pipe(
+            map(tokens => AuthActions.loginSuccess({tokens})),
+            catchError(() => {
+              this.authService.removeTokensFromLocalStorage();
+              return of(AuthActions.authTokenExpired());
+            })
+          )
+        }
       )
     )
   );
@@ -66,6 +76,18 @@ export class AuthEffects implements OnInitEffects {
     )
   );
 
+  refreshToken$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.refreshToken),
+      map(action => action.tokens),
+      exhaustMap(tokens => this.authService.refreshToken(tokens).pipe(
+        map(tokens => AuthActions.loginSuccess({tokens})),
+          catchError(() => of(AuthActions.logout()))
+        )
+      )
+    )
+  );
+
   loginRedirect$ = createEffect(() =>
       this.actions$.pipe(
         ofType(AuthActions.loginRedirect),
@@ -88,7 +110,7 @@ export class AuthEffects implements OnInitEffects {
       exhaustMap(() => this.authService.logout().pipe(
         map(() => {
           this.router.navigate(['cars']);
-          return AuthActions.logoutSuccess()
+          return AuthActions.logoutSuccess();
         }))
       ))
   );

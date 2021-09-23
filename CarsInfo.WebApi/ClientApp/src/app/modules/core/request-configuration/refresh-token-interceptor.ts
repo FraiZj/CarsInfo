@@ -5,11 +5,13 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Store} from '@ngrx/store';
 import {first, switchMap} from 'rxjs/operators';
+import jwtDecode, {JwtPayload} from "jwt-decode";
+import {refreshToken} from "@auth/store/actions/auth.actions";
 
 @Injectable({
   providedIn: CoreModule
 })
-export class JwtInterceptor implements HttpInterceptor {
+export class RefreshTokenInterceptor implements HttpInterceptor {
   constructor(private readonly store: Store) {
   }
 
@@ -17,12 +19,12 @@ export class JwtInterceptor implements HttpInterceptor {
     return this.store.select(selectAuthTokens).pipe(
       first(),
       switchMap(tokens => {
-        if (tokens && tokens.accessToken) {
-          req = req.clone({
-            setHeaders: {
-              Authorization: `Bearer ` + tokens.accessToken
-            }
-          });
+        if (tokens) {
+          const jwtPayload = jwtDecode<JwtPayload>(tokens.accessToken);
+          const expires = new Date(jwtPayload.exp! * 1000);
+          if (expires.getTime() - (60 * 1000) < Date.now()) {
+            this.store.dispatch(refreshToken({tokens}));
+          }
         }
 
         return next.handle(req);
