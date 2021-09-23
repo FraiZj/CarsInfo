@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.OperationResult;
 using CarsInfo.WebApi.Account.Models;
+using CarsInfo.WebApi.Account.Options;
 using CarsInfo.WebApi.EmailSender;
 using CarsInfo.WebApi.EmailSender.Models;
 using Microsoft.Extensions.Logging;
@@ -14,15 +15,18 @@ namespace CarsInfo.WebApi.Account
 {
     public class AccountService : IAccountService
     {
+        private readonly ApiClientOptions _apiClientOptions;
         private readonly IEmailSender _emailSender;
         private readonly ITokenService _tokenService;
         private readonly ILogger<AccountService> _logger;
 
         public AccountService(
+            ApiClientOptions apiClientOptions,
             IEmailSender emailSender,
             ITokenService tokenService,
             ILogger<AccountService> logger)
         {
+            _apiClientOptions = apiClientOptions;
             _emailSender = emailSender;
             _tokenService = tokenService;
             _logger = logger;
@@ -36,7 +40,7 @@ namespace CarsInfo.WebApi.Account
                 {
                     new (ClaimTypes.Email, model.Email)
                 });
-                var verificationLink = new Uri($"http://localhost:4200/email/verify?token={token}");
+                var verificationLink = new Uri($"{_apiClientOptions.BaseUrl}/email/verify?token={token}");
                 await _emailSender.SendEmailAsync(new EmailModel
                 {
                     Email = model.Email,
