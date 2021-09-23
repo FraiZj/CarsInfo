@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Infrastructure.BusinessLogic.Extensions;
 using CarsInfo.WebApi.Account;
 using CarsInfo.WebApi.Account.Attributes;
 using CarsInfo.WebApi.Account.Models;

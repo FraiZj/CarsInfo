@@ -10,7 +10,9 @@ using CarsInfo.Application.BusinessLogic.External.Auth.Google;
 using CarsInfo.Application.BusinessLogic.External.Auth.Google.Models;
 using CarsInfo.Application.BusinessLogic.OperationResult;
 using CarsInfo.Application.Persistence.Contracts;
+using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
+using CarsInfo.Infrastructure.BusinessLogic.Extensions;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;
 using Microsoft.Extensions.Logging;
 
@@ -23,6 +25,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         private readonly IRoleService _roleService;
         private readonly IGoogleAuthService _googleAuthService;
         private readonly ILogger<AuthenticationService> _logger;
+        private readonly ITokenService _tokenService;
         private readonly UserServiceMapper _mapper;
 
         public AuthenticationService(
@@ -31,6 +34,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             IRoleService roleService,
             IGoogleAuthService googleAuthService,
             ILogger<AuthenticationService> logger,
+            ITokenService tokenService,
             UserServiceMapper mapper)
         {
             _usersRepository = usersRepository;
@@ -38,6 +42,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             _roleService = roleService;
             _googleAuthService = googleAuthService;
             _logger = logger;
+            _tokenService = tokenService;
             _mapper = mapper;
         }
 
@@ -137,7 +142,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
                 user.EmailVerified = true;
                 await _usersRepository.UpdateAsync(user);
-                
+
                 return OperationResult<bool>.SuccessResult(true);
             }
             catch (Exception e)
@@ -147,6 +152,49 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
+        public async Task<OperationResult<ICollection<Claim>>> GetUserClaimsByTokensAsync(
+            string accessToken, string refreshToken)
+        {
+            try
+            {
+                var getPrincipalOperation = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+
+                if (!getPrincipalOperation.Success)
+                {
+                    return OperationResult<ICollection<Claim>>.FailureResult(getPrincipalOperation.FailureMessage);
+                }
+
+                var principal = getPrincipalOperation.Result;
+                var userId = principal.GetUserId();
+
+                if (!userId.HasValue)
+                {
+                    return OperationResult<ICollection<Claim>>.FailureResult("Cannot identify user");
+                }
+
+                if (await ValidateRefreshToken(userId.Value, refreshToken) == false)
+                {
+                    return OperationResult<ICollection<Claim>>.FailureResult("Invalid refresh token");
+                }
+
+                var user = await _usersRepository.GetByEmailAsync(principal.GetEmail());
+
+                return OperationResult<ICollection<Claim>>.SuccessResult(GetClaims(user));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while generating claims using refresh token");
+                return OperationResult<ICollection<Claim>>.ExceptionResult();
+            }
+        }
+
+        private async Task<bool> ValidateRefreshToken(int userId, string refreshToken)
+        {
+            var getRefreshTokenOperation = await _tokenService.GetUserRefreshTokenAsync(userId);
+            return getRefreshTokenOperation.Success && 
+                   TokenService.IsTokenValid(getRefreshTokenOperation.Result, refreshToken);
+        }
+        
         private async Task CreateUserFromGoogle(GoogleAuthResult googleAuth)
         {
             var userId = await _usersRepository.AddAsync(new User
@@ -154,7 +202,8 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 FirstName = googleAuth.FirstName,
                 LastName = googleAuth.LastName,
                 Email = googleAuth.Email,
-                IsExternal = true
+                IsExternal = true,
+                EmailVerified = true
             });
             var roleId = await _roleService.GetRoleIdAsync(Roles.User);
             await _userRoleRepository.AddAsync(new UserRole
@@ -178,7 +227,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             {
                 claims.Add(new Claim(ApplicationClaims.EmailVerified, string.Empty));
             }
-            
+
             return claims;
         }
     }

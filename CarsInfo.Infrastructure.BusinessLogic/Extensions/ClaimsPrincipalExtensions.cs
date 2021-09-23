@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using CarsInfo.Application.BusinessLogic.Enums;
 
-namespace CarsInfo.WebApi.Extensions
+namespace CarsInfo.Infrastructure.BusinessLogic.Extensions
 {
     public static class ClaimsPrincipalExtensions
     {

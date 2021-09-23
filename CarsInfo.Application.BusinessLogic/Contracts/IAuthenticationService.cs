@@ -14,5 +14,8 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
         Task<OperationResult.OperationResult<UserDto>> LoginWithGoogleAsync(string token);
         
         Task<OperationResult.OperationResult<bool>> VerifyEmailAsync(string email);
+
+        Task<OperationResult.OperationResult<ICollection<Claim>>> GetUserClaimsByTokensAsync(
+            string accessToken, string refreshToken);
     }
 }
