@@ -1,13 +1,21 @@
-import { loadNextComments } from './../../store/actions/comments.actions';
-import { CommentFilter } from './../../interfaces/comment-filter';
-import { Observable } from 'rxjs';
-import { selectComments, selectCanLoadNextComments } from './../../store/selectors/comments.selectors';
-import { Store } from '@ngrx/store';
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
-import { fetchComments } from '../../store/actions/comments.actions';
-import { CommentViewModel } from '../../interfaces/comment';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { AsyncPipe } from '@angular/common';
+import {loadNextComments} from './../../store/actions/comments.actions';
+import {CommentFilter} from './../../interfaces/comment-filter';
+import {Observable} from 'rxjs';
+import {selectComments, selectCanLoadNextComments} from './../../store/selectors/comments.selectors';
+import {Store} from '@ngrx/store';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges
+} from '@angular/core';
+import {fetchComments} from '../../store/actions/comments.actions';
+import {CommentViewModel} from '../../interfaces/comment';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {AsyncPipe} from '@angular/common';
 
 @Component({
   selector: 'comments-list',
@@ -25,10 +33,11 @@ export class CommentsListComponent implements OnInit {
     private readonly store: Store,
     private readonly spinner: NgxSpinnerService,
     private readonly asyncPipe: AsyncPipe
-  ) { }
+  ) {
+  }
 
   public ngOnInit(): void {
-    this.store.dispatch(fetchComments({ carId: this.carId }));
+    this.store.dispatch(fetchComments({carId: this.carId}));
   }
 
   public trackBy(index: number, comment: CommentViewModel) {

@@ -3,7 +3,7 @@ import {selectCar} from '../../store/selectors/car-details.selectors';
 import {Store} from '@ngrx/store';
 import {CarDeleteConfirmDialogComponent} from '../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component';
 import {Observable, Subject} from 'rxjs';
-import {ChangeDetectionStrategy, Component, OnInit, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Car} from 'app/modules/cars/interfaces/car';
 import {map, takeUntil, tap} from 'rxjs/operators';
@@ -27,11 +27,13 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly dialog: MatDialog,
-    private readonly store: Store
+    private readonly store: Store,
+    private readonly cdr: ChangeDetectorRef
   ) {
   }
 
   public ngOnInit(): void {
+    this.cdr.detectChanges();
     this.getIdFromRoute().pipe(
       tap({
         error: () => this.router.navigateByUrl("not-found")

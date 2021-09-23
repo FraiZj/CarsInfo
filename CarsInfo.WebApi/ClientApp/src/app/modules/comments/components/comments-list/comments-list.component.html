@@ -1,5 +1,5 @@
 <div class="comments-block" *ngIf="comments$ | async as comments" infiniteScroll [alwaysCallback]="true" (scrolled)="onScroll()">
-  <ng-container *ngIf="comments.length > 0">
+  <ng-container *ngIf="comments !== undefined">
     <comment-card *ngFor="let comment of comments; trackBy: trackBy;" [comment]="comment">
     </comment-card>
   </ng-container>

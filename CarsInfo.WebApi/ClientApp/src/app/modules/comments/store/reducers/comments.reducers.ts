@@ -2,8 +2,7 @@ import {
   fetchCommentsSuccess,
   loadNextCommentsSuccess,
   canLoadNextComments,
-  loadNextComments,
-  saveCommentsFilter
+  loadNextComments
 } from '../actions/comments.actions';
 import {createReducer, on} from '@ngrx/store';
 import {CommentOrderBy} from '../../enums/comment-order-by';
@@ -24,6 +23,5 @@ export const commentsListReducer = createReducer(
   on(fetchCommentsSuccess, (state, {comments}) => ({...state, comments})),
   on(loadNextComments, (state, {filter}) => ({...state, filter: filter ?? state.filter})),
   on(loadNextCommentsSuccess, (state, {comments}) => ({...state, comments: state.comments.concat(comments)})),
-  on(canLoadNextComments, (state, {can}) => ({...state, canLoadNext: can})),
-  on(saveCommentsFilter, (state, {filter}) => ({...state, filter}))
+  on(canLoadNextComments, (state, {can}) => ({...state, canLoadNext: can}))
 );

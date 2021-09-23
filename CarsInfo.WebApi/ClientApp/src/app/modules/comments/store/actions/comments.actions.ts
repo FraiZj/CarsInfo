@@ -26,8 +26,3 @@ export const canLoadNextComments = createAction(
   '[Comments] Can Load Next Comments',
   props<{ can: boolean }>()
 );
-
-export const saveCommentsFilter = createAction(
-  '[Comments] Save Comments Folter',
-  props<{ filter: CommentFilter }>()
-);
