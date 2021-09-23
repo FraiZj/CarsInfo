@@ -26,6 +26,11 @@ export const login = createAction(
   props<{ userLogin: UserLogin }>()
 );
 
+export const refreshToken = createAction(
+  '[Auth] Refresh Token',
+  props<{ tokens: AuthTokens }>()
+);
+
 export const loginSuccess = createAction(
   '[Auth] Login Success',
   props<{ tokens: AuthTokens }>()

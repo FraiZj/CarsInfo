@@ -16,6 +16,7 @@ import { AuthEffects } from '@auth/store/effects/auth.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 import {EmailVerificationModule} from "./modules/email-verification/email-verification.module";
+import {RefreshTokenInterceptor} from "@core/request-configuration/refresh-token-interceptor";
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import {EmailVerificationModule} from "./modules/email-verification/email-verifi
   providers: [
     AsyncPipe,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: RefreshTokenInterceptor, multi: true },
     { provide: "BASE_API_URL", useValue: environment.baseApiUrl },
     {
       provide: 'SocialAuthServiceConfig',

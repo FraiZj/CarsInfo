@@ -106,7 +106,7 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest(getPrincipalOperation.FailureMessage);
             }
 
-            var principal = getPrincipalOperation.Result;
+            var principal = getPrincipalOperation.Result;             
             var userId = principal.GetUserId();
 
             if (!userId.HasValue)
