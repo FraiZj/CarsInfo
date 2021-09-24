@@ -14,23 +14,19 @@ export class DurationPipe implements PipeTransform {
   };
 
   public transform(value: Date | string): string {
-    try {
-      const commentDate: Date = new Date(value);
-      const timeDiff: number = Date.now() - commentDate.getTime();
+    const commentDate: Date = new Date(value);
+    const timeDiff: number = Date.now() - commentDate.getTime();
 
-      if (timeDiff < DurationPipe.TIME_STAMPS.minute) {
-        return 'a moment ago';
-      }
+    if (timeDiff < DurationPipe.TIME_STAMPS.minute) {
+      return 'a moment ago';
+    }
 
-      for (const key in DurationPipe.TIME_STAMPS) {
-        const time: number = DurationPipe.TIME_STAMPS[key] * 1000;
-        if (timeDiff >= time) {
-          const num: number = Math.floor(timeDiff / time);
-          return num + (num > 1 ? ` ${key}s ago` : ` ${key} ago`);
-        }
+    for (const key in DurationPipe.TIME_STAMPS) {
+      const time: number = DurationPipe.TIME_STAMPS[key] * 1000;
+      if (timeDiff >= time) {
+        const num: number = Math.floor(timeDiff / time);
+        return num + (num > 1 ? ` ${key}s ago` : ` ${key} ago`);
       }
-    } catch (e) {
-      return 'some time ago';
     }
 
     return 'some time ago';
