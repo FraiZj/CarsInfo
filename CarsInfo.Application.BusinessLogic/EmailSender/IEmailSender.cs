@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using CarsInfo.WebApi.EmailSender.Models;
+using CarsInfo.Application.BusinessLogic.EmailSender.Models;
 
-namespace CarsInfo.WebApi.EmailSender
+namespace CarsInfo.Application.BusinessLogic.EmailSender
 {
     public interface IEmailSender
     {

@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using CarsInfo.Application.BusinessLogic.AuthModels;
+using CarsInfo.Application.BusinessLogic.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,12 +33,12 @@ namespace CarsInfo.WebApi.StartupConfiguration
             services.AddAuthorization();
         }
 
-        private static ApiAuthSetting GetApiAuthSettings(IServiceCollection services, IConfiguration configuration)
+        private static ApiAuthOptions GetApiAuthSettings(IServiceCollection services, IConfiguration configuration)
         {
-            var authSettingsSection = configuration.GetSection(nameof(ApiAuthSetting));
-            services.Configure<ApiAuthSetting>(authSettingsSection);
+            var authSettingsSection = configuration.GetSection(nameof(ApiAuthOptions));
+            services.Configure<ApiAuthOptions>(authSettingsSection);
 
-            return authSettingsSection.Get<ApiAuthSetting>();
+            return authSettingsSection.Get<ApiAuthOptions>();
         }
     }
 }

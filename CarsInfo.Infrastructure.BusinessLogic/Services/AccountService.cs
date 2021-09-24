@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.EmailSender;
+using CarsInfo.Application.BusinessLogic.EmailSender.Models;
+using CarsInfo.Application.BusinessLogic.Models;
 using CarsInfo.Application.BusinessLogic.OperationResult;
-using CarsInfo.WebApi.Account.Options;
-using CarsInfo.WebApi.EmailSender;
+using CarsInfo.Application.BusinessLogic.Options;
 using Microsoft.Extensions.Logging;
-using EmailModel = CarsInfo.WebApi.Account.Models.EmailModel;
 
-namespace CarsInfo.WebApi.Account
+namespace CarsInfo.Infrastructure.BusinessLogic.Services
 {
     public class AccountService : IAccountService
     {
@@ -30,7 +31,7 @@ namespace CarsInfo.WebApi.Account
             _logger = logger;
         }
         
-        public async Task<OperationResult> SendEmailVerificationAsync(EmailModel model)
+        public async Task<OperationResult> SendEmailVerificationAsync(EmailBodyModel model)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace CarsInfo.WebApi.Account
                     new (ClaimTypes.Email, model.Email)
                 });
                 var link = new Uri($"{_apiClientOptions.BaseUrl}/email/verify?token={token}");
-                await _emailSender.SendEmailAsync(new EmailSender.Models.EmailModel
+                await _emailSender.SendEmailAsync(new EmailModel
                 {
                     Email = model.Email,
                     Subject = "Email verification for CarsInfo account",
@@ -56,7 +57,7 @@ namespace CarsInfo.WebApi.Account
             }
         }
 
-        public async Task<OperationResult> SendResetPasswordEmailAsync(EmailModel model)
+        public async Task<OperationResult> SendResetPasswordEmailAsync(EmailBodyModel model)
         {
             try
             {
@@ -65,7 +66,7 @@ namespace CarsInfo.WebApi.Account
                     new (ClaimTypes.Email, model.Email)
                 });
                 var link = new Uri($"{_apiClientOptions.BaseUrl}/reset-password?token={token}");
-                await _emailSender.SendEmailAsync(new EmailSender.Models.EmailModel
+                await _emailSender.SendEmailAsync(new EmailModel
                 {
                     Email = model.Email,
                     Subject = "Reset password for CarsInfo account",

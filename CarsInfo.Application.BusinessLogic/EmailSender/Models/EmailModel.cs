@@ -1,4 +1,4 @@
-﻿namespace CarsInfo.WebApi.EmailSender.Models
+﻿namespace CarsInfo.Application.BusinessLogic.EmailSender.Models
 {
     public class EmailModel
     {

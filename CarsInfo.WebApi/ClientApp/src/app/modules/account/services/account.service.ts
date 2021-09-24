@@ -11,14 +11,11 @@ export class AccountService {
   constructor(
     @Inject("BASE_API_URL") private url: string,
     private readonly http: HttpClient
-  ) { }
+  ) {
+  }
 
   public verifyEmail(token: string): Observable<void> {
-    return this.http.get<void>(`${this.url}/verify-email`, {
-      params: {
-        token: token
-      }
-    });
+    return this.http.post<void>(`${this.url}/verify-email?token=${token}`, {});
   }
 
   public sendVerificationEmail(): Observable<void> {
@@ -26,11 +23,7 @@ export class AccountService {
   }
 
   public sendResetPasswordEmail(email: string): Observable<void> {
-    return this.http.get<void>(`${this.url}/send-reset-password-email`, {
-      params: {
-        email: email
-      }
-    });
+    return this.http.post<void>(`${this.url}/send-reset-password-email?email=${email}`, {});
   }
 
   public resetPassword(payload: ResetPasswordPayload): Observable<void> {

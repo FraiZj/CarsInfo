@@ -1,4 +1,4 @@
-﻿namespace CarsInfo.WebApi.Account.Options
+﻿namespace CarsInfo.Application.BusinessLogic.Options
 {
     public class ApiClientOptions
     {

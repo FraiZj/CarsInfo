@@ -1,4 +1,4 @@
-﻿namespace CarsInfo.WebApi.EmailSender.Options
+﻿namespace CarsInfo.Infrastructure.BusinessLogic.Options
 {
     public class SendGridOptions
     {

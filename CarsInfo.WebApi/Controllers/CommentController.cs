@@ -4,8 +4,6 @@ using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.Infrastructure.BusinessLogic.Extensions;
 using CarsInfo.WebApi.Controllers.Base;
-using CarsInfo.WebApi.EmailSender;
-using CarsInfo.WebApi.EmailSender.Models;
 using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Comment;

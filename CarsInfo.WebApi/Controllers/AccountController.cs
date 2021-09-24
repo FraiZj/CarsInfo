@@ -2,10 +2,9 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.Models;
 using CarsInfo.Infrastructure.BusinessLogic.Extensions;
-using CarsInfo.WebApi.Account;
-using CarsInfo.WebApi.Account.Attributes;
-using CarsInfo.WebApi.Account.Models;
+using CarsInfo.WebApi.Attributes;
 using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
@@ -32,7 +31,7 @@ namespace CarsInfo.WebApi.Controllers
             _userService = userService;
         }
 
-        [HttpGet("verify-email"), VerifyToken]
+        [HttpPost("verify-email"), VerifyToken]
         public async Task<IActionResult> VerifyEmail([FromQuery] string token)
         {
             var jwt = _tokenService.DecodeJwtToken(token);
@@ -66,7 +65,7 @@ namespace CarsInfo.WebApi.Controllers
             }
             
             var sendEmailVerificationOperation = await _accountService.SendEmailVerificationAsync(
-                new EmailModel
+                new EmailBodyModel
                 {
                     Email = email,
                     FirstName = getUserOperation.Result.FirstName,
@@ -78,7 +77,7 @@ namespace CarsInfo.WebApi.Controllers
                 : BadRequest(sendEmailVerificationOperation.FailureMessage);
         }
         
-        [HttpGet("send-reset-password-email")]
+        [HttpPost("send-reset-password-email")]
         public async Task<IActionResult> SendResetPasswordEmail([FromQuery] string email)
         {
             if (string.IsNullOrWhiteSpace(email))
@@ -99,7 +98,7 @@ namespace CarsInfo.WebApi.Controllers
             }
             
             var sendEmailVerificationOperation = await _accountService.SendResetPasswordEmailAsync(
-                new EmailModel
+                new EmailBodyModel
                 {
                     Email = email,
                     FirstName = getUserOperation.Result.FirstName,

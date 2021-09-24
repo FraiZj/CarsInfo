@@ -1,5 +1,7 @@
-﻿using CarsInfo.WebApi.EmailSender;
-using CarsInfo.WebApi.EmailSender.Options;
+﻿using CarsInfo.Application.BusinessLogic.EmailSender;
+using CarsInfo.Application.BusinessLogic.EmailSender.Options;
+using CarsInfo.Infrastructure.BusinessLogic.EmailSender;
+using CarsInfo.Infrastructure.BusinessLogic.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -4,12 +4,9 @@ using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
+using CarsInfo.Application.BusinessLogic.Models;
 using CarsInfo.Infrastructure.BusinessLogic.Extensions;
-using CarsInfo.Infrastructure.BusinessLogic.Services;
-using CarsInfo.WebApi.Account;
-using CarsInfo.WebApi.Account.Models;
 using CarsInfo.WebApi.Controllers.Base;
-using CarsInfo.WebApi.Extensions;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Auth;
 using Microsoft.AspNetCore.Authorization;
@@ -62,7 +59,7 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest(containsOperation.FailureMessage);
             }
 
-            await _accountService.SendEmailVerificationAsync(new EmailModel
+            await _accountService.SendEmailVerificationAsync(new EmailBodyModel
             {
                 Email = model.Email,
                 FirstName = model.FirstName,

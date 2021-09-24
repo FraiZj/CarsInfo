@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
-using CarsInfo.WebApi.EmailSender.Models;
-using CarsInfo.WebApi.EmailSender.Options;
+using CarsInfo.Application.BusinessLogic.EmailSender;
+using CarsInfo.Application.BusinessLogic.EmailSender.Models;
+using CarsInfo.Application.BusinessLogic.EmailSender.Options;
+using CarsInfo.Infrastructure.BusinessLogic.Options;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace CarsInfo.WebApi.EmailSender
+namespace CarsInfo.Infrastructure.BusinessLogic.EmailSender
 {
     public class SendGridEmailSender : IEmailSender
     {

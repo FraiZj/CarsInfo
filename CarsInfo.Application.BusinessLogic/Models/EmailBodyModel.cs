@@ -1,6 +1,6 @@
-﻿namespace CarsInfo.WebApi.Account.Models
+﻿namespace CarsInfo.Application.BusinessLogic.Models
 {
-    public class EmailModel
+    public class EmailBodyModel
     {
         public string FirstName { get; set; }
 

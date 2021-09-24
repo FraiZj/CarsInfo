@@ -1,6 +1,6 @@
-﻿namespace CarsInfo.Application.BusinessLogic.AuthModels
+﻿namespace CarsInfo.Application.BusinessLogic.Options
 {
-    public class ApiAuthSetting
+    public class ApiAuthOptions
     {
         public string Secret { get; set; }
         public string Issuer { get; set; }

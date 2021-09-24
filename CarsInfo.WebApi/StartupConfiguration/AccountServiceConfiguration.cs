@@ -1,6 +1,6 @@
-﻿using Azure.Core;
-using CarsInfo.WebApi.Account;
-using CarsInfo.WebApi.Account.Options;
+﻿using CarsInfo.Application.BusinessLogic.Contracts;
+using CarsInfo.Application.BusinessLogic.Options;
+using CarsInfo.Infrastructure.BusinessLogic.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

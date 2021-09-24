@@ -5,10 +5,10 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using CarsInfo.Application.BusinessLogic.AuthModels;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.OperationResult;
+using CarsInfo.Application.BusinessLogic.Options;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
@@ -24,10 +24,10 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
         private readonly IGenericRepository<UserRefreshToken> _userRefreshTokenRepository;
         private readonly ILogger<TokenService> _logger;
         private readonly TokenServiceMapper _mapper;
-        private readonly ApiAuthSetting _authSetting;
+        private readonly ApiAuthOptions _authOptions;
 
         public TokenService(
-            IOptions<ApiAuthSetting> authSetting,
+            IOptions<ApiAuthOptions> authSetting,
             IGenericRepository<UserRefreshToken> userRefreshTokenRepository,
             ILogger<TokenService> logger,
             TokenServiceMapper mapper)
@@ -35,7 +35,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             _userRefreshTokenRepository = userRefreshTokenRepository;
             _logger = logger;
             _mapper = mapper;
-            _authSetting = authSetting.Value;
+            _authOptions = authSetting.Value;
         }
 
         public static bool IsTokenValid(UserRefreshTokenDto userRefreshTokenDto, string refreshToken)
@@ -52,14 +52,14 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSetting.Secret));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authOptions.Secret));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
-                _authSetting.Issuer,
+                _authOptions.Issuer,
                 notBefore: now,
                 claims: claims,
-                expires: now.Add(TimeSpan.FromSeconds(_authSetting.ExpirationTime)),
+                expires: now.Add(TimeSpan.FromSeconds(_authOptions.ExpirationTime)),
                 signingCredentials: credentials);
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -85,8 +85,8 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                     RequireExpirationTime = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authSetting.Secret)),
-                    ValidIssuer = _authSetting.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authOptions.Secret)),
+                    ValidIssuer = _authOptions.Issuer,
                     ValidateIssuer = true,
                     ValidateAudience = false
                 };

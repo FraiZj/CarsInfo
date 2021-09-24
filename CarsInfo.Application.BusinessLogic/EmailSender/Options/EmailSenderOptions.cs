@@ -1,4 +1,4 @@
-﻿namespace CarsInfo.WebApi.EmailSender.Options
+﻿namespace CarsInfo.Application.BusinessLogic.EmailSender.Options
 {
     public class EmailSenderOptions
     {

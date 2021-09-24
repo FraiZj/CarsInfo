@@ -10,7 +10,6 @@ using CarsInfo.Application.BusinessLogic.External.Auth.Google;
 using CarsInfo.Application.BusinessLogic.External.Auth.Google.Models;
 using CarsInfo.Application.BusinessLogic.OperationResult;
 using CarsInfo.Application.Persistence.Contracts;
-using CarsInfo.Application.Persistence.Filters;
 using CarsInfo.Domain.Entities;
 using CarsInfo.Infrastructure.BusinessLogic.Extensions;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;

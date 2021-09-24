@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CarsInfo.WebApi.Account.Attributes
+namespace CarsInfo.WebApi.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class VerifyTokenAttribute : Attribute, IAsyncActionFilter
