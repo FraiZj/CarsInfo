@@ -19,6 +19,8 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 
         Task<OperationResult<UserRefreshTokenDto>> GetUserRefreshTokenAsync(int userId);
         
-        Task<OperationResult.OperationResult> UpdateRefreshTokenByUserIdAsync(UserRefreshTokenDto userRefreshTokenDto);
+        Task<OperationResult<string>> UpdateRefreshTokenByUserIdAsync(int userId);
+        
+        Task<OperationResult.OperationResult> DeleteRefreshTokenAsync(int userId);
     }
 }

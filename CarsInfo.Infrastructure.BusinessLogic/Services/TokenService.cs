@@ -132,25 +132,48 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
         
-        public async Task<OperationResult> UpdateRefreshTokenByUserIdAsync(UserRefreshTokenDto userRefreshTokenDto)
+        public async Task<OperationResult<string>> UpdateRefreshTokenByUserIdAsync(int userId)
         {
             try
             {
+                var userRefreshTokenDto = new UserRefreshTokenDto
+                {
+                    UserId = userId,
+                    Token = GenerateRefreshToken(),
+                    ExpiryTime = DateTimeOffset.Now.AddDays(7)
+                };
                 var filter = new FilterModel(new FiltrationField("UserId", userRefreshTokenDto.UserId));
                 var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filter.Filters);
 
                 if (userRefreshToken is null)
                 {
                     await AddRefreshTokenAsync(userRefreshTokenDto);
-                    return OperationResult.SuccessResult();
+                    return OperationResult<string>.SuccessResult(userRefreshTokenDto.Token);
                 }
                 
                 userRefreshToken.Token = userRefreshTokenDto.Token;
+                userRefreshToken.ExpiryTime = userRefreshTokenDto.ExpiryTime;
 
-                if (userRefreshTokenDto.ExpiryTime is not null)
-                {
-                    userRefreshToken.ExpiryTime = userRefreshTokenDto.ExpiryTime;
-                }
+                await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
+                
+                return OperationResult<string>.SuccessResult(userRefreshTokenDto.Token);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred while updating refresh token");
+                return OperationResult<string>.ExceptionResult();
+            }
+        }
+
+        public async Task<OperationResult> DeleteRefreshTokenAsync(int userId)
+        {
+            try
+            {
+                var filter = new FilterModel(new FiltrationField("UserId", userId));
+                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filter.Filters);
+                
+                userRefreshToken.Token = null;
+                userRefreshToken.ExpiryTime = null;
 
                 await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
                 

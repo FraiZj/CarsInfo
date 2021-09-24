@@ -105,15 +105,8 @@ namespace CarsInfo.WebApi.Controllers
             {
                 return BadRequest(getUserClaimsOperation.FailureMessage);
             }
-            
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
-            var userRefreshToken = new UserRefreshTokenDto
-            {
-                UserId = Convert.ToInt32(getUserClaimsOperation.Result
-                    .First(c => c.Type == ApplicationClaims.Id).Value),
-                Token = newRefreshToken
-            };
-            var updateRefreshTokenOperation = await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
+            var updateRefreshTokenOperation = await _tokenService.UpdateRefreshTokenByUserIdAsync(
+                Convert.ToInt32(getUserClaimsOperation.Result.First(c => c.Type == ApplicationClaims.Id).Value));
 
             if (!updateRefreshTokenOperation.Success)
             {
@@ -121,7 +114,7 @@ namespace CarsInfo.WebApi.Controllers
             }
             
             return Ok(new AuthViewModel(
-                _tokenService.GenerateAccessToken(getUserClaimsOperation.Result), newRefreshToken));
+                _tokenService.GenerateAccessToken(getUserClaimsOperation.Result), updateRefreshTokenOperation.Result));
         }
         
         [Authorize, HttpPost("revoke-token")]
@@ -133,12 +126,7 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest("Cannot authenticate user");
             }
             
-            var userRefreshToken = new UserRefreshTokenDto
-            {
-                UserId = userId.Value,
-                Token = null
-            };
-            var operation = await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
+            var operation = await _tokenService.DeleteRefreshTokenAsync(userId.Value);
 
             return operation.Success ?
                 Ok("Token revoked") :
@@ -158,22 +146,16 @@ namespace CarsInfo.WebApi.Controllers
             }
 
             var claims = getClaimsOperation.Result;
-            var refreshToken = _tokenService.GenerateRefreshToken();
-;
-            var userRefreshToken = new UserRefreshTokenDto
-            {
-                UserId = Convert.ToInt32(claims.First(c => c.Type == ApplicationClaims.Id).Value),
-                Token = refreshToken,
-                ExpiryTime = DateTimeOffset.Now.AddDays(7)
-            };
-            var updateRefreshTokenOperation = await _tokenService.UpdateRefreshTokenByUserIdAsync(userRefreshToken);
+            
+            var updateRefreshTokenOperation = await _tokenService.UpdateRefreshTokenByUserIdAsync(
+                Convert.ToInt32(claims.First(c => c.Type == ApplicationClaims.Id).Value));
 
             if (!updateRefreshTokenOperation.Success)
             {
                 return BadRequest(updateRefreshTokenOperation.FailureMessage);
             }
             
-            return Ok(new AuthViewModel(_tokenService.GenerateAccessToken(claims), refreshToken));
+            return Ok(new AuthViewModel(_tokenService.GenerateAccessToken(claims), updateRefreshTokenOperation.Result));
         }
     }
 }
