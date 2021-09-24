@@ -16,6 +16,7 @@ import {Observable, Subscription} from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
 import {filter} from 'rxjs/operators';
 import {ValidationError} from "@core/interfaces/error";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'login',
@@ -26,6 +27,7 @@ import {ValidationError} from "@core/interfaces/error";
 export class LoginComponent implements OnInit, OnDestroy {
   @Output() public switchToRegisterEvent = new EventEmitter();
   @Output() public loginEvent = new EventEmitter();
+  @Output() public closeDialog = new EventEmitter();
   private readonly subscriptions: Subscription[] = [];
   public loginForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -37,7 +39,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly formBuilder: FormBuilder,
     private readonly _snackBar: MatSnackBar,
     private readonly store: Store,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private readonly router: Router
   ) {
   }
 
@@ -95,12 +98,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.switchToRegisterEvent.emit();
   }
 
-  public openSnackBar(message: string) {
-    this._snackBar.open(message, 'X', {
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      duration: 5000,
-      panelClass: ['custom-snackbar']
-    });
+  public resetPassword() {
+    this.closeDialog.emit();
+    this.router.navigateByUrl('/reset-password/email');
   }
 }

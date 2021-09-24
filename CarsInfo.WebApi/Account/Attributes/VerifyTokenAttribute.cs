@@ -15,7 +15,7 @@ namespace CarsInfo.WebApi.Account.Attributes
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var token = context.HttpContext.Request.Query["token"];
+            var token = context.HttpContext.Request.Query["token"].ToString();
             var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
             
             if (string.IsNullOrEmpty(token))

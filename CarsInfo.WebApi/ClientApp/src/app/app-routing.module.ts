@@ -46,6 +46,11 @@ const routes: Routes = [
     canActivate: [EmailVerificationGuard]
   },
   {
+    path: 'reset-password',
+    loadChildren: () => import('./modules/reset-password-page/reset-password-page.module')
+      .then(m => m.ResetPasswordPageModule)
+  },
+  {
     path: '**',
     component: NotFoundComponent
   }

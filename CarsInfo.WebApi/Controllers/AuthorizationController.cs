@@ -62,7 +62,7 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest(containsOperation.FailureMessage);
             }
 
-            await _accountService.SendEmailVerificationAsync(new EmailVerificationModel
+            await _accountService.SendEmailVerificationAsync(new EmailModel
             {
                 Email = model.Email,
                 FirstName = model.FirstName,

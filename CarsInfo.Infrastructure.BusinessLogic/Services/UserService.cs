@@ -127,9 +127,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             try
             {
                 var user = await _usersRepository.GetByEmailAsync(email);
-                return user is null ? 
-                    OperationResult<UserDto>.FailureResult($"User with email='{email}' does not exist") : 
-                    OperationResult<UserDto>.SuccessResult(_mapper.MapToUserDto(user));
+                return OperationResult<UserDto>.SuccessResult(_mapper.MapToUserDto(user));
             }
             catch (Exception e)
             {

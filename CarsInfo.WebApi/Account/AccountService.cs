@@ -4,12 +4,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.OperationResult;
-using CarsInfo.WebApi.Account.Models;
 using CarsInfo.WebApi.Account.Options;
 using CarsInfo.WebApi.EmailSender;
-using CarsInfo.WebApi.EmailSender.Models;
 using Microsoft.Extensions.Logging;
-using ILogger = Google.Apis.Logging.ILogger;
+using EmailModel = CarsInfo.WebApi.Account.Models.EmailModel;
 
 namespace CarsInfo.WebApi.Account
 {
@@ -32,7 +30,7 @@ namespace CarsInfo.WebApi.Account
             _logger = logger;
         }
         
-        public async Task<OperationResult> SendEmailVerificationAsync(EmailVerificationModel model)
+        public async Task<OperationResult> SendEmailVerificationAsync(EmailModel model)
         {
             try
             {
@@ -40,13 +38,13 @@ namespace CarsInfo.WebApi.Account
                 {
                     new (ClaimTypes.Email, model.Email)
                 });
-                var verificationLink = new Uri($"{_apiClientOptions.BaseUrl}/email/verify?token={token}");
-                await _emailSender.SendEmailAsync(new EmailModel
+                var link = new Uri($"{_apiClientOptions.BaseUrl}/email/verify?token={token}");
+                await _emailSender.SendEmailAsync(new EmailSender.Models.EmailModel
                 {
                     Email = model.Email,
                     Subject = "Email verification for CarsInfo account",
                     Message = $@"<p>Hi {model.FirstName} {model.LastName}</p>
-                             <a href=""{verificationLink}"">Verify email</a>"
+                             <a href=""{link}"">Verify email</a>"
                 });
 
                 return OperationResult.SuccessResult();
@@ -54,6 +52,32 @@ namespace CarsInfo.WebApi.Account
             catch (Exception e)
             {
                 _logger.LogError(e, "An error occured while sending verification email");
+                return OperationResult.ExceptionResult();
+            }
+        }
+
+        public async Task<OperationResult> SendResetPasswordEmailAsync(EmailModel model)
+        {
+            try
+            {
+                var token = _tokenService.GenerateAccessToken(new List<Claim>
+                {
+                    new (ClaimTypes.Email, model.Email)
+                });
+                var link = new Uri($"{_apiClientOptions.BaseUrl}/reset-password?token={token}");
+                await _emailSender.SendEmailAsync(new EmailSender.Models.EmailModel
+                {
+                    Email = model.Email,
+                    Subject = "Reset password for CarsInfo account",
+                    Message = $@"<p>Hi {model.FirstName} {model.LastName}</p>
+                             <a href=""{link}"">Reset password</a>"
+                });
+
+                return OperationResult.SuccessResult();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occured while sending reset password email");
                 return OperationResult.ExceptionResult();
             }
         }

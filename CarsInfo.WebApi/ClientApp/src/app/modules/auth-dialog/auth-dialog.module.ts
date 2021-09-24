@@ -12,6 +12,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import {RouterModule} from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -19,21 +20,22 @@ import { MatIconModule } from '@angular/material/icon';
     LoginComponent,
     RegisterComponent
   ],
-  imports: [
-    // library modules
-    CommonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatInputModule,
-    MatIconModule,
-    ReactiveFormsModule,
-    MatSnackBarModule,
+    imports: [
+        // library modules
+        CommonModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatInputModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatSnackBarModule,
+        RouterModule,
 
-    // app modules
-    AuthModule,
-    SharedModule
-  ],
+        // app modules
+        AuthModule,
+        SharedModule
+    ],
   exports: [
     AuthDialogComponent,
   ]

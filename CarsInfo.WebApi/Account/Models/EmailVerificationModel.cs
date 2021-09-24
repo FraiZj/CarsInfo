@@ -1,6 +1,6 @@
 ﻿namespace CarsInfo.WebApi.Account.Models
 {
-    public class EmailVerificationModel
+    public class EmailModel
     {
         public string FirstName { get; set; }
 

@@ -7,7 +7,7 @@ using CarsInfo.WebApi.Account;
 using CarsInfo.WebApi.Account.Attributes;
 using CarsInfo.WebApi.Account.Models;
 using CarsInfo.WebApi.Controllers.Base;
-using CarsInfo.WebApi.Extensions;
+using CarsInfo.WebApi.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +38,9 @@ namespace CarsInfo.WebApi.Controllers
             var jwt = _tokenService.DecodeJwtToken(token);
             var email = jwt.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)!.Value;
             var operation = await _authenticationService.VerifyEmailAsync(email);
-            return operation.Success ? Ok() : BadRequest(operation.FailureMessage);
+            return operation.Success 
+                ?  Ok() 
+                : BadRequest(operation.FailureMessage);
         }
 
         [HttpPost("send-verification-email"), Authorize]
@@ -58,8 +60,13 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest(getUserOperation.FailureMessage);
             }
 
+            if (getUserOperation.Result is null)
+            {
+                return NotFound();
+            }
+            
             var sendEmailVerificationOperation = await _accountService.SendEmailVerificationAsync(
-                new EmailVerificationModel
+                new EmailModel
                 {
                     Email = email,
                     FirstName = getUserOperation.Result.FirstName,
@@ -69,6 +76,52 @@ namespace CarsInfo.WebApi.Controllers
             return sendEmailVerificationOperation.Success
                 ? Ok()
                 : BadRequest(sendEmailVerificationOperation.FailureMessage);
+        }
+        
+        [HttpGet("send-reset-password-email")]
+        public async Task<IActionResult> SendResetPasswordEmail([FromQuery] string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Cannot identify user");
+            }
+
+            var getUserOperation = await _userService.GetByEmailAsync(email);
+
+            if (!getUserOperation.Success)
+            {
+                return BadRequest(getUserOperation.FailureMessage);
+            }
+
+            if (getUserOperation.Result is null)
+            {
+                return NotFound();
+            }
+            
+            var sendEmailVerificationOperation = await _accountService.SendResetPasswordEmailAsync(
+                new EmailModel
+                {
+                    Email = email,
+                    FirstName = getUserOperation.Result.FirstName,
+                    LastName = getUserOperation.Result.LastName
+                });
+
+            return sendEmailVerificationOperation.Success
+                ? Ok()
+                : BadRequest(sendEmailVerificationOperation.FailureMessage);
+        }
+        
+        [HttpPost("reset-password"), VerifyToken]
+        public async Task<IActionResult> ResetPassword(
+            [FromBody] ResetPasswordPayload payload,
+            [FromQuery] string token)
+        {
+            var jwt = _tokenService.DecodeJwtToken(token);
+            var email = jwt.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)!.Value;
+            var operation = await _authenticationService.ResetPasswordAsync(email, payload.Password);
+            return operation.Success 
+                ? Ok() 
+                : BadRequest(operation.FailureMessage);
         }
     }
 }

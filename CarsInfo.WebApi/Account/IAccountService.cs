@@ -6,6 +6,8 @@ namespace CarsInfo.WebApi.Account
 {
     public interface IAccountService
     {
-        Task<OperationResult> SendEmailVerificationAsync(EmailVerificationModel model);
+        Task<OperationResult> SendEmailVerificationAsync(EmailModel model);
+        
+        Task<OperationResult> SendResetPasswordEmailAsync(EmailModel model);
     }
 }

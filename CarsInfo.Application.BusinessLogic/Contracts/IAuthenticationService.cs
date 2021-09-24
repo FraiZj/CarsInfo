@@ -17,5 +17,7 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
 
         Task<OperationResult.OperationResult<ICollection<Claim>>> GetUserClaimsByTokensAsync(
             string accessToken, string refreshToken);
+
+        Task<OperationResult.OperationResult> ResetPasswordAsync(string email, string password);
     }
 }
