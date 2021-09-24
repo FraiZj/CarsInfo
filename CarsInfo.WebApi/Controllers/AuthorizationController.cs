@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CarsInfo.Application.BusinessLogic.Commands;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
 using CarsInfo.Application.BusinessLogic.Enums;
@@ -9,6 +10,7 @@ using CarsInfo.Infrastructure.BusinessLogic.Extensions;
 using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.Mappers;
 using CarsInfo.WebApi.ViewModels.Auth;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,20 +22,20 @@ namespace CarsInfo.WebApi.Controllers
         private readonly IUserService _userService;
         private readonly AuthorizationControllerMapper _mapper;
         private readonly ITokenService _tokenService;
-        private readonly IAccountService _accountService;
+        private readonly IMediator _mediator;
 
         public AuthorizationController(
             IAuthenticationService authenticationService,
             IUserService userService,
             AuthorizationControllerMapper mapper,
             ITokenService tokenService,
-            IAccountService accountService)
+            IMediator mediator)
         {
             _authenticationService = authenticationService;
             _userService = userService;
             _mapper = mapper;
             _tokenService = tokenService;
-            _accountService = accountService;
+            _mediator = mediator;
         }
 
         [HttpPost("register")]
@@ -59,11 +61,14 @@ namespace CarsInfo.WebApi.Controllers
                 return BadRequest(containsOperation.FailureMessage);
             }
 
-            await _accountService.SendEmailVerificationAsync(new EmailBodyModel
+            await _mediator.Send(new SendEmailVerificationCommand
             {
-                Email = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName
+                EmailBodyModel = new EmailBodyModel
+                {
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
+                }
             });
             
             return await AuthorizeAsync(user);

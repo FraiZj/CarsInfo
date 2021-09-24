@@ -1,8 +1,12 @@
 ﻿using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.External.Auth.Google;
+using CarsInfo.Application.BusinessLogic.Options;
 using CarsInfo.Infrastructure.BusinessLogic.External.Auth.Google;
+using CarsInfo.Infrastructure.BusinessLogic.Handlers.Base;
 using CarsInfo.Infrastructure.BusinessLogic.Mappers;
 using CarsInfo.Infrastructure.BusinessLogic.Services;
+using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CarsInfo.Infrastructure.DependencyInjection
@@ -11,6 +15,8 @@ namespace CarsInfo.Infrastructure.DependencyInjection
     {
         public static void AddBusinessLogicLayer(this IServiceCollection services)
         {
+            services.AddMediatR(typeof(IOperationResultRequestHandler<>));
+            
             // Services
             services.AddTransient<ICarsService, CarsService>();
             services.AddTransient<IBrandService, BrandService>();

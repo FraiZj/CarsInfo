@@ -26,7 +26,7 @@ namespace CarsInfo.WebApi
             services.AddGoogleAuth(_configuration);
             services.AddRedisCaching(_configuration);
             services.AddEmailSenderConfiguration(_configuration);
-            services.AddAccountServiceConfiguration(_configuration);
+            services.AddApiClientConfiguration(_configuration);
             services.AddViewModelMapper();
             services.AddSwagger();
             services.AddCorsConfiguration();

@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CarsInfo.Application.BusinessLogic.Commands;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Models;
 using CarsInfo.Infrastructure.BusinessLogic.Extensions;
 using CarsInfo.WebApi.Attributes;
 using CarsInfo.WebApi.Controllers.Base;
 using CarsInfo.WebApi.ViewModels.Account;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,19 +18,19 @@ namespace CarsInfo.WebApi.Controllers
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly ITokenService _tokenService;
-        private readonly IAccountService _accountService;
         private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
         public AccountController(
             IAuthenticationService authenticationService,
             ITokenService tokenService,
-            IAccountService accountService,
-            IUserService userService)
+            IUserService userService,
+            IMediator mediator)
         {
             _authenticationService = authenticationService;
             _tokenService = tokenService;
-            _accountService = accountService;
             _userService = userService;
+            _mediator = mediator;
         }
 
         [HttpPost("verify-email"), VerifyToken]
@@ -64,14 +66,16 @@ namespace CarsInfo.WebApi.Controllers
                 return NotFound();
             }
             
-            var sendEmailVerificationOperation = await _accountService.SendEmailVerificationAsync(
-                new EmailBodyModel
+            var sendEmailVerificationOperation = await _mediator.Send(new SendEmailVerificationCommand
+            {
+                EmailBodyModel = new EmailBodyModel
                 {
                     Email = email,
                     FirstName = getUserOperation.Result.FirstName,
                     LastName = getUserOperation.Result.LastName
-                });
-
+                }
+            });
+            
             return sendEmailVerificationOperation.Success
                 ? Ok()
                 : BadRequest(sendEmailVerificationOperation.FailureMessage);
@@ -97,13 +101,15 @@ namespace CarsInfo.WebApi.Controllers
                 return NotFound();
             }
             
-            var sendEmailVerificationOperation = await _accountService.SendResetPasswordEmailAsync(
-                new EmailBodyModel
+            var sendEmailVerificationOperation = await _mediator.Send(new SendResetPasswordEmailCommand
+            {
+                EmailBodyModel = new EmailBodyModel
                 {
                     Email = email,
                     FirstName = getUserOperation.Result.FirstName,
                     LastName = getUserOperation.Result.LastName
-                });
+                }
+            });
 
             return sendEmailVerificationOperation.Success
                 ? Ok()
