@@ -16,10 +16,6 @@ const routes: Routes = [
     loadChildren: () => import('./modules/cars-list/cars-list.module').then(m => m.CarsListModule)
   },
   {
-    path: 'filter',
-    loadChildren: () => import('./modules/cars-filter/cars-filter.module').then(m => m.CarsFilterModule)
-  },
-  {
     path: 'cars/:id/edit',
     loadChildren: () => import('./modules/car-editor/car-editor.module').then(m => m.CarEditorModule),
     canActivate: [AuthGuard],
