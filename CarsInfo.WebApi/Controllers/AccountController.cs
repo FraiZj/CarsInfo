@@ -123,7 +123,7 @@ namespace CarsInfo.WebApi.Controllers
         {
             var jwt = _tokenService.DecodeJwtToken(token);
             var email = jwt.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email)!.Value;
-            var operation = await _authenticationService.ResetPasswordAsync(email, payload.Password);
+            var operation = await _userService.ResetPasswordAsync(email, payload.Password);
             return operation.Success 
                 ? Ok() 
                 : BadRequest(operation.FailureMessage);

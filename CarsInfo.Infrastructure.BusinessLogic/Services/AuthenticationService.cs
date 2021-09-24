@@ -187,29 +187,6 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             }
         }
 
-        public async Task<OperationResult> ResetPasswordAsync(string email, string password)
-        {
-            try
-            {
-                var user = await _usersRepository.GetByEmailAsync(email);
-
-                if (user is null)
-                {
-                    return OperationResult.FailureResult($"User with email='{email}' does not exist");
-                }
-
-                user.Password = BCrypt.Net.BCrypt.HashPassword(password);
-                await _usersRepository.UpdateAsync(user);
-
-                return OperationResult.SuccessResult();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while resetting user password");
-                return OperationResult.ExceptionResult();
-            }
-        }
-
         private async Task<bool> ValidateRefreshToken(int userId, string refreshToken)
         {
             var getRefreshTokenOperation = await _tokenService.GetUserRefreshTokenAsync(userId);

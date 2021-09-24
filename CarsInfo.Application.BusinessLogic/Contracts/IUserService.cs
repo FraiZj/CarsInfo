@@ -18,5 +18,7 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
         Task<OperationResult.OperationResult> DeleteByIdAsync(int id);
 
         Task<OperationResult<bool>> ContainsUserWithEmailAsync(string email);
+        
+        Task<OperationResult.OperationResult> ResetPasswordAsync(string email, string password);
     }
 }
