@@ -59,9 +59,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             var selectCarById = @"SELECT TOP 1 * FROM Car
                                 LEFT JOIN Brand
                                 ON Car.BrandId = Brand.Id
-                                LEFT JOIN CarPicture
-                                ON Car.Id = CarPicture.CarId
-                                WHERE Car.Id=@id";
+                                WHERE Car.Id = @id";
 
             if (!includeDeleted)
             {

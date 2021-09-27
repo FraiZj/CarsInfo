@@ -19,24 +19,17 @@ namespace CarsInfo.Infrastructure.DB.HealthChecks
             HealthCheckContext context,
             CancellationToken cancellationToken = new())
         {
-            try
+            if (!DatabaseAvailabilityChecker.DatabaseExists(_connectionStringBuilder))
             {
-                if (!DatabaseAvailabilityChecker.DatabaseExists(_connectionStringBuilder))
-                {
-                    return Task.FromResult(HealthCheckResult.Unhealthy("Database does not exist"));
-                }
-
-                if (!DatabaseAvailabilityChecker.TablesExist(_connectionStringBuilder))
-                {
-                    return Task.FromResult(HealthCheckResult.Unhealthy("Database does not have tables"));
-                }
-
-                return Task.FromResult(HealthCheckResult.Healthy());
+                return Task.FromResult(HealthCheckResult.Unhealthy("Database does not exist"));
             }
-            catch (Exception)
+
+            if (!DatabaseAvailabilityChecker.TablesExist(_connectionStringBuilder))
             {
-                return Task.FromResult(HealthCheckResult.Unhealthy());
+                return Task.FromResult(HealthCheckResult.Unhealthy("Database does not have tables"));
             }
+
+            return Task.FromResult(HealthCheckResult.Healthy());
         }
     }
 }

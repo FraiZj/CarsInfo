@@ -12,43 +12,32 @@ namespace CarsInfo.Infrastructure.BusinessLogic.External.Auth.Google
     public class GoogleAuthService : IGoogleAuthService
     {
         private readonly GoogleAuthSettings _googleAuthSettings;
-        private readonly ILogger<GoogleAuthService> _logger;
 
         public GoogleAuthService(
-            GoogleAuthSettings googleAuthSettings, 
-            ILogger<GoogleAuthService> logger)
+            GoogleAuthSettings googleAuthSettings)
         {
             _googleAuthSettings = googleAuthSettings;
-            _logger = logger;
         }
 
         public async Task<OperationResult<GoogleAuthResult>> AuthenticateAsync(string accessToken)
         {
-            try
-            {
-                var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken, 
-                    new GoogleJsonWebSignature.ValidationSettings
-                    {
-                        Audience = new List<string>
-                        {
-                            _googleAuthSettings.ClientId
-                        }
-                    });
-
-                var result = new GoogleAuthResult
+            var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken, 
+                new GoogleJsonWebSignature.ValidationSettings
                 {
-                    Email = payload.Email,
-                    FirstName = payload.GivenName,
-                    LastName = payload.FamilyName
-                };
+                    Audience = new List<string>
+                    {
+                        _googleAuthSettings.ClientId
+                    }
+                });
 
-                return OperationResult<GoogleAuthResult>.SuccessResult(result);
-            }
-            catch (Exception e)
+            var result = new GoogleAuthResult
             {
-                _logger.LogError(e, "An error occurred while authentication thought google api");
-                return OperationResult<GoogleAuthResult>.ExceptionResult();
-            }
+                Email = payload.Email,
+                FirstName = payload.GivenName,
+                LastName = payload.FamilyName
+            };
+
+            return OperationResult<GoogleAuthResult>.SuccessResult(result);
         }
     }
 }
