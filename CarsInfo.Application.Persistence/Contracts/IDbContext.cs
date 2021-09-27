@@ -41,9 +41,9 @@ namespace CarsInfo.Application.Persistence.Contracts
             where TSecond : BaseEntity;
 
         Task<int> AddAsync(string sql, object parameters = null);
-
+        
         Task ExecuteAsync(string sql, object parameters = null);
 
-        Task<bool?> ContainsAsync(string sql);
+        Task<bool> ContainsAsync(string sql);
     }
 }

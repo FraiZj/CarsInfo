@@ -13,41 +13,23 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
     public class DbContext : IDbContext
     {
         private readonly IDbConnection _connection;
-        private readonly ILogger<DbContext> _logger;
 
-        public DbContext(IDbConnection connection, ILogger<DbContext> logger)
+        public DbContext(IDbConnection connection)
         {
             _connection = connection;
-            _logger = logger;
         }
 
-        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null) where T : BaseEntity
+        public Task<T> QueryFirstOrDefaultAsync<T>(string sql, object parameters = null) where T : BaseEntity
         {
-            try
-            {
-                return await _connection.QueryFirstOrDefaultAsync<T>(sql, parameters);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return null;
-            }
+            return _connection.QueryFirstOrDefaultAsync<T>(sql, parameters);
         }
 
         public async Task<T> QueryFirstOrDefaultAsync<T, TFirst>(string sql, Func<T, TFirst, T> map, object parameters = null) 
             where T : BaseEntity 
             where TFirst : BaseEntity
         {
-            try
-            {
-                var res = await _connection.QueryAsync(sql, map, parameters);
-                return res.FirstOrDefault();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return null;
-            }
+            var res = await _connection.QueryAsync(sql, map, parameters);
+            return res.FirstOrDefault();
         }
 
         public async Task<T> QueryFirstOrDefaultAsync<T, TFirst, TSecond, TThird>(
@@ -57,60 +39,28 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
             where TSecond : BaseEntity
             where TThird : BaseEntity
         {
-            try
-            {
-                var res = await _connection.QueryAsync(sql, map, parameters);
-                return res.FirstOrDefault();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return null;
-            }
+            var res = await _connection.QueryAsync(sql, map, parameters);
+            return res.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<int>> QueryIdsAsync(string sql, object parameters = null)
+        public Task<IEnumerable<int>> QueryIdsAsync(string sql, object parameters = null)
         {
-            try
-            {
-                return await _connection.QueryAsync<int>(sql, parameters);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return new List<int>();
-            }
+            return _connection.QueryAsync<int>(sql, parameters);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null) where T : BaseEntity
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object parameters = null) where T : BaseEntity
         {
-            try
-            {
-                return await _connection.QueryAsync<T>(sql, parameters);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return new List<T>();
-            }
+            return _connection.QueryAsync<T>(sql, parameters);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T, TFirst>(string sql, Func<T, TFirst, T> map, object parameters = null) 
+        public Task<IEnumerable<T>> QueryAsync<T, TFirst>(string sql, Func<T, TFirst, T> map, object parameters = null) 
             where T : BaseEntity 
             where TFirst : BaseEntity
         {
-            try
-            {
-                return await _connection.QueryAsync(sql, map, parameters);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return new List<T>();
-            }
+            return _connection.QueryAsync(sql, map, parameters);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond>(
+        public Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond>(
             string sql, 
             Func<T, TFirst, TSecond, T> map, 
             object parameters = null, 
@@ -119,72 +69,33 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
             where TFirst : BaseEntity 
             where TSecond : BaseEntity
         {
-            try
-            {
-                return await _connection.QueryAsync(sql, map, parameters, commandType: commandType);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return new List<T>();
-            }
+            return _connection.QueryAsync(sql, map, parameters, commandType: commandType);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond, TThird>(
+        public Task<IEnumerable<T>> QueryAsync<T, TFirst, TSecond, TThird>(
             string sql, Func<T, TFirst, TSecond, TThird, T> map, object parameters = null)
             where T : BaseEntity
             where TFirst : BaseEntity
             where TSecond : BaseEntity
             where TThird : BaseEntity
         {
-            try
-            {
-                return await _connection.QueryAsync(sql, map, parameters);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while fetching data");
-                return new List<T>();
-            }
+            return _connection.QueryAsync(sql, map, parameters);
         }
         
         public async Task<int> AddAsync(string sql, object parameters = null)
         {
-            try
-            {
-                var id = await _connection.QueryFirstOrDefaultAsync<int>($"{sql}; SELECT SCOPE_IDENTITY()", parameters);
-                return id;
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while executing command");
-                return 0;
-            }
+            var id = await _connection.QueryFirstOrDefaultAsync<int>($"{sql}; SELECT SCOPE_IDENTITY()", parameters);
+            return id;
         }
 
-        public async Task ExecuteAsync(string sql, object parameters = null)
+        public Task ExecuteAsync(string sql, object parameters = null)
         {
-            try
-            {
-                await _connection.QueryFirstOrDefaultAsync($"{sql}", parameters);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while executing command");
-            }
+            return _connection.QueryFirstOrDefaultAsync($"{sql}", parameters);
         }
 
-        public async Task<bool?> ContainsAsync(string sql)
+        public Task<bool> ContainsAsync(string sql)
         {
-            try
-            {
-                return await _connection.QueryFirstOrDefaultAsync<bool>(sql);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while executing command");
-                return null;
-            }
+            return _connection.QueryFirstOrDefaultAsync<bool>(sql);
         }
     }
 }
