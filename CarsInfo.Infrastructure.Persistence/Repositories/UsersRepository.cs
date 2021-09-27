@@ -32,14 +32,13 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public async Task<User> GetByEmailAsync(string email)
         {
-            const string selectUserByEmail = @"SELECT TOP 1 
-                                                [User].*, [Role].* 
-                                            FROM [User]
-                                            INNER JOIN [UserRole] 
-                                            ON [User].Id = [UserRole].UserId
-                                            INNER JOIN [Role]
-                                            ON [UserRole].RoleId = [Role].Id
-                                            WHERE [User].Email = @email";
+            const string selectUserByEmail = @"SELECT [User].*, [Role].* 
+                                                FROM [User]
+                                                INNER JOIN [UserRole] 
+                                                ON [User].Id = [UserRole].UserId
+                                                INNER JOIN [Role]
+                                                ON [UserRole].RoleId = [Role].Id
+                                                WHERE [User].Email = @email";
 
             var users = (await Context.QueryAsync<User, Role>(
                 selectUserByEmail,

@@ -49,7 +49,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                 new("Id", $"({string.Join(", ", ids)})", "IN")
             };
             var filter = SqlQueryConfigurator.ConfigureFilter(TableName, filters);
-            var sql = $"UPDATE [{TableName}] SET IsDeleted = 1 WHERE {filter}";
+            var sql = $"UPDATE [{TableName}] SET IsDeleted = 1 {filter}";
             await Context.ExecuteAsync(sql);
         }
 

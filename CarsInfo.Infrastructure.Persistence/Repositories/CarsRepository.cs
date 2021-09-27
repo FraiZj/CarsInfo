@@ -37,7 +37,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             filter ??= new FilterModel();
             var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
             var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
-            var selectUserCars = $@"SELECT * FROM Car
+            var selectUserCars = $@"SELECT Car.*, Brand.* FROM Car
                                     INNER JOIN UserCar
                                     ON Car.Id = UserCar.CarId AND UserCar.UserId = @userId
                                     LEFT JOIN Brand

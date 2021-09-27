@@ -38,7 +38,7 @@ CREATE TABLE CarPicture (
 	Id int PRIMARY KEY IDENTITY(1,1),
 	IsDeleted bit DEFAULT 0,
 	CarId int NOT NULL,
-	PictureLink nvarchar(500) UNIQUE NOT NULL,
+	PictureLink nvarchar(500) NOT NULL,
 	CONSTRAINT FK_CarPicture_Car FOREIGN KEY (CarId) REFERENCES Car(Id)
 )
 

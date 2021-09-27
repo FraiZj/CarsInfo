@@ -7,6 +7,7 @@ using CarsInfo.Application.BusinessLogic.Enums;
 using CarsInfo.WebApi.IntegrationTest.Configuration;
 using CarsInfo.WebApi.IntegrationTest.Configuration.Database;
 using CarsInfo.WebApi.ViewModels.Auth;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CarsInfo.WebApi.IntegrationTest
 {
@@ -43,7 +44,8 @@ namespace CarsInfo.WebApi.IntegrationTest
 
             var loginResponse = await response.Content.ReadFromJsonAsync<AuthViewModel>();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "bearer", loginResponse?.AccessToken);
+                JwtBearerDefaults.AuthenticationScheme, 
+                loginResponse?.AccessToken);
         }
 
         public virtual async Task AuthenticateNewUserAsync(HttpClient httpClient = null)
@@ -60,7 +62,7 @@ namespace CarsInfo.WebApi.IntegrationTest
 
             var registrationResponse = await response.Content.ReadFromJsonAsync<AuthViewModel>();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "bearer", registrationResponse?.AccessToken);
+                JwtBearerDefaults.AuthenticationScheme, registrationResponse?.AccessToken);
         }
 
         public void Dispose()
