@@ -1,11 +1,11 @@
-import { Subscription } from 'rxjs';
+import {Subscription} from 'rxjs';
 import * as CarsListSelectors from './../../store/selectors/cars-list.selectors';
 import * as CarsListActions from './../../store/actions/cars-list.actions';
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Car } from 'app/modules/cars/interfaces/car';
-import { Store } from '@ngrx/store';
-import { filter, switchMap } from 'rxjs/operators';
-import { selectLoggedIn } from '@auth/store/selectors/auth.selectors';
+import {Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+import {Car} from 'app/modules/cars/interfaces/car';
+import {Store} from '@ngrx/store';
+import {switchMap} from 'rxjs/operators';
+import {selectLoggedInOnly} from '@auth/store/selectors/auth.selectors';
 
 @Component({
   selector: 'car-card',
@@ -23,12 +23,12 @@ export class CarCardComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly store: Store,
-    private readonly cdr: ChangeDetectorRef) { }
+    private readonly cdr: ChangeDetectorRef) {
+  }
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.store.select(selectLoggedIn).pipe(
-        filter(loggedIn => loggedIn),
+      this.store.pipe(selectLoggedInOnly).pipe(
         switchMap(() => this.store.select(CarsListSelectors.favoriteCarsIds))
       ).subscribe(
         ids => {
@@ -46,11 +46,11 @@ export class CarCardComponent implements OnInit, OnDestroy {
   }
 
   public onStarClick(): void {
-    this.store.dispatch(CarsListActions.toggleFavoriteCar({ id: this.car.id }));
+    this.store.dispatch(CarsListActions.toggleFavoriteCar({id: this.car.id}));
   }
 
   public setDefaultPicture() {
-    this.car = { ...this.car, carPicturesUrls: [CarCardComponent.DefaultCarImage] };
+    this.car = {...this.car, carPicturesUrls: [CarCardComponent.DefaultCarImage]};
     this.cdr.detectChanges();
   }
 }

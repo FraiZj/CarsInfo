@@ -14,7 +14,6 @@ import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Store} from '@ngrx/store';
 import {AuthService} from 'app/modules/auth/services/auth.service';
 import {Observable, Subscription} from 'rxjs';
-import {filter} from 'rxjs/operators';
 import {ValidationError} from "@core/interfaces/error";
 
 @Component({
@@ -37,7 +36,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   public validationErrors$: Observable<ValidationError[]> = this.store.select(AuthSelectors.selectAuthValidationErrors);
 
   constructor(
-    private formBuilder: FormBuilder,
+    private readonly formBuilder: FormBuilder,
     private readonly authService: AuthService,
     private readonly store: Store,
     private readonly cdr: ChangeDetectorRef
@@ -47,9 +46,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.configureValidationErrors();
     this.subscriptions.push(
-      this.store.select(AuthSelectors.selectLoggedIn).pipe(
-        filter(loggedIn => loggedIn)
-      ).subscribe(
+      this.store.pipe(AuthSelectors.selectLoggedInOnly).subscribe(
         () => this.registerSubmit.emit()
       )
     );

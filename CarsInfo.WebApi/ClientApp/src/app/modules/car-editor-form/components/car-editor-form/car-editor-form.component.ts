@@ -10,11 +10,12 @@ import {
   Output,
   EventEmitter,
   ChangeDetectionStrategy,
-  OnChanges, SimpleChanges, ChangeDetectorRef
+  OnChanges, SimpleChanges
 } from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import {CarEditor} from 'app/modules/cars/interfaces/car-editor';
 import {ValidationError} from "@core/interfaces/error";
+import {SnackBarService} from "@core/services/snackbar.service";
 
 @Component({
   selector: 'car-editor-form',
@@ -43,7 +44,8 @@ export class CarEditorFormComponent implements OnInit, OnChanges {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly store: Store
+    private readonly store: Store,
+    private readonly snackBar: SnackBarService
   ) {
   }
 
@@ -139,7 +141,7 @@ export class CarEditorFormComponent implements OnInit, OnChanges {
 
   public onSubmit(): void {
     if (this.carEditorForm.invalid) {
-      alert('Form data is invalid.');
+      this.snackBar.openSnackBar('Form data is invalid.');
       return;
     }
 

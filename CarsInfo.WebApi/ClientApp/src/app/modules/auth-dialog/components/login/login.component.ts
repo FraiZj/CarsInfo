@@ -14,7 +14,6 @@ import {
 import {FormBuilder, Validators, FormControl} from '@angular/forms';
 import {Observable, Subscription} from 'rxjs';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {filter} from 'rxjs/operators';
 import {ValidationError} from "@core/interfaces/error";
 import {Router} from "@angular/router";
 
@@ -47,9 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.configureValidationErrors();
     this.subscriptions.push(
-      this.store.select(AuthSelectors.selectLoggedIn).pipe(
-        filter(loggedIn => loggedIn)
-      ).subscribe(
+      this.store.pipe(AuthSelectors.selectLoggedInOnly).subscribe(
         () => this.loginSubmit.emit()
       )
     );

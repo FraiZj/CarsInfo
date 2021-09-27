@@ -14,6 +14,7 @@ import {ValidationError} from "@core/interfaces/error";
 import {selectCommentFormValidationErrors} from "../../store/selectors/comments.selectors";
 import {Observable, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
+import {SnackBarService} from "@core/services/snackbar.service";
 
 @Component({
   selector: 'comment-form',
@@ -32,7 +33,8 @@ export class CommentFormComponent implements OnChanges, OnDestroy {
   constructor(
     private readonly store: Store,
     private readonly fb: FormBuilder,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private readonly snackBar: SnackBarService
   ) {
   }
 
@@ -69,7 +71,7 @@ export class CommentFormComponent implements OnChanges, OnDestroy {
 
   public submit(): void {
     if (this.commentFormGroup.invalid) {
-      alert('Form data is invalid.');
+      this.snackBar.openSnackBar('Form data is invalid.');
       return;
     }
 

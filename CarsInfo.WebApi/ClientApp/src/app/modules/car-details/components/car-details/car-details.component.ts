@@ -1,13 +1,13 @@
 import {fetchCarById} from '../../store/actions/car-details.actions';
 import {selectCar} from '../../store/selectors/car-details.selectors';
 import {Store} from '@ngrx/store';
-import {CarDeleteConfirmDialogComponent} from '../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component';
 import {Observable, Subject} from 'rxjs';
 import {ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Car} from 'app/modules/cars/interfaces/car';
 import {map, takeUntil, tap} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
+import {CarDeleteConfirmDialogComponent} from "../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component";
 
 @Component({
   selector: 'card-details',

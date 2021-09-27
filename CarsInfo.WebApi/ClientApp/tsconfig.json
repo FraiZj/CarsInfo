@@ -29,7 +29,7 @@
       "@brands/*": ["app/modules/brands/*"],
       "@car-creation/*": ["app/modules/car-creation/*"],
       "@shared/*": ["app/modules/shared/*"],
-      "@car-deletion-dialog/*": ["app/modules/car-delete-confirmation-dialog/*"],
+      "@car-deletion-dialog/*": ["app/modules/car-delete-confirmation-dialog/components/car-delete-confirm-dialog/*"],
       "@car-editor/*": ["app/modules/car-editor/*"],
       "@car-editor-form/*": ["app/modules/car-editor-form/*"],
       "@cars/*": ["app/modules/cars/*"],

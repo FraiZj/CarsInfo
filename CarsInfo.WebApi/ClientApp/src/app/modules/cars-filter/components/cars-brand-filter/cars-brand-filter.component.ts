@@ -28,7 +28,6 @@ export class CarsBrandFilterComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     this.store.dispatch(fetchFilterBrands({}));
-
     this.subscriptions.push(
       this.brandFormControl.valueChanges.pipe(
         debounceTime(CarsBrandFilterComponent.FilterDebounceTime),

@@ -1,14 +1,14 @@
-import { CarDeleteConfirmationData } from './../../interfaces/car-delele-confirmation-data';
+import { CarDeleteConfirmationData } from '../../interfaces/car-delele-confirmation-data';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, Inject, Input, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthDialogComponent } from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 import { Car } from 'app/modules/cars/interfaces/car';
 import { CarsService } from 'app/modules/cars/services/cars.service';
 import { Observable, throwError, Subject } from 'rxjs';
-import { catchError, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { catchError, switchMap, takeUntil } from 'rxjs/operators';
+import {SnackBarService} from "@core/services/snackbar.service";
 
 @Component({
   selector: 'car-delete-confirm-dialog',
@@ -22,10 +22,10 @@ export class CarDeleteConfirmDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly carsService: CarsService,
-    private readonly snackBar: MatSnackBar,
     public readonly dialogRef: MatDialogRef<AuthDialogComponent>,
     private readonly router: Router,
-    @Inject(MAT_DIALOG_DATA) public data: CarDeleteConfirmationData
+    @Inject(MAT_DIALOG_DATA) private readonly data: CarDeleteConfirmationData,
+    private readonly snackBar: SnackBarService
   ) { }
 
   ngOnInit(): void {
@@ -45,25 +45,14 @@ export class CarDeleteConfirmDialogComponent implements OnInit, OnDestroy {
         if (err instanceof Error) return throwError(err.message);
         return throwError('An error occurred');
       }),
-      tap({
-        error: (err: string) => this.openSnackBar(err)
-      }),
       takeUntil(this.unsubscribe$)
     ).subscribe({
       next: () => {
-        this.openSnackBar('Car successfully deleted');
+        this.snackBar.success('Car successfully deleted');
         this.dialogRef.close();
         this.router.navigateByUrl('/cars');
-      }
-    });
-  }
-
-  private openSnackBar(message: string) {
-    this.snackBar.open(message, 'X', {
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      duration: 5000,
-      panelClass: ['custom-snackbar']
+      },
+      error: (err: string) => this.snackBar.openSnackBar(err)
     });
   }
 }

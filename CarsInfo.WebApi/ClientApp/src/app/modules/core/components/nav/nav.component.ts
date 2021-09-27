@@ -4,10 +4,9 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {AuthenticationOption} from 'app/modules/auth-dialog/types/authentication-option';
 import {AuthDialogComponent} from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 import * as AuthActions from '@auth/store/actions/auth.actions';
-import {map} from "rxjs/operators";
 import {sendVerificationEmail} from '@core/store/actions/core.actions';
 import {Observable} from "rxjs";
-import {selectCurrentUserEmailVerified} from "@auth/store/selectors/auth.selectors";
+import {selectEmailNotVerified} from "@auth/store/selectors/auth.selectors";
 
 @Component({
   selector: 'carsInfo-nav',
@@ -17,9 +16,7 @@ import {selectCurrentUserEmailVerified} from "@auth/store/selectors/auth.selecto
 })
 export class NavComponent {
   public mobileMenuOpened: boolean = false;
-  public emailVerified$: Observable<boolean | undefined> = this.store.select(selectCurrentUserEmailVerified).pipe(
-    map(emailVerified => !emailVerified)
-  );
+  public emailVerified$: Observable<boolean | undefined> = this.store.select(selectEmailNotVerified);
 
   constructor(
     private readonly dialog: MatDialog,

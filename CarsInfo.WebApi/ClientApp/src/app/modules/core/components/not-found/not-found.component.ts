@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'not-found',
-  templateUrl: './not-found.component.html',
-  styleUrls: ['./not-found.component.scss'],
+  template: '<p class="white-text">404 Not Found</p>',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotFoundComponent { }
