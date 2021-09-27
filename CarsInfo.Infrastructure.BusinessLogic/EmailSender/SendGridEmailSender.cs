@@ -3,7 +3,6 @@ using CarsInfo.Application.BusinessLogic.EmailSender;
 using CarsInfo.Application.BusinessLogic.EmailSender.Models;
 using CarsInfo.Application.BusinessLogic.EmailSender.Options;
 using CarsInfo.Infrastructure.BusinessLogic.Options;
-using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -15,11 +14,11 @@ namespace CarsInfo.Infrastructure.BusinessLogic.EmailSender
         private readonly SendGridOptions _sendGridOptions;
         
         public SendGridEmailSender(
-            IOptions<SendGridOptions> sendGridOptions, 
+            SendGridOptions sendGridOptions, 
             EmailSenderOptions emailSenderOptions)
         {
             _emailSenderOptions = emailSenderOptions;
-            _sendGridOptions = sendGridOptions.Value;
+            _sendGridOptions = sendGridOptions;
         }
         
         public Task SendEmailAsync(EmailModel emailModel)

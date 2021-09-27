@@ -13,11 +13,14 @@ namespace CarsInfo.WebApi.StartupConfiguration
             this IServiceCollection services, 
             IConfiguration configuration)
         {
+            var sendGridOptions = new SendGridOptions();
+            configuration.GetSection(nameof(SendGridOptions)).Bind(sendGridOptions);
+            services.AddSingleton(sendGridOptions);
+            
             var emailSenderOptions = new EmailSenderOptions();
             configuration.GetSection(nameof(EmailSenderOptions)).Bind(emailSenderOptions);
             services.AddSingleton(emailSenderOptions);
             services.AddTransient<IEmailSender, SendGridEmailSender>();
-            services.Configure<SendGridOptions>(configuration);
         }
     }
 }
