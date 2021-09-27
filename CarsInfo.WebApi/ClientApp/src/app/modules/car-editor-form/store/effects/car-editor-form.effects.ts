@@ -3,10 +3,7 @@ import { BrandsService } from '@brands/services/brands.service';
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import {catchError, exhaustMap, map} from 'rxjs/operators';
-import {HttpErrorResponse} from "@angular/common/http";
-import {of} from "rxjs";
-import {addApplicationError} from "@core/store/actions/core.actions";
-import {ErrorResponse} from "@core/interfaces/error-response";
+import {handleError} from "@error-handler";
 
 @Injectable()
 export class CarEditorFormEffects {
@@ -21,7 +18,7 @@ export class CarEditorFormEffects {
       exhaustMap(() =>
         this.brandsService.getBrands().pipe(
           map(brands => fetchBrandsSuccess({ brands })),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -34,23 +31,10 @@ export class CarEditorFormEffects {
       exhaustMap(brand =>
         this.brandsService.addBrand(brand).pipe(
           map(() => fetchBrands()),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
   );
-
-  private handleError(error: Error ) {
-    if (error instanceof HttpErrorResponse) {
-      const errorResponse: ErrorResponse = error.error;
-      if (errorResponse.applicationError) {
-        return of(addApplicationError({ applicationError: errorResponse.applicationError }))
-      }
-
-      return of(addApplicationError({ applicationError: errorResponse.validationErrors[0].error }));
-    }
-
-    return of(addApplicationError({ applicationError: error.message }))
-  }
 }
 

@@ -8,10 +8,7 @@ import * as CarsListActions from '../actions/cars-list.actions'
 import {catchError, exhaustMap, map} from 'rxjs/operators';
 import {ItemsTakePerLoad} from '@cars-list/consts/filter-consts';
 import {Store} from '@ngrx/store';
-import {HttpErrorResponse} from "@angular/common/http";
-import {ErrorResponse} from "@core/interfaces/error-response";
-import {of} from "rxjs";
-import {addApplicationError} from "@core/store/actions/core.actions";
+import {handleError} from "@error-handler";
 
 @Injectable()
 export class CarsListEffects {
@@ -30,7 +27,7 @@ export class CarsListEffects {
           filter: {...filter, skip: ItemsSkipPerLoad, take: ItemsTakePerLoad},
           orderBy: orderBy
         })),
-        catchError(error => this.handleError(error))
+        catchError(error => handleError(error))
       ))
     )
   );
@@ -42,7 +39,7 @@ export class CarsListEffects {
       exhaustMap(({filter, orderBy}) =>
         this.carsService.getCars(filter, orderBy).pipe(
           map(cars => CarsListActions.fetchCarsSuccess({cars})),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -55,7 +52,7 @@ export class CarsListEffects {
       exhaustMap(({filter, orderBy}) =>
         this.carsService.getCars(filter, orderBy).pipe(
           map(cars => CarsListActions.loadNextCarsSuccess({cars})),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -76,7 +73,7 @@ export class CarsListEffects {
       exhaustMap(({filter, orderBy}) =>
         this.carsService.getUserFavoriteCars(filter, orderBy).pipe(
           map(cars => CarsListActions.fetchFavoriteCarsSuccess({cars})),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -89,7 +86,7 @@ export class CarsListEffects {
       exhaustMap(({filter, orderBy}) =>
         this.carsService.getUserFavoriteCars(filter, orderBy).pipe(
           map(cars => CarsListActions.loadNextFavoriteCarsSuccess({cars})),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -108,7 +105,7 @@ export class CarsListEffects {
       ofType(CarsListActions.fetchFavoriteCarsIds),
       exhaustMap(() => this.carsService.getCurrentUserFavoriteCarsIds().pipe(
           map(ids => CarsListActions.fetchFavoriteCarsIdsSuccess({ids})),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -120,20 +117,9 @@ export class CarsListEffects {
       map(action => action.id),
       exhaustMap((id) => this.carsService.toggleFavorite(id).pipe(
           map(() => CarsListActions.fetchFavoriteCarsIds()),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
   );
-
-  private handleError(error: Error) {
-    if (error instanceof HttpErrorResponse) {
-      const errorResponse: ErrorResponse = error.error;
-      if (errorResponse.applicationError) {
-        return of(addApplicationError({applicationError: errorResponse.applicationError}))
-      }
-    }
-
-    return of(addApplicationError({applicationError: error.message}))
-  }
 }

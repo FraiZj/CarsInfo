@@ -4,11 +4,8 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { CommentsService } from "../../services/comments.service"
 import {catchError, exhaustMap, map} from 'rxjs/operators';
-import {HttpErrorResponse} from "@angular/common/http";
-import {of} from "rxjs";
-import {addApplicationError} from "@core/store/actions/core.actions";
-import {addComment, addCommentSuccess, addValidationErrors} from "../actions/comment-form.actions";
-import {ErrorResponse} from "@core/interfaces/error-response";
+import {addComment, addCommentSuccess} from "../actions/comment-form.actions";
+import { handleError } from '@error-handler';
 
 @Injectable()
 export class CommentsEffects {
@@ -24,7 +21,7 @@ export class CommentsEffects {
       exhaustMap(({ carId, filter }) =>
         this.commentsService.getComments(carId, filter).pipe(
           map(comments => commentActions.fetchCommentsSuccess({ comments })),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -44,7 +41,7 @@ export class CommentsEffects {
       exhaustMap(({ carId, filter }) =>
         this.commentsService.getComments(carId, filter).pipe(
           map(comments => commentActions.loadNextCommentsSuccess({ comments })),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -65,7 +62,7 @@ export class CommentsEffects {
       exhaustMap(({ carId, comment }) =>
         this.commentsService.addComment(carId, comment).pipe(
           map(() => addCommentSuccess({ carId })),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -80,17 +77,4 @@ export class CommentsEffects {
       })
     )
   );
-
-  private handleError(error: Error ) {
-    if (error instanceof HttpErrorResponse) {
-      const errorResponse: ErrorResponse = error.error;
-      if (errorResponse.applicationError) {
-        return of(addApplicationError({ applicationError: errorResponse.applicationError }))
-      }
-
-      return of(addValidationErrors({ validationErrors: errorResponse.validationErrors }));
-    }
-
-    return of(addApplicationError({ applicationError: error.message }))
-  }
 }

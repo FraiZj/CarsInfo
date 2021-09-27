@@ -17,6 +17,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 import {EmailVerificationModule} from "./modules/email-verification/email-verification.module";
 import {RefreshTokenInterceptor} from "@core/request-configuration/refresh-token-interceptor";
+import {appReducer} from "./store/reducers/app.reducers";
 
 @NgModule({
   declarations: [
@@ -31,7 +32,9 @@ import {RefreshTokenInterceptor} from "@core/request-configuration/refresh-token
     HttpClientModule,
     CommonModule,
     NgbModule,
-    StoreModule.forRoot({}),
+    StoreModule.forRoot({
+      app: appReducer
+    }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       autoPause: true

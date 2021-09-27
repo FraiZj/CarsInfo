@@ -1,5 +1,4 @@
 import {
-  addCarEditorValidationErrors,
   fetchCarEditorById,
   fetchCarEditorByIdSuccess,
   updateCar,
@@ -10,10 +9,7 @@ import {CarsService} from '@cars/services/cars.service';
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {catchError, exhaustMap, map, tap} from 'rxjs/operators';
-import {HttpErrorResponse} from "@angular/common/http";
-import {ErrorResponse} from "@core/interfaces/error-response";
-import {of} from "rxjs";
-import {addApplicationError} from "@core/store/actions/core.actions";
+import {handleError} from "@error-handler";
 
 @Injectable()
 export class CarEditorEffects {
@@ -34,7 +30,7 @@ export class CarEditorEffects {
             error: () => this.router.navigateByUrl('not-found')
           }),
           map(carEditor => fetchCarEditorByIdSuccess({carEditor})),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -50,22 +46,9 @@ export class CarEditorEffects {
             this.router.navigateByUrl(`/cars/${id}`);
             return updateCarSuccess();
           }),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
   );
-
-  private handleError(error: Error) {
-    if (error instanceof HttpErrorResponse) {
-      const errorResponse: ErrorResponse = error.error;
-      if (errorResponse.applicationError) {
-        return of(addApplicationError({applicationError: errorResponse.applicationError}))
-      }
-
-      return of(addCarEditorValidationErrors({validationErrors: errorResponse.validationErrors}));
-    }
-
-    return of(addApplicationError({applicationError: error.message}))
-  }
 }

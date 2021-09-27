@@ -35,7 +35,8 @@
       "@cars/*": ["app/modules/cars/*"],
       "@comments/*": ["app/modules/comments/*"],
       "@account/*": ["app/modules/account/*"],
-      "@email-verification": ["app/modules/email-verification/*"]
+      "@email-verification": ["app/modules/email-verification/*"],
+      "@error-handler": ["app/error-handler"]
     }
   },
   "angularCompilerOptions": {

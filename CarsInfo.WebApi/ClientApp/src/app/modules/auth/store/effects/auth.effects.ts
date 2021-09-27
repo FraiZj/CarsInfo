@@ -8,10 +8,8 @@ import {map, exhaustMap, catchError, tap} from "rxjs/operators";
 import * as AuthActions from '../actions/auth.actions';
 import {AuthDialogComponent} from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 import {Action} from '@ngrx/store';
-import {addApplicationError} from "@core/store/actions/core.actions";
-import {ErrorResponse} from "@core/interfaces/error-response";
-import {HttpErrorResponse} from "@angular/common/http";
 import {AuthTokens} from "@auth/interfaces/auth-tokens";
+import {handleError} from "@error-handler";
 
 @Injectable()
 export class AuthEffects implements OnInitEffects {
@@ -56,7 +54,7 @@ export class AuthEffects implements OnInitEffects {
       exhaustMap(userRegister =>
         this.authService.register(userRegister).pipe(
           map(tokens => AuthActions.loginSuccess({tokens})),
-          catchError(error => this.handleCatchError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -69,7 +67,7 @@ export class AuthEffects implements OnInitEffects {
       exhaustMap(userLogin =>
         this.authService.login(userLogin).pipe(
           map(tokens => AuthActions.loginSuccess({tokens})),
-          catchError(error => this.handleCatchError(error))
+          catchError(error => handleError(error))
         )
       )
     )
@@ -121,23 +119,9 @@ export class AuthEffects implements OnInitEffects {
       exhaustMap(token =>
         this.authService.loginWithGoogle(token).pipe(
           map(tokens => AuthActions.loginSuccess({tokens})),
-          catchError(error => this.handleCatchError(error))
+          catchError(error => handleError(error))
         )
       )
     )
   );
-
-  private handleCatchError(errorResponse: HttpErrorResponse | Error) {
-    if (errorResponse instanceof HttpErrorResponse) {
-      const error = errorResponse.error as ErrorResponse;
-
-      if (error.applicationError != null) {
-        return of(addApplicationError({applicationError: error.applicationError}));
-      }
-
-      return of(AuthActions.addAuthValidationErrors({validationErrors: error.validationErrors}));
-    }
-
-    return of(addApplicationError({applicationError: errorResponse.message}));
-  }
 }

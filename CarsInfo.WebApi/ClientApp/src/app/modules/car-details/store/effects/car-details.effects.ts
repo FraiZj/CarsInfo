@@ -4,9 +4,7 @@ import {CarsService} from '@cars/services/cars.service';
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
 import {catchError, exhaustMap, map, tap} from 'rxjs/operators';
-import {HttpErrorResponse} from "@angular/common/http";
-import {of} from "rxjs";
-import {addApplicationError} from "@core/store/actions/core.actions";
+import {handleError} from "@error-handler";
 
 @Injectable()
 export class CarDetailsEffects {
@@ -27,17 +25,9 @@ export class CarDetailsEffects {
             error: () => this.router.navigateByUrl('not-found')
           }),
           map(car => fetchCarByIdSuccess({car})),
-          catchError(error => this.handleError(error))
+          catchError(error => handleError(error))
         )
       )
     )
   );
-
-  private handleError(error: Error) {
-    if (error instanceof HttpErrorResponse && error.error.applicationError) {
-      return of(addApplicationError({applicationError: error.error.applicationError}))
-    }
-
-    return of(addApplicationError({applicationError: error.message}))
-  }
 }
