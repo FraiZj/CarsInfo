@@ -5,7 +5,6 @@ import {AuthenticationOption} from 'app/modules/auth-dialog/types/authentication
 import {AuthDialogComponent} from 'app/modules/auth-dialog/components/auth-dialog/auth-dialog.component';
 import * as AuthActions from '@auth/store/actions/auth.actions';
 import {map} from "rxjs/operators";
-import {SnackBarService} from "@core/services/snackbar.service";
 import {sendVerificationEmail} from '@core/store/actions/core.actions';
 import {Observable} from "rxjs";
 import {selectCurrentUserEmailVerified} from "@auth/store/selectors/auth.selectors";
@@ -23,9 +22,8 @@ export class NavComponent {
   );
 
   constructor(
-    public readonly dialog: MatDialog,
-    private readonly snackBar: SnackBarService,
-    public readonly store: Store
+    private readonly dialog: MatDialog,
+    private readonly store: Store
   ) {
   }
 
@@ -47,6 +45,5 @@ export class NavComponent {
 
   public sendVerificationEmail() {
     this.store.dispatch(sendVerificationEmail());
-    this.snackBar.success('Verification email sent to your email box');
   }
 }

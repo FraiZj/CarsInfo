@@ -7,12 +7,14 @@ import {
   sendVerificationEmailSuccess
 } from "@core/store/actions/core.actions";
 import {handleError} from "@error-handler";
+import {SnackBarService} from "@core/services/snackbar.service";
 
 @Injectable()
 export class CoreEffects {
   constructor(
     private readonly actions$: Actions,
-    private readonly accountService: AccountService
+    private readonly accountService: AccountService,
+    private readonly snackBar: SnackBarService
   ) {
   }
 
@@ -20,7 +22,10 @@ export class CoreEffects {
     this.actions$.pipe(
       ofType(sendVerificationEmail),
       exhaustMap(() => this.accountService.sendVerificationEmail().pipe(
-          map(() => sendVerificationEmailSuccess()),
+          map(() => {
+            this.snackBar.success('Verification email sent to your email box');
+            return sendVerificationEmailSuccess();
+          }),
           catchError(error => handleError(error))
         )
       )
