@@ -26,8 +26,8 @@ import {Router} from "@angular/router";
 })
 export class LoginComponent implements OnInit, OnDestroy {
   @Output() public switchToRegisterEvent = new EventEmitter();
-  @Output() public loginEvent = new EventEmitter();
-  @Output() public closeDialog = new EventEmitter();
+  @Output() public loginSubmit = new EventEmitter();
+  @Output() public passwordReset = new EventEmitter();
   private readonly subscriptions: Subscription[] = [];
   public loginForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.store.select(AuthSelectors.selectLoggedIn).pipe(
         filter(loggedIn => loggedIn)
       ).subscribe(
-        () => this.loginEvent.emit()
+        () => this.loginSubmit.emit()
       )
     );
   }
@@ -99,7 +99,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   public resetPassword() {
-    this.closeDialog.emit();
+    this.passwordReset.emit();
     this.router.navigateByUrl('/reset-password/email');
   }
 }

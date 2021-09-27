@@ -26,7 +26,7 @@ import {ValidationError} from "@core/interfaces/error";
 export class RegisterComponent implements OnInit, OnDestroy {
   public static readonly PasswordMaxLength: number = 6;
   @Output() public switchToLoginEvent = new EventEmitter();
-  @Output() public loginEvent = new EventEmitter();
+  @Output() public registerSubmit = new EventEmitter();
   private readonly subscriptions: Subscription[] = [];
   public registerForm = this.formBuilder.group({
     firstName: ['', Validators.required],
@@ -50,7 +50,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.store.select(AuthSelectors.selectLoggedIn).pipe(
         filter(loggedIn => loggedIn)
       ).subscribe(
-        () => this.loginEvent.emit()
+        () => this.registerSubmit.emit()
       )
     );
   }
