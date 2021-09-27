@@ -22,18 +22,15 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
     public class TokenService : ITokenService
     {
         private readonly IGenericRepository<UserRefreshToken> _userRefreshTokenRepository;
-        private readonly ILogger<TokenService> _logger;
         private readonly TokenServiceMapper _mapper;
         private readonly ApiAuthOptions _authOptions;
 
         public TokenService(
             IOptions<ApiAuthOptions> authSetting,
             IGenericRepository<UserRefreshToken> userRefreshTokenRepository,
-            ILogger<TokenService> logger,
             TokenServiceMapper mapper)
         {
             _userRefreshTokenRepository = userRefreshTokenRepository;
-            _logger = logger;
             _mapper = mapper;
             _authOptions = authSetting.Value;
         }
@@ -78,112 +75,80 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
 
         public OperationResult<ClaimsPrincipal> GetPrincipalFromExpiredToken(string token)
         {
-            try
+            var tokenValidationParameters = new TokenValidationParameters
             {
-                var tokenValidationParameters = new TokenValidationParameters
-                {
-                    RequireExpirationTime = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authOptions.Secret)),
-                    ValidIssuer = _authOptions.Issuer,
-                    ValidateIssuer = true,
-                    ValidateAudience = false
-                };
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+                RequireExpirationTime = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_authOptions.Secret)),
+                ValidIssuer = _authOptions.Issuer,
+                ValidateIssuer = true,
+                ValidateAudience = false
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
-                if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-                    !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, 
-                        StringComparison.InvariantCultureIgnoreCase))
-                {
-                    return OperationResult<ClaimsPrincipal>.FailureResult("Invalid jwt token");
-                }
-
-                return OperationResult<ClaimsPrincipal>.SuccessResult(principal);
-            }
-            catch (Exception e)
+            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, 
+                    StringComparison.InvariantCultureIgnoreCase))
             {
-                _logger.LogError(e, "An error occurred while fetching user refresh token");
-                return OperationResult<ClaimsPrincipal>.ExceptionResult();
+                return OperationResult<ClaimsPrincipal>.FailureResult("Invalid jwt token");
             }
+
+            return OperationResult<ClaimsPrincipal>.SuccessResult(principal);
         }
 
         public async Task<OperationResult<UserRefreshTokenDto>> GetUserRefreshTokenAsync(int userId)
         {
-            try
-            {
-                var filterModel = new FilterModel(new FiltrationField("UserId", userId));
-                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filterModel.Filters);
+            var filterModel = new FilterModel(new FiltrationField("UserId", userId));
+            var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filterModel.Filters);
 
-                if (userRefreshToken is null)
-                {
-                    return OperationResult<UserRefreshTokenDto>.FailureResult(
-                        $"Refresh token for user with id={userId} does not exist");
-                }
-                
-                return OperationResult<UserRefreshTokenDto>.SuccessResult(
-                    _mapper.MapToUserRefreshTokenDto(userRefreshToken));
-            }
-            catch (Exception e)
+            if (userRefreshToken is null)
             {
-                _logger.LogError(e, "An error occurred while fetching user refresh token");
-                return OperationResult<UserRefreshTokenDto>.ExceptionResult();
+                return OperationResult<UserRefreshTokenDto>.FailureResult(
+                    $"Refresh token for user with id={userId} does not exist");
             }
+                
+            return OperationResult<UserRefreshTokenDto>.SuccessResult(
+                _mapper.MapToUserRefreshTokenDto(userRefreshToken));
         }
         
         public async Task<OperationResult<string>> UpdateRefreshTokenByUserIdAsync(int userId)
         {
-            try
+            var userRefreshTokenDto = new UserRefreshTokenDto
             {
-                var userRefreshTokenDto = new UserRefreshTokenDto
-                {
-                    UserId = userId,
-                    Token = GenerateRefreshToken(),
-                    ExpiryTime = DateTimeOffset.Now.AddDays(7)
-                };
-                var filter = new FilterModel(new FiltrationField("UserId", userRefreshTokenDto.UserId));
-                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filter.Filters);
+                UserId = userId,
+                Token = GenerateRefreshToken(),
+                ExpiryTime = DateTimeOffset.Now.AddDays(7)
+            };
+            var filter = new FilterModel(new FiltrationField("UserId", userRefreshTokenDto.UserId));
+            var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filter.Filters);
 
-                if (userRefreshToken is null)
-                {
-                    await AddRefreshTokenAsync(userRefreshTokenDto);
-                    return OperationResult<string>.SuccessResult(userRefreshTokenDto.Token);
-                }
-                
-                userRefreshToken.Token = userRefreshTokenDto.Token;
-                userRefreshToken.ExpiryTime = userRefreshTokenDto.ExpiryTime;
-
-                await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
-                
+            if (userRefreshToken is null)
+            {
+                await AddRefreshTokenAsync(userRefreshTokenDto);
                 return OperationResult<string>.SuccessResult(userRefreshTokenDto.Token);
             }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while updating refresh token");
-                return OperationResult<string>.ExceptionResult();
-            }
+                
+            userRefreshToken.Token = userRefreshTokenDto.Token;
+            userRefreshToken.ExpiryTime = userRefreshTokenDto.ExpiryTime;
+
+            await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
+                
+            return OperationResult<string>.SuccessResult(userRefreshTokenDto.Token);
         }
 
         public async Task<OperationResult> DeleteRefreshTokenAsync(int userId)
         {
-            try
-            {
-                var filter = new FilterModel(new FiltrationField("UserId", userId));
-                var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filter.Filters);
+            var filter = new FilterModel(new FiltrationField("UserId", userId));
+            var userRefreshToken = await _userRefreshTokenRepository.GetAsync(filter.Filters);
                 
-                userRefreshToken.Token = null;
-                userRefreshToken.ExpiryTime = null;
+            userRefreshToken.Token = null;
+            userRefreshToken.ExpiryTime = null;
 
-                await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
+            await _userRefreshTokenRepository.UpdateAsync(userRefreshToken);
                 
-                return OperationResult.SuccessResult();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "An error occurred while updating refresh token");
-                return OperationResult.ExceptionResult();
-            }
+            return OperationResult.SuccessResult();
         }
 
         private Task AddRefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto)

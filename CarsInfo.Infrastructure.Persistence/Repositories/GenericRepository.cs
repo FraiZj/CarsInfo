@@ -84,11 +84,11 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             return await Context.QueryAsync<T>(sql);
         }
 
-        public virtual async Task<bool?> ContainsAsync(IList<FiltrationField> filters)
+        public virtual async Task<bool> ContainsAsync(IList<FiltrationField> filters)
         {
             if (filters is not null && !filters.Any())
             {
-                return null;
+                return false;
             }
 
             var filter = SqlQueryConfigurator.ConfigureFilter(TableName, filters);

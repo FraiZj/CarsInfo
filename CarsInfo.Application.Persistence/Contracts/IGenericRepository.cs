@@ -25,6 +25,6 @@ namespace CarsInfo.Application.Persistence.Contracts
 
         Task<IEnumerable<T>> GetAllAsync(FilterModel filterModel);
 
-        Task<bool?> ContainsAsync(IList<FiltrationField> filters);
+        Task<bool> ContainsAsync(IList<FiltrationField> filters);
     }
 }
