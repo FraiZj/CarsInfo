@@ -8,6 +8,7 @@ import {Car} from 'app/modules/cars/interfaces/car';
 import {map, takeUntil, tap} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {CarDeleteConfirmDialogComponent} from "../../../car-delete-confirm-dialog/components/car-delete-confirm-dialog/car-delete-confirm-dialog.component";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
   selector: 'card-details',
@@ -28,7 +29,8 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly dialog: MatDialog,
     private readonly store: Store,
-    private readonly cdr: ChangeDetectorRef
+    private readonly cdr: ChangeDetectorRef,
+    private readonly asyncPipe: AsyncPipe
   ) {
   }
 
@@ -51,8 +53,9 @@ export class CarDetailsComponent implements OnInit, OnDestroy {
 
   public onDelete(): void {
     this.dialog.open(CarDeleteConfirmDialogComponent, {
+      id: 'car-deletion-dialog',
       data: {
-        car$: this.car$
+        car: this.asyncPipe.transform(this.car$)
       }
     });
   }
