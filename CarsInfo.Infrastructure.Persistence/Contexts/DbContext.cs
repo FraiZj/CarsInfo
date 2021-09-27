@@ -55,7 +55,7 @@ namespace CarsInfo.Infrastructure.Persistence.Contexts
             where T : BaseEntity
             where TFirst : BaseEntity
             where TSecond : BaseEntity
-                where TThird : BaseEntity
+            where TThird : BaseEntity
         {
             try
             {

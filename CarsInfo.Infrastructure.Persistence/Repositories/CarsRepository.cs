@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.Persistence.Contracts;
@@ -10,140 +11,115 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 {
     public class CarsRepository : GenericRepository<Car>, ICarsRepository
     {
-        public CarsRepository(IDbContext context) 
+        public CarsRepository(IDbContext context)
             : base(context)
-        { }
-
-        public override async Task<IEnumerable<Car>> GetAllAsync(FilterModel filter)
         {
-            filter ??= new FilterModel();
-            
-            var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
-            var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
-            var sql = $@"SELECT * FROM (
-	                        SELECT Car.Id AS CarId FROM Car
-	                        LEFT JOIN Brand
-	                        ON Car.BrandId = Brand.Id
-                            { filters }
-	                        GROUP BY Car.Id, Brand.Name
-	                        { orderBy }
-	                        OFFSET { filter.Skip } ROWS
-	                        FETCH NEXT { filter.Take } ROWS ONLY
-	                    ) as CarsIds
-                        LEFT JOIN Car
-                        ON CarsIds.CarId = Car.Id
-                        LEFT JOIN Brand
-                        ON Car.BrandId = Brand.Id
-                        LEFT JOIN CarPicture
-                        ON Car.Id = CarPicture.CarId";
-
-            var cars = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
-                (car, brand, carPicture) =>
-                {
-                    car.Brand = brand;
-
-                    if (carPicture is not null)
-                    {
-                        car.CarPictures.Add(carPicture);
-                    }
-
-                    return car;
-                });
-
-            return GroupSet(cars);
         }
 
-        public async Task<IEnumerable<Car>> GetUserFavoriteCarsAsync(
-            int userId, FilterModel filter)
+        public override Task<IEnumerable<Car>> GetAllAsync(FilterModel filter)
         {
             filter ??= new FilterModel();
             var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
             var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
-            var sql = $@"SELECT * FROM (
-	                        SELECT Car.Id AS CarId FROM Car
-                            INNER JOIN UserCar
-                            ON Car.Id = UserCar.CarId AND UserCar.UserId = { userId }
-	                        LEFT JOIN Brand
-	                        ON Car.BrandId = Brand.Id
-                            { filters }
-	                        GROUP BY Car.Id, Brand.Name
-	                        { orderBy }
-	                        OFFSET { filter.Skip } ROWS
-	                        FETCH NEXT { filter.Take } ROWS ONLY
-	                    ) as CarsIds
-                        LEFT JOIN Car
-                        ON CarsIds.CarId = Car.Id
-                        LEFT JOIN Brand
-                        ON Car.BrandId = Brand.Id
-                        LEFT JOIN CarPicture
-                        ON Car.Id = CarPicture.CarId";
+            var selectCars = $@"SELECT * FROM Car
+                                LEFT JOIN Brand
+                                ON Car.BrandId = Brand.Id
+                                {filters}
+                                {orderBy}
+                                OFFSET {filter.Skip} ROWS
+	                            FETCH NEXT {filter.Take} ROWS ONLY";
 
-            var cars = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
-                (car, brand, carPicture) =>
-                {
-                    car.Brand = brand;
-
-                    if (carPicture is not null)
-                    {
-                        car.CarPictures.Add(carPicture);
-                    }
-
-                    return car;
-                });
-
-            return GroupSet(cars);
+            return GetCarsAsync(selectCars, LoadFirstPictureForEachAsync);
         }
-        
+
+        public Task<IEnumerable<Car>> GetUserFavoriteCarsAsync(int userId, FilterModel filter)
+        {
+            filter ??= new FilterModel();
+            var orderBy = SqlQueryConfigurator.ConfigureOrderBy(filter.OrderBy);
+            var filters = SqlQueryConfigurator.ConfigureFilter(TableName, filter.Filters, filter.IncludeDeleted);
+            var selectUserCars = $@"SELECT * FROM Car
+                                    INNER JOIN UserCar
+                                    ON Car.Id = UserCar.CarId AND UserCar.UserId = @userId
+                                    LEFT JOIN Brand
+                                    ON Car.BrandId = Brand.Id
+                                    {filters}
+                                    {orderBy}
+                                    OFFSET {filter.Skip} ROWS
+	                                FETCH NEXT {filter.Take} ROWS ONLY";
+
+            return GetCarsAsync(selectUserCars, LoadFirstPictureForEachAsync,
+                new
+                {
+                    userId
+                });
+        }
+
         public override async Task<Car> GetAsync(int id, bool includeDeleted = false)
         {
-            var sql = @"SELECT * FROM Car
-                         LEFT JOIN Brand
-                         ON Car.BrandId = Brand.Id
-                         LEFT JOIN CarPicture
-                         ON Car.Id = CarPicture.CarId
-                         WHERE Car.Id=@id";
+            var selectCarById = @"SELECT TOP 1 * FROM Car
+                                LEFT JOIN Brand
+                                ON Car.BrandId = Brand.Id
+                                LEFT JOIN CarPicture
+                                ON Car.Id = CarPicture.CarId
+                                WHERE Car.Id=@id";
 
             if (!includeDeleted)
             {
-                sql += " AND Car.IsDeleted = 0";
+                selectCarById += " AND Car.IsDeleted = 0";
             }
 
-            var cars  = await Context.QueryAsync<Car, Brand, CarPicture>(sql,
-                (car, brand, carPicture) =>
+            return (await GetCarsAsync(selectCarById, LoadAllPicturesForEachAsync,
+                new
                 {
-                    car.Brand = brand;
-
-                    if (carPicture is not null)
-                    {
-                        car.CarPictures.Add(carPicture);
-                    }
-                    
-                    return car;
-                }, new { id });
-
-            return GroupSet(cars).FirstOrDefault();
+                    id
+                })).FirstOrDefault();
         }
 
-        private static IEnumerable<Car> GroupSet(IEnumerable<Car> cars)
+        private async Task<IEnumerable<Car>> GetCarsAsync(
+            string sql,
+            Func<IEnumerable<Car>, Task> resultHandler,
+            object parameters = null)
         {
-            return cars.GroupBy(c => c.Id).Select(g =>
+            var cars = (await Context.QueryAsync<Car, Brand>(sql,
+                (car, brand) =>
+                {
+                    car.Brand = brand;
+                    return car;
+                }, parameters)).ToList();
+
+            await resultHandler(cars);
+
+            return cars;
+        }
+
+        private async Task LoadFirstPictureForEachAsync(IEnumerable<Car> cars)
+        {
+            const string selectFirstCarPictureByCarId =
+                "SELECT TOP 1 * FROM CarPicture WHERE CarId = @carId AND IsDeleted = 0";
+            foreach (var car in cars)
             {
-                var groupedCar = g.First();
-                if (!groupedCar.CarPictures.Any())
-                {
-                    groupedCar.CarPictures = new List<CarPicture>();
-                }
-
-                foreach (var car in g.Skip(1))
-                {
-                    if (car.CarPictures.Any())
+                car.CarPictures.Add(await Context.QueryFirstOrDefaultAsync<CarPicture>(
+                    selectFirstCarPictureByCarId,
+                    new
                     {
-                        groupedCar.CarPictures.Add(car.CarPictures.First());
-                    }
-                }
+                        carId = car.Id
+                    }));
+            }
+        }
 
-                return groupedCar;
-            });
+        private async Task LoadAllPicturesForEachAsync(IEnumerable<Car> cars)
+        {
+            const string selectCarPicturesByCarId =
+                "SELECT * FROM CarPicture WHERE CarId = @carId AND IsDeleted = 0";
+            foreach (var car in cars)
+            {
+                car.CarPictures = (await Context.QueryAsync<CarPicture>(
+                    selectCarPicturesByCarId,
+                    new
+                    {
+                        carId = car.Id
+                    })).ToList();
+            }
         }
     }
 }

@@ -14,13 +14,13 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public override async Task<IEnumerable<User>> GetAllAsync()
         {
-            var sql = @$"SELECT * FROM {TableName} user
-                         INNER JOIN UserRole
-                         ON user.UserId = UserRole.UserId
-                         INNER JOIN Role
-                         ON UserRole.RoleId = Role.Id";
+            const string selectUsers = @"SELECT * FROM [User]
+                                         INNER JOIN [UserRole]
+                                         ON [User].UserId = [UserRole].UserId
+                                         INNER JOIN [Role]
+                                         ON [UserRole].RoleId = [Role].Id";
 
-            var users = await Context.QueryAsync<User, Role>(sql,
+            var users = await Context.QueryAsync<User, Role>(selectUsers,
                 (user, role) =>
                 {
                     user.Roles.Add(role);
@@ -32,18 +32,24 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public async Task<User> GetByEmailAsync(string email)
         {
-            var sql = @$"SELECT u.*, Role.* FROM [{TableName}] u
-                         INNER JOIN UserRole 
-                         ON u.Id = UserRole.UserId
-                         INNER JOIN Role
-                         ON UserRole.RoleId = Role.Id
-                         WHERE u.Email = '{email}'";
+            const string selectUserByEmail = @"SELECT TOP 1 
+                                                [User].*, [Role].* 
+                                            FROM [User]
+                                            INNER JOIN [UserRole] 
+                                            ON [User].Id = [UserRole].UserId
+                                            INNER JOIN [Role]
+                                            ON [UserRole].RoleId = [Role].Id
+                                            WHERE [User].Email = @email";
 
-            var users = (await Context.QueryAsync<User, Role>(sql,
+            var users = (await Context.QueryAsync<User, Role>(
+                selectUserByEmail,
                 (user, role) =>
                 {
                     user.Roles.Add(role);
                     return user;
+                }, new
+                {
+                    email
                 })).ToList();
 
             return users.Count == 0 ? null : GroupSet(users).FirstOrDefault();

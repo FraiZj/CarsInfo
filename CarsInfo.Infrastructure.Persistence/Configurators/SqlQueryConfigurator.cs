@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using CarsInfo.Application.Persistence.Enums;
@@ -11,6 +12,13 @@ namespace CarsInfo.Infrastructure.Persistence.Configurators
 {
     public static class SqlQueryConfigurator
     {
+        public static string GetTableName<T>()
+            where T : BaseEntity
+        {
+            var tableAttribute = Attribute.GetCustomAttribute(typeof(T), typeof(TableAttribute)) as TableAttribute;
+            return tableAttribute?.Name;
+        }
+        
         public static string ConfigureOrderBy(SortingField sortingField)
         {
             if (sortingField is null || string.IsNullOrWhiteSpace(sortingField.Field))

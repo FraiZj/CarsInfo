@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using CarsInfo.Application.Persistence.Contracts;
 using CarsInfo.Application.Persistence.Filters;
@@ -20,7 +17,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         public GenericRepository(IDbContext context)
         {
             Context = context;
-            TableName = GetTableName(typeof(T));
+            TableName = SqlQueryConfigurator.GetTableName<T>();
         }
 
         public virtual async Task<int> AddAsync(T entity)
@@ -100,7 +97,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
                         SELECT
                           CASE WHEN EXISTS 
                           (
-                            SELECT * FROM [{GetTableName(typeof(T))}] {filter}
+                            SELECT * FROM [{TableName}] {filter}
                           )
                           THEN 1
                           ELSE 0
@@ -127,12 +124,6 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
             var sqlValuePairs = SqlQueryConfigurator.GetSqlPairs(propertyContainer.ValueNames);
             var sql = $"UPDATE [{TableName}] SET {sqlValuePairs} WHERE Id={entity.Id}";
             await Context.ExecuteAsync(sql, propertyContainer.AllPairs.ToList());
-        }
-
-        private static string GetTableName(MemberInfo memberInfo)
-        {
-            var tableAttribute = Attribute.GetCustomAttribute(memberInfo, typeof(TableAttribute)) as TableAttribute;
-            return tableAttribute?.Name;
         }
     }
 }
