@@ -147,4 +147,8 @@ export class CarEditorFormComponent implements OnInit, OnChanges {
 
     this.carEditorSubmit.emit(this.carEditorForm.value);
   }
+
+  public returnBack(): void {
+    window.history.back();
+  }
 }

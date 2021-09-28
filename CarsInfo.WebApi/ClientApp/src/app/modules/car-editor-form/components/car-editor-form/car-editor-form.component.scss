@@ -13,6 +13,11 @@ $validation-color: #f44336;
   }
 }
 
+.car-editor-button {
+  margin: 0 10px;
+  width: calc(50% - 20px);
+}
+
 .car-editor-input {
   width: 100%;
 

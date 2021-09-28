@@ -32,4 +32,8 @@ export class SendResetPasswordComponent {
     }));
     this.resetPasswordFormGroup.reset();
   }
+
+  public returnBack(): void {
+    window.history.back();
+  }
 }

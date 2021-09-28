@@ -1,7 +1,5 @@
 <div class="car-editor-block">
 
-  <h2 class="white-text"></h2>
-
   <form [formGroup]="carEditorForm" class="car-editor">
     <div>
       <mat-form-field class="car-editor-input" appearance="fill">
@@ -82,8 +80,10 @@
     </div>
 
     <div class="submit-block">
-      <button class="car-editor-input" mat-raised-button color="primary" type="submit" [disabled]="!carEditorForm.valid"
+      <button class="car-editor-button" mat-raised-button color="primary" type="submit" [disabled]="!carEditorForm.valid"
         (click)="onSubmit()">Submit</button>
+      <button class="car-editor-button" mat-raised-button type="submit"
+              (click)="returnBack()">Cancel</button>
     </div>
   </form>
 
