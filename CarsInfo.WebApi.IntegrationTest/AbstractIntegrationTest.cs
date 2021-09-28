@@ -17,7 +17,8 @@ namespace CarsInfo.WebApi.IntegrationTest
 
         protected AbstractIntegrationTest()
         {
-            _tempHttpClientWrapper = TempHttpClientWrapper.Create(TestDatabaseConfiguration.GetTempTestDbConnectionString());
+            _tempHttpClientWrapper = TempHttpClientWrapper.Create(
+                TestDatabaseConfiguration.GetTempTestDbConnectionString());
         }
 
         protected HttpClient TestClient => _tempHttpClientWrapper.HttpClient;

@@ -10,7 +10,7 @@ namespace CarsInfo.WebApi.IntegrationTest.Configuration
 {
     public class TempHttpClientWrapper : IDisposable
     {
-        private bool _disposed = false;
+        private bool _disposed;
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
         public HttpClient HttpClient { get; }
 
@@ -33,9 +33,11 @@ namespace CarsInfo.WebApi.IntegrationTest.Configuration
             HttpClient = applicationFactory.CreateClient();
         }
 
+        ~TempHttpClientWrapper() => Dispose(false);
+        
         public static TempHttpClientWrapper Create(string connectionString = null)
         {
-            return new (connectionString);
+            return new TempHttpClientWrapper(connectionString);
         }
 
         public void Dispose()
