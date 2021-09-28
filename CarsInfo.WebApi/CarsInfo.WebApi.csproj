@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarsInfo.Common.Installers\CarsInfo.Common.Installers.csproj" />
     <ProjectReference Include="..\CarsInfo.Infrastructure\CarsInfo.Infrastructure.csproj" />
   </ItemGroup>
 

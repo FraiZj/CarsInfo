@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
-using CarsInfo.Infrastructure.DependencyInjection;
+using CarsInfo.Common.Installers.Extensions;
+using CarsInfo.Infrastructure;
+using CarsInfo.WebApi.Installers;
 using CarsInfo.WebApi.StartupConfiguration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,17 +23,8 @@ namespace CarsInfo.WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddInfrastructure(_configuration);
-            services.AddJwtAuthentication(_configuration);
-            services.AddGoogleAuth(_configuration);
-            services.AddRedisCaching(_configuration);
-            services.AddEmailSenderConfiguration(_configuration);
-            services.AddApiClientConfiguration(_configuration);
-            services.AddViewModelMapper();
-            services.AddSwagger();
-            services.AddCorsConfiguration();
-            services.AddHealthChecksConfiguration(_configuration);
-            services.AddControllersConfiguration();
+            services.AddInstallersFromAssembliesContaining(_configuration, 
+                typeof(Startup), typeof(InfrastructureInstaller));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,14 +37,14 @@ namespace CarsInfo.WebApi
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint(SwaggerConfiguration.SwaggerUrl, SwaggerConfiguration.SwaggerName);
+                c.SwaggerEndpoint(SwaggerInstaller.SwaggerJsonPath, SwaggerInstaller.SwaggerName);
             });
 
             app.UseHttpsRedirection();
-            app.UseCustomHealthChecks("/health");
+            app.UseCustomHealthChecks();
 
             app.UseRouting();
-            app.UseCors(CorsConfiguration.CarsInfoPolicy);
+            app.UseCors(CorsInstaller.CarsInfoPolicy);
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -60,7 +53,7 @@ namespace CarsInfo.WebApi
             {
                 endpoints.MapGet("/", async context =>
                 {
-                    await Task.Run(() => context.Response.Redirect("/swagger"));
+                    await Task.Run(() => context.Response.Redirect(SwaggerInstaller.SwaggerEndpoint));
                 });
                 endpoints.MapControllers();
             });

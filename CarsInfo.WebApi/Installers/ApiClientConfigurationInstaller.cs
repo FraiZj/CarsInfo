@@ -1,14 +1,13 @@
 ﻿using CarsInfo.Application.BusinessLogic.Options;
+using CarsInfo.Common.Installers.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CarsInfo.WebApi.StartupConfiguration
+namespace CarsInfo.WebApi.Installers
 {
-    public static class AccountServiceConfiguration
+    public class ApiClientConfigurationInstaller : IInstaller
     {
-        public static void AddApiClientConfiguration(
-            this IServiceCollection services, 
-            IConfiguration configuration)
+        public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             var apiClientOptions = new ApiClientOptions();
             configuration.GetSection(nameof(ApiClientOptions)).Bind(apiClientOptions);

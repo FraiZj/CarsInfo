@@ -1,17 +1,16 @@
 ﻿using CarsInfo.Application.BusinessLogic.EmailSender;
 using CarsInfo.Application.BusinessLogic.EmailSender.Options;
+using CarsInfo.Common.Installers.Base;
 using CarsInfo.Infrastructure.BusinessLogic.EmailSender;
 using CarsInfo.Infrastructure.BusinessLogic.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CarsInfo.WebApi.StartupConfiguration
+namespace CarsInfo.WebApi.Installers
 {
-    public static class EmailSenderConfiguration
+    public class EmailSenderInstaller : IInstaller
     {
-        public static void AddEmailSenderConfiguration(
-            this IServiceCollection services, 
-            IConfiguration configuration)
+        public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             var sendGridOptions = new SendGridOptions();
             configuration.GetSection(nameof(SendGridOptions)).Bind(sendGridOptions);

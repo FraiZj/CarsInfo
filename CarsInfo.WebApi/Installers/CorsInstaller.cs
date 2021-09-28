@@ -1,12 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CarsInfo.Common.Installers.Base;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace CarsInfo.WebApi.StartupConfiguration
+namespace CarsInfo.WebApi.Installers
 {
-    public static class CorsConfiguration
+    public class CorsInstaller : IInstaller
     {
         public const string CarsInfoPolicy = "CarsInfoPolicy";
         
-        public static void AddCorsConfiguration(this IServiceCollection services)
+        public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddCors(o => o.AddPolicy(CarsInfoPolicy, builder =>
             {

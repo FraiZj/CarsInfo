@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CarsInfo.Application.Persistence\CarsInfo.Application.Persistence.csproj" />
+    <ProjectReference Include="..\CarsInfo.Common.Installers\CarsInfo.Common.Installers.csproj" />
     <ProjectReference Include="..\CarsInfo.Infrastructure.BusinessLogic\CarsInfo.Infrastructure.BusinessLogic.csproj" />
     <ProjectReference Include="..\CarsInfo.Infrastructure.DB\CarsInfo.Infrastructure.DB.csproj" />
     <ProjectReference Include="..\CarsInfo.Infrastructure.Persistence\CarsInfo.Infrastructure.Persistence.csproj" />

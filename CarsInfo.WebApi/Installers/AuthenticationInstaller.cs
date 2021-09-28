@@ -1,17 +1,16 @@
 ﻿using System.Text;
 using CarsInfo.Application.BusinessLogic.Options;
+using CarsInfo.Common.Installers.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CarsInfo.WebApi.StartupConfiguration
+namespace CarsInfo.WebApi.Installers
 {
-    public static class JwtAuthentication
+    public class AuthenticationInstaller : IInstaller
     {
-        public static void AddJwtAuthentication(
-            this IServiceCollection services, 
-            IConfiguration configuration)
+        public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             var apiAuthSettings = GetApiAuthSettings(services, configuration);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -32,7 +31,7 @@ namespace CarsInfo.WebApi.StartupConfiguration
                 });
             services.AddAuthorization();
         }
-
+        
         private static ApiAuthOptions GetApiAuthSettings(IServiceCollection services, IConfiguration configuration)
         {
             var authSettingsSection = configuration.GetSection(nameof(ApiAuthOptions));

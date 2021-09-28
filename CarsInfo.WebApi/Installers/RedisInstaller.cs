@@ -1,13 +1,14 @@
-﻿using CarsInfo.WebApi.Caching;
+﻿using CarsInfo.Common.Installers.Base;
+using CarsInfo.WebApi.Caching;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
-namespace CarsInfo.WebApi.StartupConfiguration
+namespace CarsInfo.WebApi.Installers
 {
-    public static class RedisConfiguration
+    public class RedisInstaller : IInstaller
     {
-        public static void AddRedisCaching(this IServiceCollection services, IConfiguration configuration)
+        public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             var redisSettings = new RedisSettings();
             configuration.GetSection(nameof(RedisSettings)).Bind(redisSettings);

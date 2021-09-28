@@ -31,7 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7AE08F9B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsInfo.WebApi.PerformanceTest", "CarsInfo.WebApi.PerformanceTest\CarsInfo.WebApi.PerformanceTest.csproj", "{F4850804-0795-40AD-8BB1-2A2AAE50DA65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsInfo.WebApi.IntegrationTest", "CarsInfo.WebApi.IntegrationTest\CarsInfo.WebApi.IntegrationTest.csproj", "{F4650D6E-B020-4F21-B2B6-1D61C9F6AF17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsInfo.WebApi.IntegrationTest", "CarsInfo.WebApi.IntegrationTest\CarsInfo.WebApi.IntegrationTest.csproj", "{F4650D6E-B020-4F21-B2B6-1D61C9F6AF17}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{D848B646-8B9E-4AA2-9A4F-F280D5EDE06D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsInfo.Common.Installers", "CarsInfo.Common.Installers\CarsInfo.Common.Installers.csproj", "{0A720F22-3ED3-41DE-88EE-A0E7D4CCF298}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +83,10 @@ Global
 		{F4650D6E-B020-4F21-B2B6-1D61C9F6AF17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4650D6E-B020-4F21-B2B6-1D61C9F6AF17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4650D6E-B020-4F21-B2B6-1D61C9F6AF17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A720F22-3ED3-41DE-88EE-A0E7D4CCF298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A720F22-3ED3-41DE-88EE-A0E7D4CCF298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A720F22-3ED3-41DE-88EE-A0E7D4CCF298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A720F22-3ED3-41DE-88EE-A0E7D4CCF298}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +102,7 @@ Global
 		{0CF4A886-754E-4D16-BDF7-55704AD5A8D6} = {5ECF241E-83BD-4DA1-A889-5C4913584A54}
 		{F4850804-0795-40AD-8BB1-2A2AAE50DA65} = {7AE08F9B-B401-4FE1-9072-B41D5188152A}
 		{F4650D6E-B020-4F21-B2B6-1D61C9F6AF17} = {7AE08F9B-B401-4FE1-9072-B41D5188152A}
+		{0A720F22-3ED3-41DE-88EE-A0E7D4CCF298} = {D848B646-8B9E-4AA2-9A4F-F280D5EDE06D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1252DC9C-CBD6-4366-8FC3-481147FBC06D}

@@ -1,19 +1,22 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using CarsInfo.Common.Installers.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace CarsInfo.WebApi.StartupConfiguration
+namespace CarsInfo.WebApi.Installers
 {
-    public static class SwaggerConfiguration
+    public class SwaggerInstaller : IInstaller
     {
-        public const string SwaggerUrl = "/swagger/v1/swagger.json";
+        public const string SwaggerJsonPath = "/swagger/v1/swagger.json";
         public const string SwaggerName = "CarsInfo API V1";
-
-        public static void AddSwagger(this IServiceCollection services)
+        public const string SwaggerEndpoint = "/swagger";
+        
+        public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddSwaggerGen(options =>
             {

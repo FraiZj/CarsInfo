@@ -1,12 +1,13 @@
 ﻿using CarsInfo.Application.BusinessLogic.External.Auth.Google.Models;
+using CarsInfo.Common.Installers.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CarsInfo.WebApi.StartupConfiguration
+namespace CarsInfo.WebApi.Installers
 {
-    public static class GoogleAuthConfiguration
+    public class GoogleAuthInstaller : IInstaller
     {
-        public static void AddGoogleAuth(this IServiceCollection services, IConfiguration configuration)
+        public void AddServices(IServiceCollection services, IConfiguration configuration)
         {
             var googleAuthSettings = new GoogleAuthSettings();
             configuration.GetSection(nameof(GoogleAuthSettings)).Bind(googleAuthSettings);
