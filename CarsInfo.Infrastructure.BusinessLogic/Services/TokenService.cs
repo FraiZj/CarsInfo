@@ -86,16 +86,24 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
                 ValidateAudience = false
             };
             var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+            
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+                
+                if (securityToken is not JwtSecurityToken jwtSecurityToken 
+                    || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, 
+                        StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return OperationResult<ClaimsPrincipal>.FailureResult("Invalid jwt token");
+                }
 
-            if (securityToken is not JwtSecurityToken jwtSecurityToken ||
-                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, 
-                    StringComparison.InvariantCultureIgnoreCase))
+                return OperationResult<ClaimsPrincipal>.SuccessResult(principal);
+            }
+            catch (Exception)
             {
                 return OperationResult<ClaimsPrincipal>.FailureResult("Invalid jwt token");
             }
-
-            return OperationResult<ClaimsPrincipal>.SuccessResult(principal);
         }
 
         public async Task<OperationResult<UserRefreshTokenDto>> GetUserRefreshTokenAsync(int userId)
