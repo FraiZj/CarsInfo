@@ -8,7 +8,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersListRoutingModule } from './users-list-routing.module';
 import { UsersListComponent } from './components/user-list/users-list.component';
-import { usersListreducer } from './store/reducers/users-list.reducers';
+import { usersListReducer } from './store/reducers/users-list.reducers';
+import { UsersFiilterModule } from '../users-fiilter/users-fiilter.module';
 
 @NgModule({
   declarations: [
@@ -18,13 +19,14 @@ import { usersListreducer } from './store/reducers/users-list.reducers';
     CommonModule,
     StoreModule.forFeature({
       name: usersListFeatureKey,
-      reducer: usersListreducer
+      reducer: usersListReducer
     }),
     EffectsModule.forFeature([UsersListEffects]),
     MatButtonModule,
 
     UsersListRoutingModule,
-    UsersSharedModule
+    UsersSharedModule,
+    UsersFiilterModule
   ]
 })
 export class UsersListModule { }

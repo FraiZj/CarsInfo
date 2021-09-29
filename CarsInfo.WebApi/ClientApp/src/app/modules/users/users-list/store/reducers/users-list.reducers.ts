@@ -6,7 +6,7 @@ export const initialState: UsersListState = {
   users: []
 };
 
-export const usersListreducer = createReducer(
+export const usersListReducer = createReducer(
   initialState,
   on(fetchUsersSuccess, (state, { users }) => ({ ...state, users })),
 );

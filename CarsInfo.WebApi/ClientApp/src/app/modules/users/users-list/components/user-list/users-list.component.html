@@ -1,3 +1,4 @@
+<users-filter></users-filter>
 <table>
   <thead>
     <tr>
@@ -11,7 +12,9 @@
   <tbody>
     <tr *ngFor='let user of users$ | async'>
       <td scope="row" data-label="Full Name">{{ user.firstName }} {{ user.lastName }}</td>
-      <td data-label="Email" class="email-block"><a [href]="mailTo(user.email)">{{ user.email }}</a></td>
+      <td data-label="Email">
+        <a class="email-link" [href]="mailTo(user.email)">{{ user.email }}</a>
+      </td>
       <td data-label="Email Verified">{{ user.emailVerified ? '+': '-' }}</td>
       <td data-label="Roles">
         {{ user.roles.join(', ') }}
