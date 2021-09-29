@@ -1,3 +1,25 @@
-<div *ngFor='let user of users$ | async'>
-  {{user.email}}
-</div>
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Full Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Email Verified</th>
+      <th scope="col">Roles</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor='let user of users$ | async'>
+      <td scope="row" data-label="Full Name">{{ user.firstName }} {{ user.lastName }}</td>
+      <td data-label="Email" class="email-block"><a [href]="mailTo(user.email)">{{ user.email }}</a></td>
+      <td data-label="Email Verified">{{ user.emailVerified ? '+': '-' }}</td>
+      <td data-label="Roles">
+        {{ user.roles.join(', ') }}
+      </td>
+      <td>
+        <button mat-button>Edit</button>
+        <button mat-button>Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

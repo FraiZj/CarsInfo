@@ -20,4 +20,8 @@ export class UsersListComponent implements OnInit {
   public ngOnInit(): void {
     this.store.dispatch(fetchUsers());
   }
+
+  public mailTo(email: string) {
+    return `mailto:${email}`;
+  }
 }

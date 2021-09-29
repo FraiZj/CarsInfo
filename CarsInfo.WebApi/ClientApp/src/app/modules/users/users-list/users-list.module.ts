@@ -1,3 +1,4 @@
+import { MatButtonModule } from '@angular/material/button';
 import { UsersListEffects } from './store/effects/users-list.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { usersListFeatureKey } from './store/states/users-list.state';
@@ -7,14 +8,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersListRoutingModule } from './users-list-routing.module';
 import { UsersListComponent } from './components/user-list/users-list.component';
-import { UserCardComponent } from './components/user-card/user-card.component';
 import { usersListreducer } from './store/reducers/users-list.reducers';
-
 
 @NgModule({
   declarations: [
-    UsersListComponent,
-    UserCardComponent
+    UsersListComponent
   ],
   imports: [
     CommonModule,
@@ -23,6 +21,7 @@ import { usersListreducer } from './store/reducers/users-list.reducers';
       reducer: usersListreducer
     }),
     EffectsModule.forFeature([UsersListEffects]),
+    MatButtonModule,
 
     UsersListRoutingModule,
     UsersSharedModule
