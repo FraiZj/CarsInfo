@@ -16,7 +16,7 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
         {
             const string selectUsers = @"SELECT * FROM [User]
                                          INNER JOIN [UserRole]
-                                         ON [User].UserId = [UserRole].UserId
+                                         ON [User].Id = [UserRole].UserId
                                          INNER JOIN [Role]
                                          ON [UserRole].RoleId = [Role].Id";
 
