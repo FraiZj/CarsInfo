@@ -1,9 +1,9 @@
-import {NotFoundComponent} from '@core/components/not-found/not-found.component';
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {Roles} from '@auth/enums/roles';
-import {AuthGuard} from '@core/auth/auth-guard';
-import {EmailVerificationGuard} from "./modules/email-verification/guards/email-verification-guard";
+import { NotFoundComponent } from '@core/components/not-found/not-found.component';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { Roles } from '@auth/enums/roles';
+import { AuthGuard } from '@core/auth/auth-guard';
+import { EmailVerificationGuard } from "./modules/email-verification/guards/email-verification-guard";
 
 const routes: Routes = [
   {
@@ -30,6 +30,14 @@ const routes: Routes = [
   {
     path: 'add-car',
     loadChildren: () => import('./modules/car-creation/car-creation.module').then(m => m.CarCreationModule),
+    canActivate: [AuthGuard],
+    data: {
+      roles: [Roles.Admin]
+    }
+  },
+  {
+    path: 'users',
+    loadChildren: () => import('./modules/users/users-list/users-list.module').then(m => m.UsersListModule),
     canActivate: [AuthGuard],
     data: {
       roles: [Roles.Admin]
