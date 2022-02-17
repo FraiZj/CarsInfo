@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace CarsInfo.Application.BusinessLogic.Dtos
+namespace CarsInfo.WebApi.ViewModels.Users
 {
-    public class UserDto
+    public class UserReadViewModel
     {
         public int Id { get; set; }
-
+        
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
 
         public string Email { get; set; }
-        
-        public string Password { get; set; }
-
-        public bool IsExternal { get; set; }
         
         public bool EmailVerified { get; set; }
 

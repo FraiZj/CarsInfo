@@ -13,6 +13,7 @@ namespace CarsInfo.WebApi.Installers
             services.AddSingleton<CarsControllerMapper>();
             services.AddSingleton<BrandControllerMapper>();
             services.AddSingleton<CommentControllerMapper>();
+            services.AddSingleton<UsersControllerMapper>();
         }
     }
 }

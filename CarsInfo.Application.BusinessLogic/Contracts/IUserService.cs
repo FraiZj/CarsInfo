@@ -13,9 +13,9 @@ namespace CarsInfo.Application.BusinessLogic.Contracts
         
         Task<OperationResult<int>> AddAsync(UserDto entity);
 
-        Task<OperationResult.OperationResult> UpdateAsync(UserDto entity);
+        Task<OperationResult.OperationResult> UpdateAsync(string email, UserEditorDto entity);
 
-        Task<OperationResult.OperationResult> DeleteByIdAsync(int id);
+        Task<OperationResult.OperationResult> DeleteByByEmailAsync(string email);
 
         Task<OperationResult<bool>> ContainsUserWithEmailAsync(string email);
         

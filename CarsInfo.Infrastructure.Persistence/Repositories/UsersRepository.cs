@@ -14,9 +14,9 @@ namespace CarsInfo.Infrastructure.Persistence.Repositories
 
         public override async Task<IEnumerable<User>> GetAllAsync()
         {
-            const string selectUsers = @"SELECT * FROM [User]
+            const string selectUsers = @"SELECT [User].*, [Role].* FROM [User]
                                          INNER JOIN [UserRole]
-                                         ON [User].UserId = [UserRole].UserId
+                                         ON [User].Id = [UserRole].UserId
                                          INNER JOIN [Role]
                                          ON [UserRole].RoleId = [Role].Id";
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CarsInfo.Application.BusinessLogic.Contracts;
 using CarsInfo.Application.BusinessLogic.Dtos;
@@ -36,7 +38,7 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             var userAlreadyExist = await _usersRepository.ContainsAsync(filter.Filters);
             if (userAlreadyExist)
             {
-                return OperationResult<int>.FailureResult($"User with email'{entity.Email}' already exists");
+                return OperationResult<int>.FailureResult($"User with email '{entity.Email}' already exists");
             }
                 
             var user = _mapper.MapToUser(entity);
@@ -59,14 +61,14 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             return OperationResult<bool>.SuccessResult(contains);
         }
 
-        public async Task<OperationResult> DeleteByIdAsync(int id)
+        public async Task<OperationResult> DeleteByByEmailAsync(string email)
         {
-            var user = await _usersRepository.GetAsync(id);
+            var user = await _usersRepository.GetByEmailAsync(email);
             if (user is null)
             {
-                return OperationResult.FailureResult($"User with id={id} does not exist");
+                return OperationResult.FailureResult("User not found");
             }
-            await _usersRepository.DeleteAsync(id);
+            await _usersRepository.DeleteAsync(user.Id);
             return OperationResult.SuccessResult();
         }
 
@@ -81,16 +83,46 @@ namespace CarsInfo.Infrastructure.BusinessLogic.Services
             var user = await _usersRepository.GetByEmailAsync(email);
             return OperationResult<UserDto>.SuccessResult(_mapper.MapToUserDto(user));
         }
-
-        public async Task<OperationResult> UpdateAsync(UserDto entity)
+        
+        public async Task<OperationResult> UpdateAsync(string email, UserEditorDto updatedUser)
         {
-            var user = await _usersRepository.GetAsync(entity.Id);
+            if (!updatedUser.Roles.Any())
+            {
+                return OperationResult.FailureResult($"User must have at least one role");
+            }
+            
+            var user = await _usersRepository.GetByEmailAsync(email);
             if (user is null)
             {
-                return OperationResult.FailureResult($"User with id={entity.Id} does not exist");
+                return OperationResult.FailureResult("User not found");
             }
-            await _usersRepository.UpdateAsync(_mapper.MapToUser(entity));
+            
+            await _usersRepository.UpdateAsync(user);
+            await DeleteUserRolesAsync(user.Id);
+            await AddUserRolesAsync(user.Id, updatedUser.Roles);
+
             return OperationResult.SuccessResult();
+        }
+
+        private async Task DeleteUserRolesAsync(int userId)
+        {
+            var userRoles = await _userRoleRepository.GetAllAsync(
+                new FilterModel(new FiltrationField("UserRole.UserId", userId)));
+            await _userRoleRepository.DeleteRangeAsync(userRoles.Select(ur => ur.Id));
+        }
+
+        private async Task AddUserRolesAsync(int userId, IEnumerable<string> roles)
+        {
+            var newUserRoles = new List<UserRole>();
+            foreach (var role in roles)
+            {
+                newUserRoles.Add(new UserRole
+                {
+                    UserId = userId,
+                    RoleId = await _roleService.GetRoleIdAsync(role)
+                });
+            }
+            await _userRoleRepository.AddRangeAsync(newUserRoles);
         }
         
         public async Task<OperationResult> ResetPasswordAsync(string email, string password)
